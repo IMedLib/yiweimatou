@@ -1,0 +1,93 @@
+/**
+ * Created by zhangruofan on 2015/12/24.
+ */
+var cookie=require('../lib/cookie');
+$(document).ready(function () {
+    var wait = 60;
+    function getUrlParam(name)
+    {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r!=null) return r[2]; return null;
+    }
+    $('form').submit(function () {
+        var mobile = $('#mobile').val();
+        var code = $('#code').val();
+        if (!isMobile(mobile)) {
+            $('#mobileErr').text('非法手机号码！').fadeOut(5000);
+            return false;
+        }
+        if (code.length != 6) {
+            $('#codeErr').text('验证码错误！').fadeOut(5000);
+        }
+        $.getJSON(url + 'User/Add/Reg/', {
+            mobile: mobile,
+            recuid: $('#recuid').val(),
+            verifycode: code
+        }).done(function (data) {
+            if (data.code !== 0) {
+                $('#registerErr').text(data.msg === "" ? "注册失败，请重新尝试！" : data.msg)
+                    .fadeOut(5000);
+                return false;
+            }
+            if (data.token !== '' && data.key !== '') {
+                var end = (new Date()).getDate() + 7;
+                cookie.setCookie('key', data.key, end);
+                cookie.setCookie('token', data.token, end);
+                var redirect=decodeURIComponent(getUrlParam('redirect'));
+                if(redirect=='null' || redirect=='')
+                {
+                    redirect='/';
+                }
+                window.location.href = redirect;
+            }
+        }).fail(function () {
+            $('#registerErr').text("请求超时！").fadeOut(5000);
+        });
+        return false;
+    });
+    $('#codeGet').on('click', function () {
+        var mobile = $('#mobile').val();
+        if (!isMobile(mobile)) {
+            $('#mobileErr').text('非法手机号码！').fadeOut(5000);
+            return false;
+        }
+        setTime($(this));
+        getCode(mobile);
+    });
+    function isMobile(mobile) {
+        if (mobile.length === 11 && /^(((13)|(15)|(17)|(18))+\d{9})$/.test(mobile))
+            return true;
+        return false;
+    }
+
+    function getCode(mobile) {
+        $.getJSON(url + '/Captcha/Add', {
+            mobile:mobile
+        }).done(function (data) {
+            if (data.code !== 0) {
+                $('#codeErr').text(data.msg === "" ? "获取失败，请重新尝试！" : data.msg)
+                    .fadeOut(5000);
+                return false;
+            }
+            $('#code').val(data.verifycode);
+        }).fail(function () {
+            $('#codeErr').text("请求超时！").fadeOut(5000);
+        });
+    }
+
+    function setTime(object) {
+        if (wait === 0) {
+            object.removeAttr('disabled');
+            object.text("点击获取验证码");
+            wait = 60;
+        } else {
+            object.attr('disabled', true);
+            object.text("重新发送(" + wait + ")");
+            wait--;
+            setTimeout(function () {
+                setTime(object);
+            }, 1000);
+        }
+    }
+});

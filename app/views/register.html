@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>注册</title>
+    <link rel="stylesheet" href="/css/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/login/login.min.css">
+</head>
+<body>
+<div class="container">
+    <form class="form-signin">
+        <h3 class="form-signin-heading" style="text-align: center;">注册</h3>
+        <input type="text" id="mobile" name="mobile"
+               class="form-control" placeholder="手机号码" required autofocus>
+        <input type="text" id="recuid" placeholder="推荐人ID（选填）" class="form-control">
+        <span id="mobileErr" style="color: red"></span>
+        <input type="text" id="code" name="code"
+               class="form-control" placeholder="验证码" required>
+        <span id="codeErr" style="color: red"></span>
+        <button class="btn btn-block btn-primary" id="codeGet" type="button">点击获取验证码</button>
+        <button class="btn btn-lg btn-info btn-block" type="submit" id="register">注册</button>
+        <span id="registerErr" style="color: red"></span>
+    </form>
+</div>
+<script type="text/javascript" src="/js/lib/jquery.min.js"></script>
+<script type="text/javascript">
+    var url='{{account}}';
+</script>
+<script type="text/javascript" src="/js/register/7d8fbe04f5896f1e9417.wp.js">
+</script>
+</body>
+</html>
