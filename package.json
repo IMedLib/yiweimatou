@@ -1,0 +1,27 @@
+{
+  "name": "yiweimatou",
+  "version": "1.0.0",
+  "description": "yiweili",
+  "scripts": {
+    "start": "node --harmony ./bin/www",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IMedLib/yiweimatou.git"
+  },
+  "author": "zhangruofan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/IMedLib/yiweimatou/issues"
+  },
+  "homepage": "https://github.com/IMedLib/yiweimatou#readme",
+  "dependencies": {
+    "koa": "^1.1.2",
+    "koa-favicon": "^1.2.0",
+    "koa-router": "^5.3.0",
+    "koa-static": "^1.5.2",
+    "koa-swig": "^2.1.0",
+    "mount-koa-routes": "^1.0.7"
+  }
+}
