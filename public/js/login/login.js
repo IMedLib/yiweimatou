@@ -30,9 +30,10 @@ $(document).ready(function () {
                 return false;
             }
             if (data.token !== '' && data.key !== '') {
-                var end = (new Date()).getDate() + 7;
-                cookie.setCookie('key', data.key, end);
-                cookie.setCookie('token', data.token, end);
+                var now = new Date();
+                now.setDate(now.getDate()+parseInt(expire));
+                cookie.setCookie('key', data.key, now);
+                cookie.setCookie('token', data.token, now);
                 var redirect=decodeURIComponent(getUrlParam('redirect'));
                 if(redirect=='null' || redirect=='')
                 {

@@ -7,5 +7,8 @@ module.exports = {
         upload:"http://121.41.92.56:8001/",
         domain:"http://121.41.92.56/",
         account:"http://121.41.92.56:8002/"
+    },
+    cookie:{
+        expire:89
     }
 };

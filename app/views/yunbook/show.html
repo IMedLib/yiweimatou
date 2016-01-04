@@ -1,0 +1,103 @@
+{% extends '../layout/header.html' %}
+
+{% block breadcrumbs %}
+    <li><a href="/index">首页</a></li>
+    <li><a href="/yunbook">云板书</a></li>
+    <li class="active">云板书显示</li>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div id="map" style="width: 1200px;height: 600px"></div>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script src="/js/lib/googlemap/mapapi.js"></script>
+<script src="/js/lib/googlemap/drawing.js"></script>
+<script>
+        $(document).ready(function(){
+            var lat=parseFloat('{{lat}}'), lng=parseFloat('{{lng}}'),map;
+            var polyOptions = {
+                fillColor: "#ff7f00",
+                fillOpacity: 0.45,
+                strokeColor: "rgba(255, 0, 0, 0.8)",
+                strokeOpacity: 0.4,
+                strokeWeight: 5,
+                fillOpacity: 0, //0.45
+                editable: false,
+                draggable: false,
+                clickable: false
+            };
+            initMap();
+            function initMap(){
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat:lat,lng:lng},
+                    zoom: 3,
+                    streetViewControl: false,
+                    mapTypeControlOptions: {
+                        mapTypeIds: ['moon']
+                    }
+                });
+                var moonMapType = new google.maps.ImageMapType({
+
+                    getTileUrl: function (coord, zoom) {
+                        return '{{yunbook.uri}}' + '/' + zoom + '/' + coord.x + '/' + coord.y + '.png';
+                    },
+                    tileSize: new google.maps.Size(256, 256),
+                    maxZoom: parseInt('{{yunbook.zoomnum}}',10),
+                    minZoom: 2,
+                    radius: 1738000,
+                    name: '云板书'
+                });
+
+                map.mapTypes.set('moon', moonMapType);
+                map.setMapTypeId('moon');
+                var drawingManager = new google.maps.drawing.DrawingManager({
+                    //drawingMode: google.maps.drawing.OverlayType.MARKER,
+                    drawingControl: true,
+                    drawingControlOptions: {
+                        position: google.maps.ControlPosition.TOP_LEFT,
+                        drawingModes: [
+                            google.maps.drawing.OverlayType.MARKER,
+                            google.maps.drawing.OverlayType.CIRCLE,
+                            google.maps.drawing.OverlayType.POLYGON,
+                            google.maps.drawing.OverlayType.POLYLINE,
+                            google.maps.drawing.OverlayType.RECTANGLE
+                        ]
+                    },
+                    markerOptions: {icon: '/js/lib/googlemap/markers2/marker_sprite.png'},
+                    circleOptions: {
+                        fillColor: '#ffff00',
+                        fillOpacity: 1,
+                        strokeWeight: 5,
+                        clickable: false,
+                        editable: true,
+                        zIndex: 1
+                    }
+                });
+                drawingManager.setMap(map);
+                google.maps.event.addDomListener(map.getDiv(), 'mousedown', function (e) {
+                    //do it with the right mouse-button only
+                    if (e.button != 2) {
+                        return false;
+                    }
+                    //the polygon
+                    //if(!poly){
+                    var poly = new google.maps.Polyline(polyOptions);//{map:map,clickable:false}
+                    poly.setMap(map);
+                    //}
+                    //move-listener
+                    var move = google.maps.event.addListener(map, 'mousemove', function (e) {
+                        poly.getPath().push(e.latLng);
+                    });
+                    //mouseup-listener
+                    google.maps.event.addListenerOnce(map, 'mouseup', function (e) {//addListenerOnce
+                        google.maps.event.removeListener(move);
+                    });
+
+                });
+            }
+        });
+</script>
+{% endblock %}

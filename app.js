@@ -14,7 +14,8 @@ app.context.render=render({
     cache: false, //'memory'
     ext: 'html'
 });
-app.use(favicon());
+app.use(favicon(__dirname+"/public/img/logo/favicon.ico"));
 app.use(require('koa-static')(__dirname+'/public'));
+
 module.exports = app;
 

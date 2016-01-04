@@ -1,0 +1,54 @@
+{% extends '../layout/header.html' %}
+{% block body %}
+<div class="row">
+    <!--Left Sidebar-->
+    <div class="col-md-3 md-margin-bottom-40">
+        <img class="img-responsive profile-img margin-bottom-20" src="/img/clients4/img12.jpg" alt="">
+
+        <ul class="list-group sidebar-nav-v1 margin-bottom-40" id="sidebar-nav-1">
+            <li class="list-group-item">
+                <a href="/user/home"><i class="fa fa-user"></i> 我的主页 </a>
+            </li>
+            <li class="list-group-item">
+                <a href="#"><i class="fa fa-group"></i> 我的学生 </a>
+            </li>
+            <li class="list-group-item">
+                <a href="#"><i class="fa fa-cubes"></i> 我管理的课程 </a>
+            </li>
+            <li class="list-group-item">
+                <a href="#"><i class="fa fa-comments"></i> 我的评论 </a>
+            </li>
+            <li class="list-group-item list-toggle">
+                <a class="accordion-toggle" href="#collapse-yunbook" data-toggle="collapse"> 我的云板书 </a>
+                <ul id="collapse-yunbook" class="collapse">
+                    <li>
+                        <a href="/yunbook/me"><i class="fa fa-book"></i>我的云板书</a>
+                    </li>
+                    <li><a href="/yunbook/add"><i class="fa fa-plus"></i>
+                        新建云板书
+                    </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="list-group-item">
+                <a href="#"><i class="fa fa-file"></i> 我的文档 </a>
+            </li>
+            <li class="list-group-item">
+                <a href="#"><i class="fa fa-picture-o"></i> 我的图片</a>
+            </li>
+            <li class="list-group-item">
+                <a href="#"><i class="fa fa-video-camera"></i> 我的视频</a>
+            </li>
+            <li class="list-group-item">
+                <a href="#"><i class="fa fa-cog"></i> 个人设置 </a>
+            </li>
+        </ul>
+
+        <hr>
+    </div>
+    <!--End Left Sidebar-->
+    <div class="col-md-9 md-margin-bottom-40">
+        {% block content %} {% endblock %}
+    </div>
+</div>
+{% endblock %}

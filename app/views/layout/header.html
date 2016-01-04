@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/css/lib/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/lib/Font-Awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/lib/style.css">
+    <link rel="stylesheet" href="/css/lib/header-default.css">
+    {% block css %}{% endblock %}
+    <title>{{title|医卫里}}</title>
+</head>
+<body>
+
+<div class="wrapper">
+    <!--=== Header ===-->
+    <div class="header">
+        <div class="container">
+            <!-- Logo -->
+            <a class="logo" href="/index">
+                <img src="/img/logo/logo{{logo}}-default.png" alt="Logo">
+            </a>
+            <!-- End Logo -->
+            <!-- Topbar -->
+            <!--<div class="topbar">-->
+            <!--<ul class="loginbar pull-right">-->
+            <!--<li class="topbar-devider"></li>-->
+            <!--<li><a href="/login">Login</a></li>-->
+            <!--</ul>-->
+            <!--</div>-->
+            <!-- End Topbar -->
+
+            <!-- Toggle get grouped for better mobile display -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target=".navbar-responsive-collapse">
+                <span class="sr-only">打开导航</span>
+                <span class="fa fa-bars"></span>
+            </button>
+            <!-- End Toggle -->
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse mega-menu navbar-responsive-collapse">
+            <div class="container">
+                <ul class="nav navbar-nav">
+                    <!-- Home -->
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                            首页
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/index">首页</a></li>
+                            <li><a href="#">田家园</a></li>
+                            <li><a href="#">2.5D人体</a></li>
+                            <li><a href="#">在身边</a></li>
+                        </ul>
+                    </li>
+                    <!-- 机构 -->
+                    <li>
+                        <a href="/group">
+                            机构
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/course">
+                            课程
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/class">
+                            课堂
+                        </a>
+                    </li>
+                    <li><a href="/user/home">我的主页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--=== Breadcrumbs ===-->
+    <div class="breadcrumbs">
+        <div class="container">
+            <h1 class="pull-left">{{title}}</h1>
+            <ul class="pull-right breadcrumb">
+                {% block breadcrumbs %}{% endblock %}
+            </ul>
+        </div>
+    </div>
+    <!--=== End Breadcrumbs ===-->
+    <!--=== Container ===-->
+    <div class="container content">
+        {% block body %}{% endblock %}
+    </div>
+    <!--=== END Container ===-->
+</div>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script type="text/javascript" src="/js/lib/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script type="text/javascript" src="/js/lib/bootstrap.min.js"></script>
+{% block js %}{% endblock %}
+</body>
+</html>

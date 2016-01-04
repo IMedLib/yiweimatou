@@ -1,0 +1,62 @@
+/*Registration and Login Page v1
+------------------------------------*/
+.reg-page {
+	color: #555;
+	padding: 30px;
+	background: #fefefe;
+	border: solid 1px #eee;
+	box-shadow: 0 0 3px #eee;
+}
+.content{
+	padding: 80px 0;
+}
+.btn-u {
+	border: 0;
+	color: #fff;
+	font-size: 14px;
+	cursor: pointer;
+	font-weight: 400;
+	padding: 6px 13px;
+	position: relative;
+	background: #72c02c;
+	white-space: nowrap;
+	display: inline-block;
+	text-decoration: none;
+}
+.btn-u:hover {
+	color: #fff;
+	text-decoration: none;
+	-webkit-transition: all 0.3s ease-in-out;
+	-moz-transition: all 0.3s ease-in-out;
+	-o-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+}
+/*Reg Header*/
+.reg-header {
+	color: #555;
+	text-align: center;
+	margin-bottom: 35px;
+	border-bottom: solid 1px #eee;
+}
+
+.reg-header h2 {
+	font-size: 24px;
+	margin-bottom: 15px;
+}
+
+/*Reg Forms*/
+.reg-page label {
+	color: #777;
+}
+.margin-bottom-20{
+	margin-bottom: 20px;
+}
+.form-control {
+	box-shadow: none;
+	border-radius:0
+}
+
+.form-control:focus {
+	border-color: #bbb;
+	box-shadow: 0 0 2px #c9c9c9;
+}
