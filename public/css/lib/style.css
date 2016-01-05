@@ -531,14 +531,6 @@ a.thumbnail {
 	text-transform: uppercase;
 }
 
-/*About Skills*/
-.about-skills {
-	padding: 40px 0; 	
-	border-top: 1px solid #eee;
-	border-bottom: 1px solid #eee;
-	background: url(../img/breadcrumbs.png) repeat;
-}
-
 /*Gallery Page
 ------------------------------------*/
 .gallery-page .thumbnail,
@@ -740,12 +732,6 @@ ul.blog-tags a:hover i {
 .fullwidthbanner-container.slider-promo {
 	max-height: 460px !important;
 }
-
-.slider-promo-info-bg {
-	padding: 25px 20px 20px;
-	background: url(../img/bg-black.png) repeat;
-}
-
 .slider-promo-info span.big-size { 
 	color: #fff;
 	display: block;
@@ -1036,37 +1022,6 @@ ul.labels-demo li {
 	  width: 12.5%;
 	}
 }
-
-/*Glyphicons Pro*/
-.demo-pro-glyphicons li {
-	width: 170px;
-	height: 100px;
-	padding: 20px 10px 30px;
-}
-
-.demo-pro-glyphicons span {
-	height: 40px;
-	display: block;
-}
-
-.demo-pro-glyphicons span:before {
-	color: #555;
-	padding: 10px 62px;
-}
-
-.demo-pro-glyphicons span.glyphicons:before {
-	font-size: 22px;
-}
-
-/*Glyphicons Pro Halflings*/
-.demo-pro-glyphicons span.halflings {
-	height: 30px;
-}
-
-.demo-pro-glyphicons span.halflings:before {
-	padding: 10px 70px;
-}
-
 /*Contact Pages
 ------------------------------------*/
 .map {
@@ -1503,16 +1458,6 @@ img.img-mouse {
 
 /*Desire Page
 ------------------------------------*/
-/*Service Info*/
-.service-info {
-	position: relative;
-	padding: 40px 0 50px;
-	background: url(../img/patterns/17.png) repeat;
-}
-
-.service-info .info-description {
-	overflow: hidden;
-}
 
 .service-info i.service-info-icon {
 	color: #777;
@@ -1553,55 +1498,6 @@ img.img-mouse {
 .project-details a {
   text-decoration: underline;
 }
-
-/*Bootstrap Testimonials
-------------------------------------*/
-.testimonials-bs {
-  padding: 50px 0;
-  background: url(../img/bg/16.jpg) 50% 0 repeat fixed;  
-}
-
-.testimonials-bs .headline-center-v2 span.author {
-  color: #777;
-  font-size: 14px;
-}
-
-/*Removes Bootstrap carousel background images*/
-.testimonials-bs .item {
-  margin-bottom: 30px;
-}
-
-.testimonials-bs .carousel-arrow {
-  text-align: center;
-}
-
-.testimonials-bs .carousel-control-v2 i {
-	color: #888;
-	width: 30px;
-	height: 30px;
-	padding: 2px;
-	font-size: 22px;
-	display: inline-block;
-	border: 2px solid #888;
-}
-
-.testimonials-bs .carousel-control-v2 i:hover {
-  color: #72c02c;
-  border-color: #72c02c;
-  text-decoration: none;
-  transition: all 0.3s ease-in-out;
-  -o-transition: all 0.3s ease-in-out;
-  -moz-transition: all 0.3s ease-in-out;
-  -webkit-transition: all 0.3s ease-in-out;
-}
-
-.testimonials-bs .carousel-control-v2.left,
-.testimonials-bs .carousel-control-v2.right {
-    text-decoration: none;
-    background-image: none;
-}
-
-/*Team v1*/
-.team-v1 li > h3 {
-	color: #555;
+.font-red{
+	color: red;
 }

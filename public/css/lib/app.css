@@ -878,7 +878,7 @@ h3.heading-xs {
 
 .sidebar-nav-v1 > li.active,
 .sidebar-nav-v1 > li.active:hover {
-  background: #717984;
+  background: #72c02c;
 } 
 
 .sidebar-nav-v1 > li.active, 
@@ -899,9 +899,9 @@ h3.heading-xs {
 
 .sidebar-nav-v1 li ul,
 .sidebar-nav-v1 li.active ul a {
-  background: #f8f8f8;
+  background: #fff;
+  color: #72c02c;
 }
-
 .sidebar-nav-v1 li ul a {
   color: #555;
   font-size: 12px;
@@ -911,7 +911,8 @@ h3.heading-xs {
 
 .sidebar-nav-v1 ul li:hover a,
 .sidebar-nav-v1 ul li.active a {
-  color: #72c02c;
+  color: #fff;
+  background: #72c02c;
 }
 
 /*Sidebar Badges*/
@@ -939,7 +940,7 @@ h3.heading-xs {
 .list-toggle:after {
     top: 7px;
     right: 10px;
-    color: #777;
+    color: #72c02c;
     font-size: 14px;
     content: "\f105";
     position: absolute;

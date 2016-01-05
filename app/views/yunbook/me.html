@@ -9,21 +9,14 @@
 {% block content %}
 <div class="row">
     {% for yunbook in yunbookList %}
-    <div class="col-sm-4 margin-top-10">
+    <div class="col-sm-4 margin-button-20">
         <div class="funny-boxes funny-boxes-top-green">
             <div class="row">
-                <div class="col-md-4 funny-boxes-img">
+                <div class="col-md-4">
                     <img class="img-responsive" src="{{domain}}{{yunbook.coverpath}}256_256.png" alt="云板书封面">
                 </div>
                 <div class="col-md-8">
                     <h2><a href="/yunbook/show?yid={{yunbook.yid}}">{{yunbook.title}}</a></h2>
-                    <ul class="list-unstyled funny-boxes-rating">
-                        <li><i class="fa fa-star"></i></li>
-                        <li><i class="fa fa-star"></i></li>
-                        <li><i class="fa fa-star"></i></li>
-                        <li><i class="fa fa-star"></i></li>
-                        <li><i class="fa fa-star"></i></li>
-                    </ul>
                     <p>{{yunbook.remark}}</p>
                 </div>
             </div>

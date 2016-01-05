@@ -79,7 +79,7 @@
 .sky-form .select select,
 .sky-form .textarea textarea {
   border-width: 1px;
-  font-size: 14px;
+  /*font-size: 14px;*/
   color: #404040;
 }
 
@@ -100,17 +100,6 @@
   top: 1px;
   right: 1px;
 }
-
-/**/
-/* captcha inputs */
-/**/
-.sky-form .input-captcha img {
-  position: absolute;
-  top: 1px;
-  right: 1px;
-  border-left: 1px solid #e5e5e5;
-}
-
 
 /**/
 /* normal state */

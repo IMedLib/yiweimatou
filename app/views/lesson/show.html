@@ -1,0 +1,247 @@
+{% extends '../layout/header.html' %}
+{% block css %}
+<link rel="stylesheet" href="/css/lib/bootstrap-datetimepicker.min.css">
+<link rel="stylesheet" href="/css/lib/sky-forms.css">
+<link rel="stylesheet" href="/css/lib/custom-sky-forms.css">
+{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="/index">首页</a></li>
+<li><a href="/group/show?oid={{lesson.oid}}">{{group.title|课程所属机构}}</a></li>
+<li class="active">{{lesson.title}}</li>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-3">
+        <ul class="list-group sidebar-nav-v1" id="sidebar-nav">
+            <li class="list-group-item active">
+                <a href="#lesson" data-toggle="tab"><i class="fa fa-venus"></i> 课程详情</a></li>
+            {%if admin > 1%}
+            <li class="list-group-item">
+                <a href="#addClass" data-toggle="tab">
+                    <i class="fa fa-plus"></i> 添加课堂 </a>
+            </li>
+            <li class="list-group-item">
+                <a href="#addteacher" data-toggle="tab"><i class="fa fa-plus"></i> 添加老师</a>
+            </li>
+            {%endif%}
+            {% if admin >=1%}
+            <li class="list-group-item">
+                <a href="#addstu"><i class="fa fa-plus"></i>添加学生</a></li>
+            {% endif %}
+            <hr>
+            {% for clazz in clazzes %}
+            <li class="list-group-item">
+                <a href="#tab-{{clazz.cid}}" data-toggle="tab"> {{clazz.title}} </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-9">
+        <div class="tab-content">
+            {% for clazz in clazzes %}
+            <div class="tab-pane fade in" id="tab-{{clazz.cid}}">
+                <div class="row">
+                    <div class="col-md-7">
+                        {% if admin%}
+                        <a href="/clazz/edit?cid={{clazz.cid}}" class="btn-u btn-xs pull-right">编辑</a>
+                        {% endif %}
+                        <h3>详情</h3>
+                        <dl class="dl-horizontal margin-top-20">
+                            <dt>课堂名称:</dt>
+                            <dd>{{clazz.title}}</dd>
+                            <dt>课堂备注:</dt>
+                            <dd><p>{{clazz.remark}}</p></dd>
+                            <dt>更新时间:</dt>
+                            <dd>{{clazz.puttime}}</dd>
+                            <dt>开始时间:</dt>
+                            <dd>{{clazz.starttime}}</dd>
+
+                            <dt>结束时间:</dt>
+                            <dd>{{clazz.endtime}}</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-5">
+                        <img src="{{clazz.coverpath}}512_256.png" class="img-responsive" alt="课堂封面">
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <h3>云板书</h3>
+                </div>
+                <hr>
+                <div class="row">
+                    <h3>文件</h3>
+                </div>
+                <hr>
+                <div class="row">
+                    <h3>图片</h3>
+                </div>
+                <hr>
+                <div class="row">
+                    <h3>视频</h3>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div id="lesson" class="tab-pane fade in active">
+                <div class="row">
+                    <div class="col-md-7">
+                        {% if admin%}
+                        <a href="/group/lesson/edit?lid={{lesson.lid}}" class="btn-u btn-xs pull-right">编辑</a>
+                        {% endif %}
+                        <h3>详情</h3>
+                        <dl class="dl-horizontal margin-top-20">
+                            <dt>课程名称:</dt>
+                            <dd>{{lesson.title}}</dd>
+                            <dt>课程备注:</dt>
+                            <dd><p>{{lesson.remark}}</p></dd>
+                            <dt>主讲老师:</dt>
+                            <dd>{{lesson.uid}}</dd>
+                            <dt>更新时间:</dt>
+                            <dd>{{lesson.puttime}}</dd>
+                            <dt>开始时间:</dt>
+                            <dd>{{lesson.starttime}}</dd>
+
+                            <dt>结束时间:</dt>
+                            <dd>{{lesson.endtime}}</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-5">
+                        <img src="{{lesson.coverpath}}256_256.png" class="img-responsive" alt="课程封面">
+                    </div>
+                </div>
+                <hr>
+            </div>
+            {% if admin %}
+            <div id="addClass" class="tab-pane fade in">
+                <div class="row">
+                    <form class="sky-form">
+                        <header>新建课堂</header>
+                        <fieldset>
+                            <section>
+                                <label for="title" class="label">课堂标题</label>
+                                <label class="input">
+                                    <input type="text" id="title" required>
+                                </label>
+                            </section>
+                            <section>
+                                <label class="label">课程封面</label>
+                                <label for="file" class="input input-file">
+                                    <div class="button">
+                                        <input type="file" id="file" required
+                                               onchange="this.parentNode.nextElementSibling.value = this.value">选择文件
+                                    </div>
+                                    <input id="path" type="text" readonly>
+                                </label>
+                            </section>
+                            <section>
+                                <label for="remark" class="label">课堂备注</label>
+                                <label class="textarea">
+                                    <textarea id="remark" rownum="3"></textarea>
+                                </label>
+                            </section>
+                            <div class="row">
+                                <section class="col col-6">
+                                    <label class="input">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input class="ui-datepicker" type="text" required id="start" placeholder="开始时间">
+                                    </label>
+                                </section>
+                                <section class="col col-6">
+                                    <label class="input">
+                                        <i class="icon-append fa fa-calendar"></i>
+                                        <input class="ui-datepicker" required
+                                               type="text" id="end" placeholder="结束时间">
+                                    </label>
+                                </section>
+                            </div>
+                        </fieldset>
+                        <footer>
+                            <span class="font-red" id="err"></span>
+                            <button type="submit" class="btn-u pull-right">提交</button>
+                        </footer>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="/js/lib/bootstrap-datetimepicker.min.js"></script>
+<script src="/js/lib/bootstrap-datetimepicker.zh-CN.js"></script>
+<script>
+    $(document).ready(function () {
+        jQuery('.list-toggle').on('click', function() {
+            jQuery(this).toggleClass('active');
+        });
+        $('.ui-datepicker').datetimepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd hh:ii:ss',
+            weekStart: 1,
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            forceParse: 0,
+            showMeridian: 1
+        });
+        '{%if admin %}'
+        $('form').submit(function (e) {
+            e.preventDefault();
+            var title = $('#title').val(),
+                    remark = $('#remark').val(),
+                    file = $('#file').get(0).files[0],
+                    start = $('#start').val(),
+                    end = $('#end').val(),
+                    formData = new FormData();
+
+            formData.append('uploadfile', file);
+            $.ajax({
+                url: '{{config.url.upload}}/file/',
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                timeout: 300000
+            }).done(function (data) {
+                if (data.code === 0) {
+                    $.ajax({
+                        url: '{{config.url.api}}/Classroom/Add/',
+                        data: {
+                            lid: '{{lesson.lid}}',
+                            title: title,
+                            remark: remark,
+                            starttime: start,
+                            endtime: end,
+                            coverpath: '{{config.url.domain}}/cover/' + data.cover_path,
+                            zoom: 4,
+                            point: 'POINT(0 0)',
+                            key: '{{key}}',
+                            token: '{{token}}'
+                        }
+                    }).done(function (data) {
+                        if (data.code == 0) {
+                            alert('新建成功！');
+                        } else {
+                            alert(data.msg === '' ? "新建失败！" : data.msg);
+                        }
+                    }).fail(function () {
+                        alert('新建课堂失败！');
+                    });
+                } else {
+                    alert(data.msg === '' ? "上传失败，请重新上传！" : data.msg);
+                }
+            }).fail(function () {
+                alert('文件上传超时！');
+            });
+            return false;
+        });
+        '{% endif %}'
+    });
+</script>
+{% endblock %}

@@ -3,12 +3,12 @@
 {% block breadcrumbs %}
     <li><a href="/index">首页</a></li>
     <li><a href="/yunbook">云板书</a></li>
-    <li class="active">云板书显示</li>
+    <li class="active">{{yunbook.title}}</li>
 {% endblock %}
 
 {% block body %}
     <div class="row">
-        <div id="map" style="width: 1200px;height: 600px"></div>
+        <div id="map"></div>
     </div>
 {% endblock %}
 
@@ -29,6 +29,7 @@
                 draggable: false,
                 clickable: false
             };
+            $('#map').attr('style', 'height:' + 0.7 *document.body.scrollHeight + "px");
             initMap();
             function initMap(){
                 map = new google.maps.Map(document.getElementById('map'), {

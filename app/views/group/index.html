@@ -1,0 +1,25 @@
+{% extends '../layout/header.html'%}
+{% block breadcrumbs %}
+<li><a href="/index">首页</a></li>
+<li class="active">{{title}}</li>
+{% endblock %}
+{% block body %}
+<div class="row">
+    {% for group in groups %}
+    <div class="col-md-4">
+        <div class="funny-boxes funny-boxes-top-green">
+                <div class="row">
+                    <div class="col-md-7">
+                        <img src="{{domain}}{{group.coverpath}}64_64.png" class="img-responsive" alt="封面">
+                    </div>
+                    <div class="col-md-5">
+                        <h2><a href="/group/show?oid={{group.oid}}">{{group.title}}</a></h2>
+                        <p>{{group.remark}}</p>
+                    </div>
+                </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock%}

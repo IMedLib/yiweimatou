@@ -1,0 +1,45 @@
+{% extends '../layout/header.html' %}
+{% block breadcrumbs %}
+<li><a href="/index">首页</a></li>
+<li><a href="/group">机构列表</a></li>
+<li class="active">{{group.title}}</li>
+{% endblock %}
+{% block body %}
+<div class="row">
+    <div class="col-md-7">
+        {% if admin %}
+        <a href="/lesson/add?oid={{group.oid}}" class="btn-u pull-right">新建课程</a>
+        {% endif %}
+        <h3>详情</h3>
+        <dl class="dl-horizontal margin-top-20">
+            <dt>机构名:</dt>
+            <dd>{{group.title}}</dd>
+            <dt>管理员:</dt>
+            <dd>{{group.uid}}</dd>
+            <dt>更新时间:</dt>
+            <dd>{{group.puttime}}</dd>
+        </dl>
+    </div>
+    <div class="col-md-5">
+        <img src="{{domain}}{{group.coverpath}}512_256.png" class="img-responsive"
+             alt="机构封面">
+    </div>
+</div>
+
+<hr>
+<div class="row">
+    <a href="#" class="btn-u pull-right">显示全部</a>
+    <h3>热门课程</h3>
+
+</div>
+<hr>
+<div class="row">
+    <a href="#" class="btn-u pull-right">显示全部</a>
+    <h3>明星老师</h3>
+</div>
+<hr>
+<div class="row">
+    <a href="#" class="btn-u pull-right">显示全部</a>
+    <h3>热门评论</h3>
+</div>
+{% endblock %}

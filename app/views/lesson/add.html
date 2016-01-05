@@ -1,0 +1,197 @@
+{% extends '../layout/header.html' %}
+{% block css %}
+<link rel="stylesheet" href="/css/lib/jquery.steps.css">
+<link rel="stylesheet" href="/css/lib/bootstrap-datetimepicker.min.css">
+<link rel="stylesheet" href="/css/lib/sky-forms.css">
+<link rel="stylesheet" href="/css/lib/custom-sky-forms.css">
+{% endblock %}
+{% block breadcrumbs %}
+<li><a href="/index">首页</a></li>
+<li><a href="/group/show?oid={{group.oid}}">{{group.title}}</a></li>
+<li class="active">{{title}}</li>
+{% endblock %}
+{% block body %}
+<div class="text-center">
+    <span style="color: red" id="error" hidden></span>
+</div>
+<div id="wizard">
+    <h1>第一步</h1>
+    <div class="step-content text-center">
+        <form class="sky-form">
+            <header>填写课程基本信息</header>
+            <fieldset>
+                <section>
+                    <label class="label" for="title">课程标题</label>
+                    <label class="input">
+                        <input type="text" required="required" id="title">
+                    </label>
+                </section>
+                <section>
+                    <label class="label">课程封面</label>
+                    <label for="file" class="input input-file">
+                        <div class="button">
+                            <input type="file" id="file" required="required"
+                                   onchange="this.parentNode.nextElementSibling.value = this.value">选择文件
+                        </div>
+                        <input id="path" type="text" readonly>
+                    </label>
+                </section>
+                <section>
+                    <label class="label" for="remark">课程摘要</label>
+                    <label class="textarea">
+                        <textarea rows="3" id="remark"></textarea>
+                    </label>
+                </section>
+                <div class="row">
+                    <section class="col col-6">
+                        <label class="input">
+                            <i class="icon-append fa fa-calendar"></i>
+                            <input class="ui-datepicker" type="text" id="start" placeholder="开始时间">
+                        </label>
+                    </section>
+                    <section class="col col-6">
+                        <label class="input">
+                            <i class="icon-append fa fa-calendar"></i>
+                            <input class="ui-datepicker"
+                                   type="text" id="end" placeholder="结束时间">
+                        </label>
+                    </section>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+    <h1>第二步</h1>
+    <div class="step-content">
+        <div class="text-center m-t-md">
+            <form class="sky-form">
+                <header>设置主讲教师</header>
+                <fieldset>
+                    <section>
+                        <label class="label" for="teacherID">输入教师ID</label>
+                        <label class="input">
+                            <input type="number" required="required" id="teacherID">
+                        </label>
+                    </section>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script src="/js/lib/jquery.steps.min.js"></script>
+<script src="/js/lib/bootstrap-datetimepicker.min.js"></script>
+<script src="/js/lib/bootstrap-datetimepicker.zh-CN.js"></script>
+<script>
+    $(document).ready(function () {
+        function getFileExt(name){
+            return name.substring(name.lastIndexOf('.'),name.length).toUpperCase();
+        }
+        $("#wizard").steps({
+            enableCancelButton: false,
+            labels: {
+                previous: '上一步',
+                next: '下一步',
+                finish: '完成'
+            },
+            onFinishing: function () {
+                var title = $('#title'),
+                        remark = $('#remark').val(),
+                        teacherID = $('#teacherID'),
+                        file = $('#file'),
+                        start=$('#start'),end=$('#end'),err=$('#error');
+                if (title.val() === '') {
+                    err.html('请填写标题').show().fadeOut(5000);
+                    title.focus();
+                    return false;
+                }
+                if (typeof file === 'undefined') {
+                    err.html('请选择封面').show().fadeOut(5000);
+                    file.focus();
+                    return false;
+                }
+                var ext = getFileExt(file.name);
+                if(ext!=='.JPG'&&ext!=='.PNG'&&ext!=='.JPEG'&&ext!=='.GIF'){
+                    err.html('请选择图片上传').show().fadeOut(5000);
+                    file.focus();
+                    return false;
+                }
+                if (file.get(0).files[0].size>4194304){
+                    err.html('请选择小于4M的封面').show().fadeOut(5000);
+                    file.focus();
+                    return false;
+                }
+                if (start.val() === ''){
+                    err.html("请选择时间").show().fadeOut(5000);
+                    start.focus();
+                    return false;
+                }
+                if (end.val() === ''){
+                    err.html("请选择时间").show().fadeOut(5000);
+                    end.focus();
+                    return false;
+                }
+                if (teacherID.val() === '') {
+                    err.html("请选择主讲教师").show().fadeOut(5000);
+                    teacherID.focus();
+                    return false;
+                }
+                var formData = new FormData();
+                formData.append('uploadfile', file.get(0).files[0]);
+                $.ajax({
+                    url: '{{config.url.upload}}/file',
+                    data: formData,
+                    type: 'POST',
+                    contentType: false,
+                    processData: false,
+                    timeout: 300000 //5min
+                }).done(function (data) {
+                    if (data.code === 0) {
+                        $.ajax({
+                            url: '{{config.url.api}}/Lesson/Add/',
+                            data: {
+                                key: '{{key}}',
+                                token: '{{token}}',
+                                title: title.val(),
+                                remark: remark,
+                                uid: teacherID.val(),
+                                coverpath: '{{config.url.domain}}/cover/' + data.cover_path,
+                                starttime:encodeURIComponent(start.val()),
+                                endtime:encodeURIComponent(end.val()),
+                                zoom:4,
+                                point:"POINT(0 0)",
+                                oid:'{{group.oid}}'
+                            }
+                        }).done(function (data) {
+                            if (data.code == 0) {
+                                alert('新建成功！');
+                            } else {
+                                alert(data.msg === '' ? "新建失败！" : data.msg);
+                            }
+                        }).fail(function () {
+                            alert('新建课程失败！');
+                        });
+                    } else {
+                        alert(data.msg === '' ? "上传失败，请重新上传！" : data.msg);
+                    }
+                }).fail(function () {
+                    alert('文件上传超时！');
+                });
+                return true;
+            }
+        });
+        $('.ui-datepicker').datetimepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd hh:ii:ss',
+            weekStart: 1,
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            forceParse: 0,
+            showMeridian: 1
+        });
+    });
+</script>
+{% endblock %}
