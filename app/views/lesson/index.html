@@ -5,22 +5,25 @@
 {% endblock %}
 {% block body %}
 <div class="row">
-    {% for lesson in lessons %}
-    <div class="col-md-4">
-        <div class="funny-boxes funny-boxes-top-green">
-            <div class="row">
-                <div class="col-md-7">
-                    <img src="{{lesson.coverpath}}256_256.png" class="img-responsive" alt="封面">
-                </div>
-                <div class="col-md-5">
-                    <h2><a href="/lesson/show?lid={{lesson.lid}}">{{lesson.title}}</a></h2>
-                    <small>主讲老师:{{lesson.uid}}</small>
-                    <p>{{lesson.remark}}</p>
-                </div>
+    <div class="col-md-12">
+        {% for lesson in lessons %}
+        <div class="file-box">
+            <div class="file">
+                <a href="/lesson/show?lid={{lesson.lid}}">
+                    <span class="corner"></span>
+                    <div class="image">
+                        <img src="{{lesson.coverpath}}512_256.png" class="img-responsive" alt="">
+                    </div>
+                    <div class="file-name">
+                        {{lesson.title}}
+                        <br/>
+                        <small>{{lesson.puttime}}</small>
+                    </div>
+                </a>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 
 {% endblock%}

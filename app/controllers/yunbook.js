@@ -67,7 +67,7 @@ module.exports = {
         yield this.render('yunbook/add', {
             title: "新建云板书",
             logo: "云板书",
-            url: config.url,
+            config: config,
             key: key,
             token: token
         });
@@ -97,8 +97,7 @@ module.exports = {
         yield this.render('yunbook/me', {
             title: "我的云板书",
             logo: "云板书",
-            yunbookList: yunBookList,
-            domain: config.url.domain
+            yunbooks: yunBookList
         });
     }
 };

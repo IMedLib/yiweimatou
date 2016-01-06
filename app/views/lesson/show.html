@@ -44,7 +44,7 @@
             <div class="tab-pane fade in" id="tab-{{clazz.cid}}">
                 <div class="row">
                     <div class="col-md-7">
-                        {% if admin%}
+                        {% if admin>=1 %}
                         <a href="/clazz/edit?cid={{clazz.cid}}" class="btn-u btn-xs pull-right">编辑</a>
                         {% endif %}
                         <h3>详情</h3>
@@ -75,13 +75,6 @@
                     <h3>文件</h3>
                 </div>
                 <hr>
-                <div class="row">
-                    <h3>图片</h3>
-                </div>
-                <hr>
-                <div class="row">
-                    <h3>视频</h3>
-                </div>
             </div>
             {% endfor %}
 
@@ -114,7 +107,7 @@
                 </div>
                 <hr>
             </div>
-            {% if admin %}
+            {% if admin>1 %}
             <div id="addClass" class="tab-pane fade in">
                 <div class="row">
                     <form class="sky-form">
@@ -165,6 +158,32 @@
                     </form>
                 </div>
             </div>
+            <div id="addteacher" class="tab-pane fade in">
+                <div class="input-group">
+                    <input type="text" class="input form-control" >
+                    <span class="input-group-btn">
+                            <button type="button" class="btn-u"><i class="fa fa-search"></i>
+                                查询
+                            </button>
+                    </span>
+                </div>
+                <div class="full-height-scroll">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td><input type="radio" name="user" value="{{user.uid}}"></td>
+                                <td class="client-avatar"><img alt="image" src="/img/clients4/img12.jpg"></td>
+                                <td class="contact-type"><i class="fa fa-mobile-phone"> </i></td>
+                                <td> user.username</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
             {% endif %}
         </div>
     </div>
@@ -176,7 +195,7 @@
 <script src="/js/lib/bootstrap-datetimepicker.zh-CN.js"></script>
 <script>
     $(document).ready(function () {
-        jQuery('.list-toggle').on('click', function() {
+        jQuery('.list-toggle').on('click', function () {
             jQuery(this).toggleClass('active');
         });
         $('.ui-datepicker').datetimepicker({
@@ -190,7 +209,10 @@
             forceParse: 0,
             showMeridian: 1
         });
-        '{%if admin %}'
+        '{% if admin >= 1%}'
+
+        '{% endif %}'
+        '{%if admin>1 %}'
         $('form').submit(function (e) {
             e.preventDefault();
             var title = $('#title').val(),

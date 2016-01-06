@@ -5,21 +5,25 @@
 {% endblock %}
 {% block body %}
 <div class="row">
+    <div class="col-md-12">
     {% for group in groups %}
-    <div class="col-md-4">
-        <div class="funny-boxes funny-boxes-top-green">
-                <div class="row">
-                    <div class="col-md-7">
-                        <img src="{{domain}}{{group.coverpath}}64_64.png" class="img-responsive" alt="封面">
-                    </div>
-                    <div class="col-md-5">
-                        <h2><a href="/group/show?oid={{group.oid}}">{{group.title}}</a></h2>
-                        <p>{{group.remark}}</p>
-                    </div>
+    <div class="file-box">
+        <div class="file">
+            <a href="/group/show?oid={{group.oid}}">
+                <span class="corner"></span>
+                <div class="image">
+                    <img src="{{group.coverpath}}256_256.png" class="img-responsive" alt="">
                 </div>
+                <div class="file-name">
+                    {{group.title}}
+                    <br/>
+                    <small>{{group.addtime}}</small>
+                </div>
+            </a>
         </div>
     </div>
     {% endfor %}
+    </div>
 </div>
 
 {% endblock%}

@@ -8,28 +8,33 @@
 
 {% block content %}
 <div class="row">
-    {% for yunbook in yunbookList %}
-    <div class="col-sm-4 margin-button-20">
-        <div class="funny-boxes funny-boxes-top-green">
-            <div class="row">
-                <div class="col-md-4">
-                    <img class="img-responsive" src="{{domain}}{{yunbook.coverpath}}256_256.png" alt="云板书封面">
-                </div>
-                <div class="col-md-8">
-                    <h2><a href="/yunbook/show?yid={{yunbook.yid}}">{{yunbook.title}}</a></h2>
-                    <p>{{yunbook.remark}}</p>
-                </div>
+    <div class="col-md-12">
+        {% for yunbook in yunbooks %}
+        <div class="file-box">
+            <div class="file">
+                <a href="/yunbook/show?yid={{yunbook.yid}}">
+                    <span class="corner"></span>
+                    <div class="image">
+                        <img src="{{yunbook.coverpath}}512_256.png" class="img-responsive" alt="">
+                    </div>
+                    <div class="file-name">
+                        {{yunbook.title}}
+                        <br/>
+                        <small>{{yunbook.puttime}}</small>
+                    </div>
+                </a>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 {% endblock %}
 {% block js %}
 <script>
     $(document).ready(function () {
-        $('#collapse-yunbook').addClass('in');
-        $('#collapse-yunbook>li').eq(0).addClass('active');
+        var $yunbookCollapse = $('#collapse-yunbook');
+        $yunbookCollapse.addClass('in');
+        $yunbookCollapse.find('li').eq(0).addClass('active');
     });
 </script>
 {% endblock %}

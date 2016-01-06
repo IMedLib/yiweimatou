@@ -90,7 +90,7 @@ module.exports = {
         });
     },
     show:function *(){
-        var lid = this.query.lid, admin = 0, lesson,clazzes,group;
+        var lid = this.query.lid, admin = 0, lesson,clazzes,group,users;
         if (typeof lid === 'undefined') {
             this.redirect('/lesson');
         }
@@ -169,6 +169,17 @@ module.exports = {
         }).catch(function(err){
            console.error('organ/get',err.message);
         });
+
+        yield request({
+           uri:config.url.api+'Userinfo/List',
+            gzip:true,json:true
+        }).then(function(data){
+            if(data.code === 0){
+                users = data.list;
+            }
+        }).catch(function (err) {
+            console.error('Userinfo/List',err.message);
+        });
         yield this.render('lesson/show', {
             title: lesson.title,
             logo: '云课程',
@@ -178,7 +189,8 @@ module.exports = {
             token: token,
             config: config,
             clazzes:clazzes,
-            group:group
+            group:group,
+            users:users
         });
     },
     add:function *(){

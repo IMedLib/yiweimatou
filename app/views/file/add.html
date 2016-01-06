@@ -5,23 +5,22 @@
 {% endblock%}
 {% block breadcrumbs%}
 <li><a href="/index">首页</a></li>
-<li><a href="/yunbook">云板书</a></li>
 <li class="active">{{title}}</li>
 {% endblock %}
 {% block content%}
 <form class="sky-form">
-    <header>新建云板书</header>
+    <header>新增文件</header>
     <fieldset>
         <section>
-            <label class="label" for="title">云板书标题</label>
+            <label class="label" for="title">文件标题</label>
             <label class="input">
                 <input type="text" required="required" id="title">
             </label>
         </section>
         <section>
-            <label class="label">云板书图片</label>
+            <label class="label">文件</label>
             <label for="file" class="input input-file">
-                <div id="b" class="button">
+                <div class="button">
                     <input type="file" id="file" required="required"
                            onchange="this.parentNode.nextElementSibling.value = this.value">选择文件
                 </div>
@@ -29,7 +28,7 @@
             </label>
         </section>
         <section>
-            <label class="label">云板书备注</label>
+            <label class="label">文件备注</label>
             <label class="textarea">
                 <textarea id="remark" rows="3"></textarea>
             </label>
@@ -45,19 +44,19 @@
 {% block js %}
 <script>
     $(document).ready(function () {
-        var $yunbookCollapse = $('#collapse-yunbook');
-        $yunbookCollapse.addClass('in');
-        $yunbookCollapse.find('li').eq(1).addClass('active');
-        $('form').submit(function(){
+        var $fileCollapse = $('#collapse-file');
+        $fileCollapse.addClass('in');
+        $fileCollapse.find('li').eq(1).addClass('active');
+        $('form').submit(function(e){
+            e.preventDefault();
             var title=$('#title').val(),
                     remark=$('#remark').val(),
                     file=$('#file').get(0).files[0];
 
             var formData=new FormData();
             formData.append('uploadfile',file);
-            formData.append('title',title);
             $.ajax({
-                url:'{{config.url.upload}}/yunbook',
+                url:'{{config.url.upload}}/file',
                 data:formData,
                 type:'POST',
                 contentType: false,
@@ -66,20 +65,18 @@
             }).done(function(data){
                 if(data.code===0){
                     $.ajax({
-                        url: "{{config.url.api}}/Useryunbook/Add/",
+                        url: "{{config.url.api}}Userfile/Add/",
                         data: {
                             title: title,
                             key: '{{key}}',
-                            width:data.file_width,
-                            height:data.file_height,
                             token: '{{token}}',
                             remark: remark,
-                            zoomnum: data.zoom_num,
                             zoom:4,
+                            ext:data.file_ext,
                             size:data.file_size,
-                            point: "POINT(43.61221676817571 33.7060546875)",
-                            coverpath:"{{config.url.domain}}cover/"+data.cover_path,
-                            uri:'{{config.url.domain}}yunbook/'+ data.file_path
+                            point: "POINT(0 0)",
+                            coverpath:"fa-file",
+                            uri:'{{config.url.domain}}file/'+ data.file_path+data.file_name+data.file_ext
                         }
                     }).done(function(data){
                         if(data.code==0){
@@ -88,7 +85,7 @@
                             alert(data.msg === '' ? "新建失败！" : data.msg);
                         }
                     }).fail(function(){
-                        alert('新建云板书失败！');
+                        alert('上传文件失败！');
                     });
                 }else{
                     alert(data.msg===''?"上传失败，请重新上传！":data.msg);
