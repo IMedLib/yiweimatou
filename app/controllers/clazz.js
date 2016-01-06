@@ -6,7 +6,7 @@ var request = require('request-promise'),
     key, token;
 module.exports={
     edit:function *(){
-        var cid = this.query.cid,clazz;
+        var cid = this.query.cid,clazz,lesson;
         if (typeof cid === 'undefined'){
             this.redirect('/clazz');
         }
@@ -29,10 +29,35 @@ module.exports={
         }).catch(function(err){
             console.error('Classroom/Get/',err.message);
         });
+        if( typeof clazz === 'undefined' || clazz === '{}'){
+            this.redirect('/lesson');
+        }else{
+            yield request({
+                uri:config.url.api+'lesson/get',
+                qs:{
+                    lid:clazz.lid
+                },gzip:true,json:true
+            }).then(function(data){
+                if(data.code === 0){
+                    lesson = data.get;
+                }else{
+                    console.error('lesson/get',data);
+                }
+            }).catch(function(err){
+                console.error('lesson/get',err.message);
+            });
+        }
+        //yield request({
+        //
+        //});
         yield this.render('clazz/edit',{
             key:key,
             token:token,
-            clazz:clazz
+            clazz:clazz,
+            lesson:lesson,
+            title:clazz.title,
+            logo:'云课堂',
+            config:config
         })
     }
 };

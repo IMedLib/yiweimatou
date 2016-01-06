@@ -1,0 +1,39 @@
+{% extends '../layout/user_sidebar.html' %}
+
+{% block breadcrumbs%}
+<li><a href="/index">首页</a></li>
+<li class="active">{{title}}</li>
+{% endblock %}}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 animated">
+    {% for file in files %}
+        <div class="file-box">
+            <div class="file">
+                <a href="#">
+                    <span class="corner"></span>
+                    <div class="icon">
+                        <i class="fa fa-file"></i>
+                    </div>
+                    <div class="file-name">
+                        {{file.title}}
+                        <br/>
+                        <small>{{file.puttime}}</small>
+                    </div>
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+    $(document).ready(function () {
+        var $fileCollapse = $('#collapse-file');
+        $fileCollapse.addClass('in');
+        $fileCollapse.find('li').eq(0).addClass('active');
+    });
+</script>
+{% endblock %}

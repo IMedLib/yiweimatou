@@ -29,17 +29,16 @@
                     </li>
                 </ul>
             </li>
-            <li class="list-group-item">
-                <a href="#"><i class="fa fa-file"></i> 我的文档 </a>
+            <li class="list-group-item list-toggle">
+                <a href="#collapse-file" class="accordion-toggle" data-toggle="collapse">
+                    <i class="fa fa-file"></i> 我的文件 </a>
+                <ul id="collapse-file" class="collapse">
+                    <li><a href="/file/me"><i class="fa fa-file"></i> 我的文件 </a></li>
+                    <li><a href="/file/add"><i class="fa fa-plus"></i> 上传文件 </a></li>
+                </ul>
             </li>
             <li class="list-group-item">
-                <a href="#"><i class="fa fa-picture-o"></i> 我的图片</a>
-            </li>
-            <li class="list-group-item">
-                <a href="#"><i class="fa fa-video-camera"></i> 我的视频</a>
-            </li>
-            <li class="list-group-item">
-                <a href="#"><i class="fa fa-cog"></i> 个人设置 </a>
+                <a href="/setting"><i class="fa fa-cog"></i> 个人设置 </a>
             </li>
         </ul>
 

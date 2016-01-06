@@ -6,21 +6,25 @@
 {% endblock %}
 
 {% block content %}
-{% for group in groupList %}
-<div class="col-sm-4 margin-button-20">
-    <div class="funny-boxes funny-boxes-top-green">
-        <div class="row">
-            <div class="col-md-4">
-                <img class="img-responsive" src="{{config.url.domain}}{{group.coverpath}}64_64.png" alt="机构封面">
-            </div>
-            <div class="col-md-8">
-                <h2><a href="/group/show?oid={{group.oid}}">{{group.title}}</a></h2>
-                <p>{{group.remark}}</p>
-            </div>
+<div class="col-md-12">
+    {% for group in groupList %}
+    <div class="file-box">
+        <div class="file">
+            <a href="/group/show?oid={{group.oid}}">
+                <span class="corner"></span>
+                <div class="image">
+                    <img src="{{group.coverpath}}512_256.png" class="img-responsive" alt="">
+                </div>
+                <div class="file-name">
+                    {{group.title}}
+                    <br/>
+                    <small>{{group.addtime}}</small>
+                </div>
+            </a>
         </div>
     </div>
+    {% endfor %}
 </div>
-{% endfor %}
 {% endblock %}
 
 {% block js %}

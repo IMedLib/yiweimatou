@@ -1,0 +1,233 @@
+{% extends '../layout/header.html'%}
+{% block css%}
+<link rel="stylesheet" href="/css/lib/bootstrap-datetimepicker.min.css">
+<link rel="stylesheet" href="/css/lib/sky-forms.css">
+<link rel="stylesheet" href="/css/lib/custom-sky-forms.css">
+{% endblock %}
+{% block breadcrumbs %}
+<li><a href="/index">首页</a></li>
+<li><a href="/lesson/show?lid={{lesson.lid}}">{{lesson.title}}</a></li>
+<li class="active">{{clazz.title}}</li>
+{% endblock %}
+
+{% block body %}
+<div class="profile-body">
+    <div class="tab-v1">
+        <ul class="nav nav-justified nav-tabs margin-bottom-20">
+            <li class="active">
+                <a href="#info" data-toggle="tab">修改信息</a>
+            </li>
+            <li><a href="#cover" data-toggle="tab">编辑封面</a></li>
+            <li><a href="#file" data-toggle="tab">编辑资源</a></li>
+            <li><a href="#yunbook" data-toggle="tab">编辑云板书</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="info" class="profile-edit tab-pane fade in active">
+                <form class="sky-form">
+                    <fieldset>
+                        <section>
+                            <label class="label" for="title">名称</label>
+                            <label class="input">
+                                <input type="text" required="required" value="{{clazz.title}}" id="title">
+                            </label>
+                        </section>
+                        <div class="row">
+                            <section class="col col-6">
+                                <label class="input">
+                                    <i class="icon-append fa fa-calendar"></i>
+                                    <input class="ui-datepicker" required type="text" id="start"
+                                           value="{{clazz.starttime}}">
+                                </label>
+                            </section>
+                            <section class="col col-6">
+                                <label class="input">
+                                    <i class="icon-append fa fa-calendar"></i>
+                                    <input class="ui-datepicker" required
+                                           type="text" id="end" value="{{clazz.endtime}}">
+                                </label>
+                            </section>
+                        </div>
+                        <section>
+                            <label class="label" for="remark">简介</label>
+                            <label class="textarea">
+                                <textarea rows="3" id="remark">{{clazz.remark}}</textarea>
+                            </label>
+                        </section>
+                    </fieldset>
+                    <footer>
+                        <button type="submit" class="btn-u pull-right">修改</button>
+                    </footer>
+                </form>
+            </div>
+            <div id="cover" class="tab-pane fade in">
+                <div class="row">
+                    <h3 class="page-header">预览</h3>
+                    <img src="{{clazz.coverpath}}1024_512.png" class="img-responsive center-block" id="image"
+                         alt="封面图片">
+                </div>
+
+                <div class="row">
+                    <div class="btn-group pull-right">
+                        <label title="Upload image file" for="inputImage" class="btn-u btn-lg btn-link">
+                            <input type="file" accept="image/*" name="file" id="inputImage" class="hide">
+                            上传新封面
+                        </label>
+                        <label id="submit" class="btn-u btn-lg btn-link">确认提交</label>
+                    </div>
+                </div>
+            </div>
+            <div id="yunbook" class="tab-pane fade in">
+                <div class="row">
+                    <div class="file-box col-md-offset-4 col-md-4 margin-top-20">
+                        <div class="file">
+                            {% if yunbook %}
+                            <a href="/yunbook/show?yid={{yunbook.yid}}">
+                                <span class="corner"></span>
+                                <div class="image">
+                                    <img src="{{yunbook.coverpath}}" alt="封面">
+                                </div>
+                                <div class="file-name">
+                                    {{yunbook.title}}
+                                    <br/>
+                                    <small>{{yunbook.puttime}}</small>
+                                </div>
+                            </a>
+                            {% else %}
+                            <a href="#" class="pull-right color-red"><i class="fa fa-times"></i></a>
+                            <a href="#" data-toggle="modal">
+                                <div class="icon">
+                                    <i class="fa fa-plus"></i>
+                                </div>
+                                <div class="file-name text-center">
+                                    添加云板书
+                                </div>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="file" class="tab-pane fade in">
+                <div class="row">
+                    <div class="col-md-12">
+                        {% for file in files %}
+                         <div class="file-box">
+                             <div class="file">
+                                 <a href="#">
+                                     <div class="icon">
+                                         <i class="fa fa-file"></i>
+                                     </div>
+                                     <div class="file-name">
+                                         {{file.title}}
+                                         <br/>
+                                         <small>{{file.puttime}}</small>
+                                     </div>
+                                 </a>
+                             </div>
+                         </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="/js/lib/bootstrap-datetimepicker.min.js"></script>
+<script src="/js/lib/bootstrap-datetimepicker.zh-CN.js"></script>
+<script>
+    $(document).ready(function () {
+        var $inputImage = $("#inputImage"), $image = $('#image');
+        if (window.FileReader) {
+            $inputImage.change(function () {
+                var fileReader = new FileReader(),
+                        files = this.files,
+                        file;
+                if (!files.length) {
+                    return;
+                }
+                file = files[0];
+
+                if (/^image\/\w+$/.test(file.type)) {
+                    fileReader.readAsDataURL(file);
+                    fileReader.onload = function () {
+//                        $inputImage.val("");
+                        $image.attr('src', this.result);
+                    };
+                } else {
+                    showMessage("请选择图片!");
+                }
+            });
+        } else {
+            $inputImage.addClass("hide");
+        }
+        $('#submit').on('click', function () {
+            var uploadfile = $inputImage.get(0).files[0];
+            if (typeof uploadfile === 'undefined') {
+                alert('请选择一张图片');
+                return false;
+            }
+            var formData = new FormData();
+            formData.append('uploadfile', uploadfile);
+            $.ajax({
+                url: '{{config.url.upload}}/file',
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                timeout: 300000
+            }).done(function (data) {
+                if (data.code === 0) {
+                    $.ajax({
+                        url: '{{config.url.api}}/classroom/put',
+                        data: {
+                            cid: '{{clazz.cid}}',
+                            coverpath: '{{config.url.domain}}cover/' + data.cover_path,
+                            key: '{{key}}',
+                            token: '{{token}}'
+                        }
+                    }).done(function (data) {
+                        if (data.code === 0) {
+                            alert('更新封面成功！');
+                        } else {
+                            alert(data.msg === '' ? '更换封面失败！' : data.msg);
+                        }
+                    }).fail(function () {
+                        alert('更换封面失败！');
+                    });
+                } else {
+                    alert(data.msg === '' ? '上传失败，请稍后再试！' : data.msg);
+                }
+            }).fail(function () {
+                alert('上传超时，请稍后再试！');
+            });
+        });
+        $('form').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '{{config.url.api}}classroom/put',
+                data: {
+                    cid: '{{clazz.cid}}',
+                    starttime: $('#start').val(),
+                    endtime: $('#end').val(),
+                    title: $('#title').val(),
+                    remark: $('#remark').val(),
+                    key: "{{key}}",
+                    token: "{{token}}"
+                }
+            }).done(function (data) {
+                if (data.code === 0) {
+                    alert('修改成功！');
+                } else {
+                    alert(data.msg === '' ? '修改失败！' : data.msg);
+                }
+            }).fail(function () {
+                alert('修改超时，请重新提交！');
+            });
+            return false;
+        });
+    });
+</script>
+{% endblock %}

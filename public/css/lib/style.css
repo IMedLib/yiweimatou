@@ -15,6 +15,7 @@ body {
    color: #333; 
    font-size: 14px;
    line-height: 1.6;
+   font-family: 'open sans', 'Helvetica Neue', Helvetica, Arial, sans-serif
 }
 
 body.header-fixed-space {
@@ -1500,4 +1501,87 @@ img.img-mouse {
 }
 .font-red{
 	color: red;
+}
+.file-box {
+	float: left;
+	width: 220px;
+}
+.file .icon i {
+	font-size: 70px;
+	color: #dadada;
+}
+.file .file-name {
+	padding: 10px;
+	background-color: #f8f8f8;
+	border-top: 1px solid #e7eaec;
+}
+.file-name small {
+	color: #676a6c;
+}
+.corner {
+	position: absolute;
+	display: inline-block;
+	width: 0;
+	height: 0;
+	line-height: 0;
+	border: 0.6em solid transparent;
+	border-right: 0.6em solid #f1f1f1;
+	border-bottom: 0.6em solid #f1f1f1;
+	right: 0em;
+	bottom: 0em;
+}
+.file .icon,
+.file .image {
+	height: 100px;
+	overflow: hidden;
+}
+.file .icon {
+	padding: 15px 10px;
+	text-align: center;
+}
+
+/* CLIENTS */
+.clients-list {
+	margin-top: 20px;
+}
+.clients-list .tab-pane {
+	position: relative;
+	height: 600px;
+}
+.client-detail {
+	position: relative;
+	height: 620px;
+}
+.clients-list table tr td {
+	height: 46px;
+	vertical-align: middle;
+	border: none ;
+}
+.client-link {
+	font-weight: 600;
+	color: inherit;
+}
+.client-link:hover {
+	color: inherit;
+}
+.client-avatar {
+	width: 42px;
+}
+.client-avatar img {
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+}
+.contact-type {
+	width: 20px;
+	color: #c1c3c4;
+}
+.client-status {
+	text-align: left;
+}
+.client-detail .vertical-timeline-content p {
+	margin: 0;
+}
+.client-detail .vertical-timeline-icon.gray-bg {
+	color: #a7aaab;
 }
