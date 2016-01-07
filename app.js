@@ -7,7 +7,7 @@ var app =  require('koa')(),
     mount = require('mount-koa-routes')
     ;
 
-mount(app,__dirname+'/app/routes',true);
+mount(app,__dirname+'/app/routes');
 app.context.render=render({
     root:__dirname+'/app/views',
     autoescape: true,
