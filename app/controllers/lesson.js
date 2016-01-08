@@ -32,7 +32,7 @@ module.exports = {
         })
     },
     edit: function *() {
-        var lid = this.query.lid, lesson;
+        var lid = this.query.lid, lesson,admin=0;
         if (typeof lid === 'undefined') {
             this.redirect('/lesson');
         }
@@ -55,12 +55,35 @@ module.exports = {
         }).catch(function (err) {
             console.error('Lesson/Get/', err.message);
         });
+        //如果不是主讲教师，继续查是不是讲师
+        if (key !== lesson.uid.toString()) {
+            yield request({
+                uri: config.url.api + '/Lessonadmin/List/',
+                qs: {
+                    lid: lid,
+                    state: 4//已审核
+                }, gzip: true, json: true
+            }).then(function (data) {
+                if (data.code === 0 && data.list.indexOf(key) > -1) {
+                    admin = 1;
+                }
+            }).catch(function (err) {
+                console.error(err.message);
+            });
+        } else {
+            admin = 2;
+        }
+        if(admin === 0){
+            this.redirect('/lesson')
+        }
         yield this.render('lesson/edit', {
             title:'课程修改',
             logo:'云课程',
             key: key,
             token: token,
-            lesson: lesson
+            lesson: lesson,
+            admin:admin,
+            config:config
         });
     },
     me:function *(){
@@ -90,7 +113,7 @@ module.exports = {
         });
     },
     show:function *(){
-        var lid = this.query.lid, admin = 0, lesson,clazzes,group,users;
+        var lid = this.query.lid, admin = 0, lesson,group;
         if (typeof lid === 'undefined') {
             this.redirect('/lesson');
         }
@@ -169,17 +192,6 @@ module.exports = {
         }).catch(function(err){
            console.error('organ/get',err.message);
         });
-
-        yield request({
-           uri:config.url.api+'Userinfo/List',
-            gzip:true,json:true
-        }).then(function(data){
-            if(data.code === 0){
-                users = data.list;
-            }
-        }).catch(function (err) {
-            console.error('Userinfo/List',err.message);
-        });
         yield this.render('lesson/show', {
             title: lesson.title,
             logo: '云课程',
@@ -189,8 +201,7 @@ module.exports = {
             token: token,
             config: config,
             clazzes:clazzes,
-            group:group,
-            users:users
+            group:group
         });
     },
     add:function *(){

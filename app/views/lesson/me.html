@@ -6,9 +6,8 @@
 {% endblock %}
 
 {% block content %}
-<div class="col-md-12">
     {% for lesson in lessons %}
-    <div class="file-box">
+    <div class="col-sm-4">
         <div class="file">
             <a href="/lesson/show?lid={{lesson.lid}}">
                 <span class="corner"></span>
@@ -24,7 +23,6 @@
         </div>
     </div>
     {% endfor %}
-</div>
 {% endblock %}
 
 {% block js %}
