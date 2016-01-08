@@ -7,10 +7,8 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-12 animated">
     {% for file in files %}
-        <div class="file-box">
-            <div class="file">
+            <div class="col-sm-3 file">
                 <a href="#">
                     <span class="corner"></span>
                     <div class="icon">
@@ -23,9 +21,7 @@
                     </div>
                 </a>
             </div>
-        </div>
     {% endfor %}
-    </div>
 </div>
 {% endblock %}
 {% block js %}
