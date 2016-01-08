@@ -12,16 +12,43 @@
 {% endblock %}
 
 {% block body %}
-<div class="profile-body">
-    <div class="tab-v1">
-        <ul class="nav nav-justified nav-tabs margin-bottom-20">
-            <li class="active">
-                <a href="#info" data-toggle="tab">修改信息</a>
+<div class="row">
+    <div class="col-sm-3">
+        <ul class="list-group sidebar-nav-v1">
+            <li class="list-group-item list-toggle active">
+                <a href="#collapse-clazz" data-toggle="collapse"><i class="fa fa-edit"></i>&nbsp;编辑课堂</a>
+                <ul class="collapse in" id="collapse-clazz">
+                    <li class="active">
+                        <a href="#info" data-toggle="tab">修改信息</a>
+
+                    </li>
+                    <li><a href="#cover" data-toggle="tab">更换封面</a></li>
+
+                </ul>
             </li>
-            <li><a href="#cover" data-toggle="tab">编辑封面</a></li>
-            <li><a href="#file" data-toggle="tab">编辑资源</a></li>
-            <li><a href="#yunbook" data-toggle="tab">编辑云板书</a></li>
+            <li class="list-group-item list-toggle">
+                <a href="#collapse-file" data-toggle="collapse" class="accordion-toggle">
+                    <i class="fa fa-files-o"></i>&nbsp;资源管理
+                </a>
+                <ul class="collapse" id="collapse-file">
+                    <li><a href="#addClazzFiles" data-toggle="tab">新增资源</a></li>
+                    <li>
+                        <a href="#delFiles" data-toggle="tab">删除资源</a>
+                    </li>
+                </ul>
+            <li class="list-group-item list-toggle">
+                <a href="#collapse-yunbook" data-toggle="collapse" class="accordion-toggle">
+                    <i class="fa fa-book"></i>&nbsp;云板书管理
+                </a>
+                <ul class="collapse" id="collapse-yunbook">
+                    <li><a href="#addYunbook" data-toggle="tab">新增云板书</a></li>
+                    <li>
+                        <a href="#yunbook" data-toggle="tab">删除云板书</a></li>
+                </ul>
+            </li>
         </ul>
+    </div>
+    <div class="col-sm-9">
         <div class="tab-content">
             <div id="info" class="profile-edit tab-pane fade in active">
                 <form class="sky-form">
@@ -62,12 +89,11 @@
             </div>
             <div id="cover" class="tab-pane fade">
                 <div class="row">
-                    <h3 class="page-header">预览</h3>
                     <img src="{{clazz.coverpath}}1024_512.png" class="img-responsive center-block" id="image"
                          alt="封面图片">
                 </div>
 
-                <div class="row">
+                <div class="row margin-top-20">
                     <div class="btn-group pull-right">
                         <label title="Upload image file" for="inputImage" class="btn-u btn-lg btn-link">
                             <input type="file" accept="image/*" name="file" id="inputImage" class="hide">
@@ -77,149 +103,59 @@
                     </div>
                 </div>
             </div>
-            <div id="yunbook" class="tab-pane fade">
-                <div class="row">
-                    <div class="file-box col-md-offset-4 col-md-4 margin-top-20">
-                        <div class="file">
-                            {% if yunbook %}
-                            <a href="/yunbook/show?yid={{yunbook.yid}}">
-                                <span class="corner"></span>
-                                <div class="image">
-                                    <img src="{{yunbook.coverpath}}" alt="封面">
-                                </div>
-                                <div class="file-name">
-                                    {{yunbook.title}}
-                                    <br/>
-                                    <small>{{yunbook.puttime}}</small>
-                                </div>
-                            </a>
-                            {% else %}
-                            <a href="#" class="pull-right color-red"><i class="fa fa-times"></i></a>
-                            <a href="#yunbookModal" data-toggle="modal">
-                                <div class="icon">
-                                    <i class="fa fa-plus"></i>
-                                </div>
-                                <div class="file-name text-center">
-                                    添加云板书
-                                </div>
-                            </a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
+            <div id="yunbook" class="tab-pane fade in">
+                <div class="row" id="yunbookEdit"></div>
             </div>
-            <div id="file" class="tab-pane fade">
-                <div class="row">
-                    <div class="file-box col-sm-4">
-                        <div class="file">
-                            <a data-target="#addClazzFile" data-toggle="modal">
-                                <div class="icon">
-                                    <i class="fa fa-plus"></i>
-                                </div>
-                                <div class="file-name text-center">
-                                    添加文件
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div id="files">
-
-                    </div>
+            <div id="addYunbook" class="tab-pane fade in">
+                <span class="color-red" hidden id="err2"></span>
+                <span id="message2" class="color-green" hidden></span>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-bordered">
+                        <tbody id="yunbooks"></tbody>
+                    </table>
                 </div>
-                <div class="pagination" hidden id="filep">
+                <div class="pagination" hidden id="yunbookPage">
                     <a href="#" class="first" data-action="first">&laquo;</a>
                     <a href="#" class="previous" data-action="previous">&lsaquo;</a>
                     <input title="" type="text" readonly="readonly"/>
                     <a href="#" class="next" data-action="next">&rsaquo;</a>
                     <a href="#" class="last" data-action="last">&raquo;</a>
                 </div>
+                <button type="button" id="addYunbookSubmit" class="btn-u pull-right">
+                    添加
+                </button>
+            </div>
+            <div id="delFiles" class="tab-pane fade in">
+                <div id="files" class="row"></div>
+                <div class="pagination fade" id="filep">
+                    <a href="#" class="first" data-action="first">&laquo;</a>
+                    <a href="#" class="previous" data-action="previous">&lsaquo;</a>
+                    <input title="" type="text" readonly="readonly"/>
+                    <a href="#" class="next" data-action="next">&rsaquo;</a>
+                    <a href="#" class="last" data-action="last">&raquo;</a>
+                </div>
+            </div>
+            <div id="addClazzFiles" class="tab-pane fade in">
+                <span class="color-red" hidden id="err"></span>
+                <span id="message" class="color-green" hidden></span>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-bordered">
+                        <tbody id="fileList"></tbody>
+                    </table>
+                </div>
+                <div class="pagination" hidden id="addFilep">
+                    <a href="#" class="first" data-action="first">&laquo;</a>
+                    <a href="#" class="previous" data-action="previous">&lsaquo;</a>
+                    <input title="" type="text" readonly="readonly"/>
+                    <a href="#" class="next" data-action="next">&rsaquo;</a>
+                    <a href="#" class="last" data-action="last">&raquo;</a>
+                </div>
+                <button type="button" id="addFileSubmit" class="btn-u pull-right">
+                    添加
+                </button>
             </div>
         </div>
     </div>
-</div>
-<!-- 添加yunbook模态框（Modal） -->
-<div class="modal fade" id="yunbookModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close"
-                        data-dismiss="modal" aria-hidden="true">
-                    &times;
-                </button>
-                <h4 class="modal-title">
-                    添加课堂文件
-                    <span class="color-red" hidden id="err2"></span>
-                    <span id="message2" class="color-green" hidden></span>
-                </h4>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <tbody id="yunbooks">
-
-                        </tbody>
-                    </table>
-                </div>
-                <div class="pagination text-center" hidden id="yunbookPage">
-                    <a href="#" class="first" data-action="first">&laquo;</a>
-                    <a href="#" class="previous" data-action="previous">&lsaquo;</a>
-                    <input title="" type="text" readonly="readonly"/>
-                    <a href="#" class="next" data-action="next">&rsaquo;</a>
-                    <a href="#" class="last" data-action="last">&raquo;</a>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn"
-                        data-dismiss="modal">关闭
-                </button>
-                <button type="button" id="addYunbookSubmit" class="btn-u">
-                    添加
-                </button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal -->
-</div>
-<!-- 添加file模态框（Modal） -->
-<div class="modal fade" id="addClazzFile" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close"
-                        data-dismiss="modal" aria-hidden="true">
-                    &times;
-                </button>
-                <h4 class="modal-title">
-                    添加课堂文件
-                    <span class="color-red" hidden id="err"></span>
-                    <span id="message" class="color-green" hidden></span>
-                </h4>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <tbody id="userFiles">
-
-                        </tbody>
-                    </table>
-                </div>
-                <div class="pagination" hidden id="userFilesPage">
-                    <a href="#" class="first" data-action="first">&laquo;</a>
-                    <a href="#" class="previous" data-action="previous">&lsaquo;</a>
-                    <input title="" type="text" readonly="readonly"/>
-                    <a href="#" class="next" data-action="next">&rsaquo;</a>
-                    <a href="#" class="last" data-action="last">&raquo;</a>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn"
-                        data-dismiss="modal">关闭
-                </button>
-                <button type="button" id="addFileSubmit" class="btn-u">
-                    添加
-                </button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal -->
 </div>
 {% endblock %}
 
@@ -241,7 +177,6 @@
     [each list as file]
     <tr>
         <td><input type="checkbox" value="[file.fid]"></td>
-        <td class="contact-type"><i class="fa fa-file"> </i></td>
         <td>[file.title]</td>
     </tr>
     [/each]
@@ -249,121 +184,53 @@
 <script type="text/html" id="listFiles">
     [each list as file]
     <div class="col-sm-4">
-        <div class="file-box">
-            <div class="file">
-                <a href="#">
-                    <span class="corner"></span>
-                    <div class="icon">
-                        <i class="fa fa-file"></i>
-                    </div>
-                    <div class="file-name">
-                        [file.title]
-                    </div>
-                </a>
-            </div>
+        <div class="file" id="[file.id]">
+            <a href="javascript:fileDel([file.id])" class="pull-right color-red"><i class="fa fa-close"></i></a>
+            <a href="#">
+                <span class="corner"></span>
+                <div class="icon">
+                    <i class="fa fa-file"></i>
+                </div>
+                <div class="file-name">
+                    [file.title]
+                </div>
+            </a>
         </div>
     </div>
     [/each]
 </script>
 <script>
     $(document).ready(function () {
-        var $inputImage = $("#inputImage"), $image = $('#image'),limit = 9
-                ,$error=$('#err'),$message=$('#message'),$error2 = $('#err2')
-                ,$message2=$('#message2');
-        template.config('openTag','[');
-        template.config('closeTag',']');
-        $('#addFileSubmit').on('click',function(){
-            var checked = $(':checkbox:checked');
-            checked.each(function(){
-                postAdd({
-                    fid:this.value,
-                    title:$(this).parent().parent().children().last().html()
-                });
-            });
+        var $inputImage = $("#inputImage"), $image = $('#image'), limit = 9
+                , $error = $('#err'), $message = $('#message'), $error2 = $('#err2')
+                , $message2 = $('#message2');
+        template.config('openTag', '[');
+        template.config('closeTag', ']');
+        $('.ui-datepicker').datetimepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd hh:ii:ss',
+            weekStart: 1,
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            forceParse: 0,
+            showMeridian: 1
         });
-        $('#addYunbookSubmit').on('click',function(){
-           var checked = $(':radio:checked').eq(0);
-            $.ajax({
-               url:'{{config.url.api}}yunbook/add',
-                data:{
-                    cid:'{{clazz.cid}}',
-                    yid:checked.val(),
-                    title:checked.parent().last().html(),
-                    zoom:4,
-                    point:'POINT(0 0)',
-                    key:'{{key}}',
-                    token:'{{token}}'
-                }
-            }).done(function(data){
-                if(data.code === 0){
-                    $message2.html('添加云板书成功！').show().fadeOut(5000);
-                }else{
-                    $error2.html(data.msg).show().fadeOut(5000);
-                }
-            }).fail(function(){
-                $error2.html('添加云板书超时').show().fadeOut(5000);
-            });
+        jQuery('.accordion-toggle').on('click', function () {
+            jQuery(this).parent().toggleClass('active');
         });
-        function postAdd(file){
-            $.ajax({
-               url:'{{config.url.api}}file/add',
-                data:{
-                    key:'{{key}}',
-                    token:'{{token}}',
-                    cid:'{{clazz.cid}}',
-                    fid:file.fid,
-                    title:file.title,
-                    zoom:4,
-                    point:'POINT(0 0)'
-                }
-            }).done(function(data){
-                if(data.code === 0){
-                    $message.html(file.title+'添加到{{clazz.title}}').show().fadeOut(5000);
-                }else{
-                    $error.html(file.title+data.msg===''?'添加失败!':data.msg)
-                            .show().fadeOut(5000);
-                }
-            }).fail(function(){
-                $error.html(file.title+'操作超时').show().fadeOut(5000);
-            });
-        }
-        function getYunbookCount(){
-            var count = 0;
-            $.ajax({
-                url:"{{config.url.api}}useryunbook/info",
-                async:false
-            }).done(function(data){
-                if(data.code === 0){
-                    count = data.info.Count;
-                }else{
-                    $error2.html(data.msg).show().fadeOut(5000);
-                }
-            }).fail(function(){
-                $error2.html('获取云板书信息超时').show().fadeOut(5000);
-            });
-            return count;
-        }
-        function getYunbooks(limit,offset){
-            $.ajax({
-                url:"{{config.url.api}}useryunbook/list",
-                data:{
-                    limit:limit,
-                    offset:offset
-                }
-            }).done(function(data){
-                if(data.code === 0){
-                    $('#yunbooks').html(template('yunbookTemplate',data));
-                }else {
-                    $error2.html(data.msg).show().fadeOut(5000);
-                }
-            }).fail(function(){
-                $error2.html('获取云板书列表超时').show().fadeOut(5000);
-            });
-        }
-        $('#yunbookModal').on('show.bs.modal',function(){
-            var count = getYunbookCount(),$yunbookPage = $('#yunbookPage');
-            if (count>0){
-                getYunbooks(limit,1);
+        $(document).on('click', 'ul.collapse.in>li>a', function () {
+            var active = $('ul.collapse>li.active').not($(this).parent());
+            if (typeof active === 'undefined') return;
+            active.removeClass('active');
+        });
+        $('a[href="#addYunbook"]').on('click', function () {
+            var $yunbooks = $('#yunbooks')
+                    , $yunbookPage = $('#yunbookPage');
+            if ($yunbooks.html() === '') {
+                var count = getYunbookCount();
+                getYunbooks(limit, 1);
                 $yunbookPage.jqPagination({
                     max_page: Math.ceil(count / limit),
                     page_string: '第{current_page}页,共{max_page}页',
@@ -374,105 +241,229 @@
                 $yunbookPage.show();
             }
         });
-        $('#addClazzFile').on('show.bs.modal',function(){
-           var count = getUserFileCounts(),$userFiles = $('#userFiles'),$up = $('#userFilesPage');
-            if(count > 0){
-                getUserFiles($userFiles,limit,1);
-                $up.jqPagination({
-                    max_page: Math.ceil(count / limit),
-                    page_string: '第{current_page}页,共{max_page}页',
-                    paged: function (page) {
-                        getUserFiles($userFiles,limit, page);
-                    }
+        $('#addFileSubmit').on('click', function () {
+            var checked = $(':checkbox:checked');
+            checked.each(function () {
+                postAdd({
+                    fid: this.value,
+                    title: $(this).parent().parent().children().last().html()
                 });
-                $up.show();
-            }
+            });
         });
-        $('a[href="#file"]').on('show.bs.tab', function (e) {
-            var $files = $('#files'),count = getFileCounts('{{clazz.cid}}'),$filep=$('#filep');
-            if(count > 0){
-                getFiles($files,limit,1);
-                $filep.jqPagination({
-                    max_page: Math.ceil(count / limit),
-                    page_string: '第{current_page}页,共{max_page}页',
-                    paged: function (page) {
-                        getFiles($files,limit, page);
-                    }
-                });
-                $filep.show();
-            }
+        $('#addYunbookSubmit').on('click', function () {
+            var checked = $(':radio:checked').eq(0);
+            $.ajax({
+                url: '{{config.url.api}}yunbook/add',
+                data: {
+                    cid: '{{clazz.cid}}',
+                    yid: checked.val(),
+                    title: checked.parent().parent().children().last().html(),
+                    zoom: 4,
+                    point: 'POINT(0 0)',
+                    key: '{{key}}',
+                    token: '{{token}}'
+                }
+            }).done(function (data) {
+                if (data.code === 0) {
+                    $message2.html('添加云板书成功！').show().fadeOut(5000);
+                } else {
+                    $error2.html(data.msg).show().fadeOut(5000);
+                }
+            }).fail(function () {
+                $error2.html('添加云板书超时').show().fadeOut(5000);
+            });
         });
-        function getUserFileCounts(){
+        function postAdd(file) {
+            $.ajax({
+                url: '{{config.url.api}}file/add',
+                data: {
+                    key: '{{key}}',
+                    token: '{{token}}',
+                    cid: '{{clazz.cid}}',
+                    fid: file.fid,
+                    title: file.title,
+                    zoom: 4,
+                    point: 'POINT(0 0)'
+                }
+            }).done(function (data) {
+                if (data.code === 0) {
+                    $message.html(file.title + '添加到{{clazz.title}}').show().fadeOut(5000);
+                } else {
+                    $error.html(file.title + data.msg === '' ? '添加失败!' : data.msg)
+                            .show().fadeOut(5000);
+                }
+            }).fail(function () {
+                $error.html(file.title + '操作超时').show().fadeOut(5000);
+            });
+        }
+
+        function getYunbookCount() {
             var count = 0;
             $.ajax({
-                url:'{{config.url.api}}userFile/info',
-                async:false
-            }).done(function(data){
-                if(data.code === 0){
+                url: "{{config.url.api}}useryunbook/info",
+                async: false
+            }).done(function (data) {
+                if (data.code === 0) {
                     count = data.info.Count;
-                }else{
-                    alert(data.msg === ''?'获取文件数失败！':data.msg);
+                } else {
+                    $error2.html(data.msg).show().fadeOut(5000);
                 }
-            }).fail(function(){
+            }).fail(function () {
+                $error2.html('获取云板书信息超时').show().fadeOut(5000);
+            });
+            return count;
+        }
+
+        function getYunbooks(limit, offset) {
+            $.ajax({
+                url: "{{config.url.api}}useryunbook/list",
+                data: {
+                    limit: limit,
+                    offset: offset
+                }
+            }).done(function (data) {
+                if (data.code === 0) {
+                    $('#yunbooks').html(template('yunbookTemplate', data));
+                } else {
+                    $error2.html(data.msg).show().fadeOut(5000);
+                }
+            }).fail(function () {
+                $error2.html('获取云板书列表超时').show().fadeOut(5000);
+            });
+        }
+
+        $('a[href="#addClazzFiles"]').on('show.bs.tab', function () {
+            var $fileList = $('#fileList');
+            if ($fileList.html() === '') {
+                var count = getUserFileCounts(), $up = $('#addFilep');
+                if (count > 0) {
+                    getUserFiles($fileList, limit, 1);
+                    $up.jqPagination({
+                        max_page: Math.ceil(count / limit),
+                        page_string: '第{current_page}页,共{max_page}页',
+                        paged: function (page) {
+                            getUserFiles($fileList, limit, page);
+                        }
+                    });
+                    $up.show();
+                }
+            }
+        });
+        $('a[href="#delFiles"]').on('show.bs.tab', function () {
+            var $files = $('#files');
+            if ($files.html() === '') {
+                var count = getFileCounts('{{clazz.cid}}'), $filep = $('#filep');
+                console.log(count);
+                if (count > 0) {
+                    getFiles($files, limit, 1);
+                    $filep.jqPagination({
+                        max_page: Math.ceil(count / limit),
+                        page_string: '第{current_page}页,共{max_page}页',
+                        paged: function (page) {
+                            getFiles($files, limit, page);
+                        }
+                    });
+                    $filep.removeClass('fade');
+                }
+            }
+        });
+        $('a[href="#yunbook"]').on('show.bs.tab', function () {
+            if($('#yunbook').find('div').html() === ''){
+                $.ajax({
+                    url: '{{config.url.api}}yunbook/get',
+                    data: {
+                        cid: '{{clazz.cid}}'
+                    }
+                }).done(function (data) {
+                    var $yunbookEdit = $('#yunbookEdit');
+                    if (data.get.id !== undefined) {
+                        $yunbookEdit.html('<div class="col-sm-3 file"><a href="javascript:yunbookDel(' + data.get.id +
+                                ')" class="pull-right color-red"><i class="fa fa-close"></i></a>' +
+                                '<a href="/yunbook/show?yid=' + data.get.yid + '">'
+                                + '<div class="icon">'
+                                + '<i class="fa fa-book"></i>'
+                                + '</div>'
+                                + '<div class="file-name">'
+                                + data.get.title
+                                + '<br/></div> </a></div>');
+                    }
+                });
+            }
+        });
+        function getUserFileCounts() {
+            var count = 0;
+            $.ajax({
+                url: '{{config.url.api}}userFile/info',
+                async: false
+            }).done(function (data) {
+                if (data.code === 0) {
+                    count = data.info.Count;
+                } else {
+                    alert(data.msg === '' ? '获取文件数失败！' : data.msg);
+                }
+            }).fail(function () {
                 alert('请求超时!');
             });
             return count;
         }
-        function getUserFiles(object,limit,offset){
+
+        function getUserFiles(object, limit, offset) {
             $.ajax({
-                url:'{{config.url.api}}userFile/list',
-                data:{
-                    limit:limit,
-                    offset:offset
+                url: '{{config.url.api}}userFile/list',
+                data: {
+                    limit: limit,
+                    offset: offset
                 }
-            }).done(function(data){
-                if(data.code === 0){
-                    var html = template('addFiles',data);
-                    object.html(html);
-                }else{
-                    alert(data.msg === ''?'获取文件失败！':data.msg);
+            }).done(function (data) {
+                if (data.code === 0) {
+                    object.html(template('addFiles', data));
+                } else {
+                    alert(data.msg === '' ? '获取文件失败！' : data.msg);
                 }
-            }).fail(function(){
+            }).fail(function () {
                 alert('请求超时，请稍后再试!');
             });
         }
-        function getFileCounts(cid){
+
+        function getFileCounts(cid) {
             var count = 0;
             $.ajax({
-                url:'{{config.url.api}}/file/info',
-                data:{
-                    cid:cid
+                url: '{{config.url.api}}/file/info',
+                data: {
+                    cid: cid
                 },
-                async:false
-            }).done(function(data){
-                if(data.code === 0){
+                async: false
+            }).done(function (data) {
+                if (data.code === 0) {
                     count = data.info.Count;
-                }else{
-                    alert(data.msg === ''?'获取文件数失败！':data.msg);
+                } else {
+                    alert(data.msg === '' ? '获取文件数失败！' : data.msg);
                 }
-            }).fail(function(){
+            }).fail(function () {
                 alert('请求超时!');
             });
             return count;
         }
-        function getFiles(object,limit,offset){
+
+        function getFiles(object, limit, offset) {
             $.ajax({
-                url:'{{config.url.api}}file/list',
-                data:{
-                    cid:'{{clazz.cid}}',
-                    limit:limit,
-                    offset:offset
+                url: '{{config.url.api}}file/list',
+                data: {
+                    cid: '{{clazz.cid}}',
+                    limit: limit,
+                    offset: offset
                 }
-            }).done(function(data){
-                if(data.code === 0){
-                    object.html(template('listFiles',data));
-                }else{
-                    alert(data.msg === ''?'获取文件失败！':data.msg);
+            }).done(function (data) {
+                if (data.code === 0) {
+                    object.html(template('listFiles', data));
+                } else {
+                    alert(data.msg === '' ? '获取文件失败！' : data.msg);
                 }
-            }).fail(function(){
-               alert('请求超时，请稍后再试!');
+            }).fail(function () {
+                alert('请求超时，请稍后再试!');
             });
         }
+
         if (window.FileReader) {
             $inputImage.change(function () {
                 var fileReader = new FileReader(),
@@ -562,5 +553,51 @@
             return false;
         });
     });
+    function fileDel(id) {
+        if (typeof id === 'undefined') {
+            return;
+        }
+        $.ajax({
+            url: '{{config.url.api}}file/del',
+            data: {
+                id: id,
+                key: '{{key}}',
+                token: '{{token}}'
+            }
+        }).done(function (data) {
+            if (data.code === 0) {
+                var node = document.getElementById(id);
+                node.parentNode.removeChild(node);
+                alert('删除成功！');
+            } else {
+                alert(data.msg === '' ? '删除失败！' : data.msg);
+            }
+        }).fail(function () {
+            alert('删除失败！');
+        });
+    }
+    function yunbookDel(id) {
+        if (typeof id === 'undefined') {
+            return;
+        }
+        $.ajax({
+            url: '{{config.url.api}}yunbook/del',
+            data: {
+                id: id,
+                key: "{{key}}",
+                token: '{{token}}'
+            }
+        }).done(function (data) {
+            if (data.code === 0) {
+                $('#yunbookEdit').empty();
+                alert('删除成功！');
+            } else {
+                alert(data.msg === '' ? '删除失败！' : data.msg);
+            }
+        }).fail(function () {
+            alert('删除失败！');
+        });
+
+    }
 </script>
 {% endblock %}

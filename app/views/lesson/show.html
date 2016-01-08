@@ -1,8 +1,8 @@
 {% extends '../layout/header.html' %}
 {% block css %}
-<link rel="stylesheet" href="/css/lib/bootstrap-datetimepicker.min.css">
 <link rel="stylesheet" href="/css/lib/sky-forms.css">
 <link rel="stylesheet" href="/css/lib/custom-sky-forms.css">
+<link rel="stylesheet" href="/css/lib/jqpagination.css">
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -15,74 +15,47 @@
 <div class="row">
     <div class="col-md-3">
         <ul class="list-group sidebar-nav-v1" id="sidebar-nav">
-            <li class="list-group-item active">
-                <a href="#lesson" data-toggle="tab"><i class="fa fa-venus"></i> 课程详情</a></li>
-            {%if admin > 1%}
-            <li class="list-group-item">
-                <a href="#addClass" data-toggle="tab">
-                    <i class="fa fa-plus"></i> 添加课堂 </a>
+            <li class="list-group-item list-toggle active">
+                <a href="#collapse-lesson" data-toggle="collapse" class="accordion-toggle">
+                    <i class="fa fa-graduation-cap"></i>&nbsp;课程信息
+                </a>
+                <ul class="collapse in" id="collapse-lesson">
+                    <li class="active">
+                        <a href="#lesson" data-toggle="tab"><i class="fa fa-graduation-cap"></i>&nbsp;课程详情</a>
+                    </li>
+                    <li>
+                        <a href="#teachers" data-toggle="tab">
+                            <i class="fa fa-user-plus"></i>&nbsp;讲师团队
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#students" data-toggle="tab">
+                            <i class="fa fa-child"></i>&nbsp;上课学生
+                        </a>
+                    </li>
+                </ul>
             </li>
-            <li class="list-group-item">
-                <a href="#addteacher" data-toggle="tab"><i class="fa fa-plus"></i> 添加老师</a>
+
+            <li class="list-group-item list-toggle">
+                <a href="#collapse-clazz" data-toggle="collapse" class="accordion-toggle">
+                    <i class="fa fa-building"></i>&nbsp;&nbsp;课堂列表
+                </a>
+                <ul id="collapse-clazz" class="collapse">
+                    {% for clazz in clazzes %}
+                    <li>
+                        <a href="#tab-{{clazz.cid}}" class="xx" data-toggle="tab"> {{clazz.title}} </a></li>
+                    {% endfor %}
+                </ul>
             </li>
-            {%endif%}
-            {% if admin >=1%}
-            <li class="list-group-item">
-                <a href="#addstu"><i class="fa fa-plus"></i>添加学生</a></li>
-            {% endif %}
-            <hr>
-            {% for clazz in clazzes %}
-            <li class="list-group-item">
-                <a href="#tab-{{clazz.cid}}" data-toggle="tab"> {{clazz.title}} </a>
-            </li>
-            {% endfor %}
         </ul>
     </div>
     <div class="col-md-9">
         <div class="tab-content">
-            {% for clazz in clazzes %}
-            <div class="tab-pane fade in" id="tab-{{clazz.cid}}">
-                <div class="row">
-                    <div class="col-md-7">
-                        {% if admin>=1 %}
-                        <a href="/clazz/edit?cid={{clazz.cid}}" class="btn-u btn-xs pull-right">编辑</a>
-                        {% endif %}
-                        <h3>详情</h3>
-                        <dl class="dl-horizontal margin-top-20">
-                            <dt>课堂名称:</dt>
-                            <dd>{{clazz.title}}</dd>
-                            <dt>课堂备注:</dt>
-                            <dd><p>{{clazz.remark}}</p></dd>
-                            <dt>更新时间:</dt>
-                            <dd>{{clazz.puttime}}</dd>
-                            <dt>开始时间:</dt>
-                            <dd>{{clazz.starttime}}</dd>
-
-                            <dt>结束时间:</dt>
-                            <dd>{{clazz.endtime}}</dd>
-                        </dl>
-                    </div>
-                    <div class="col-md-5">
-                        <img src="{{clazz.coverpath}}512_256.png" class="img-responsive" alt="课堂封面">
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <h3>云板书</h3>
-                </div>
-                <hr>
-                <div class="row">
-                    <h3>文件</h3>
-                </div>
-                <hr>
-            </div>
-            {% endfor %}
-
             <div id="lesson" class="tab-pane fade in active">
                 <div class="row">
                     <div class="col-md-7">
-                        {% if admin%}
-                        <a href="/group/lesson/edit?lid={{lesson.lid}}" class="btn-u btn-xs pull-right">编辑</a>
+                        {% if admin > 1%}
+                        <a href="/lesson/edit?lid={{lesson.lid}}" class="btn-u btn-xs pull-right">编辑</a>
                         {% endif %}
                         <h3>详情</h3>
                         <dl class="dl-horizontal margin-top-20">
@@ -107,163 +80,300 @@
                 </div>
                 <hr>
             </div>
-            {% if admin>1 %}
-            <div id="addClass" class="tab-pane fade in">
+            {% for clazz in clazzes %}
+            <div class="tab-pane fade in" id="tab-{{clazz.cid}}">
                 <div class="row">
-                    <form class="sky-form">
-                        <header>新建课堂</header>
-                        <fieldset>
-                            <section>
-                                <label for="title" class="label">课堂标题</label>
-                                <label class="input">
-                                    <input type="text" id="title" required>
-                                </label>
-                            </section>
-                            <section>
-                                <label class="label">课程封面</label>
-                                <label for="file" class="input input-file">
-                                    <div class="button">
-                                        <input type="file" id="file" required
-                                               onchange="this.parentNode.nextElementSibling.value = this.value">选择文件
-                                    </div>
-                                    <input id="path" type="text" readonly>
-                                </label>
-                            </section>
-                            <section>
-                                <label for="remark" class="label">课堂备注</label>
-                                <label class="textarea">
-                                    <textarea id="remark" rownum="3"></textarea>
-                                </label>
-                            </section>
-                            <div class="row">
-                                <section class="col col-6">
-                                    <label class="input">
-                                        <i class="icon-append fa fa-calendar"></i>
-                                        <input class="ui-datepicker" type="text" required id="start" placeholder="开始时间">
-                                    </label>
-                                </section>
-                                <section class="col col-6">
-                                    <label class="input">
-                                        <i class="icon-append fa fa-calendar"></i>
-                                        <input class="ui-datepicker" required
-                                               type="text" id="end" placeholder="结束时间">
-                                    </label>
-                                </section>
-                            </div>
-                        </fieldset>
-                        <footer>
-                            <span class="font-red" id="err"></span>
-                            <button type="submit" class="btn-u pull-right">提交</button>
-                        </footer>
-                    </form>
-                </div>
-            </div>
-            <div id="addteacher" class="tab-pane fade in">
-                <div class="input-group">
-                    <input type="text" class="input form-control" >
-                    <span class="input-group-btn">
-                            <button type="button" class="btn-u"><i class="fa fa-search"></i>
-                                查询
-                            </button>
-                    </span>
-                </div>
-                <div class="full-height-scroll">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <tbody>
-                            {% for user in users %}
-                            <tr>
-                                <td><input type="radio" name="user" value="{{user.uid}}"></td>
-                                <td class="client-avatar"><img alt="image" src="/img/clients4/img12.jpg"></td>
-                                <td class="contact-type"><i class="fa fa-mobile-phone"> </i></td>
-                                <td> user.username</td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                    <div class="col-md-7">
+                        {% if admin>=1 %}
+                        <a href="/clazz/edit?cid={{clazz.cid}}" class="btn-u btn-xs pull-right">编辑</a>
+                        {% endif %}
+                        <h3>详情</h3>
+                        <dl class="dl-horizontal margin-top-20">
+                            <dt>课堂名称:</dt>
+                            <dd>{{clazz.title}}</dd>
+                            <dt>课堂备注:</dt>
+                            <dd><p>{{clazz.remark}}</p></dd>
+                            <dt>更新时间:</dt>
+                            <dd>{{clazz.puttime}}</dd>
+                            <dt>开始时间:</dt>
+                            <dd>{{clazz.starttime}}</dd>
+                            <dt>结束时间:</dt>
+                            <dd>{{clazz.endtime}}</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-5">
+                        <img src="{{clazz.coverpath}}512_256.png" class="img-responsive" alt="课堂封面">
                     </div>
                 </div>
+                <hr>
+                <h3>云板书</h3>
+
+                <div class="row" id="yunbook-{{clazz.cid}}">
+                </div>
+                <hr>
+                <h3>文件</h3>
+                <div class="row" id="file-{{clazz.cid}}">
+                </div>
+                <hr>
             </div>
-            {% endif %}
+            {% endfor %}
+            <div id="teachers" class="tab-pane fade in">
+                <div class="row" id="tList"></div>
+            </div>
+            <div id="students" class="tab-pane fade in">
+                <div class="row" id="sList"></div>
+                <div class="pagination fade" id="studentPage">
+                    <a href="#" class="first" data-action="first">&laquo;</a>
+                    <a href="#" class="previous" data-action="previous">&lsaquo;</a>
+                    <input title="" type="text" readonly="readonly"/>
+                    <a href="#" class="next" data-action="next">&rsaquo;</a>
+                    <a href="#" class="last" data-action="last">&raquo;</a>
+                </div>
+            </div>
         </div>
+
     </div>
 </div>
 {% endblock %}
 
 {% block js %}
-<script src="/js/lib/bootstrap-datetimepicker.min.js"></script>
-<script src="/js/lib/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="/js/lib/template.js"></script>
+<script src="/js/lib/jquery.jqpagination.js"></script>
+<script id="fileTemplate" type="text/html">
+    [each list as file]
+        <div class="col-sm-3 file">
+            <a href="#">
+                <span class="corner"></span>
+                <div class="icon"><i class="fa fa-file"></i></div>
+                <div class="file-name">
+                    [file.title]
+                </div>
+            </a>
+        </div>
+    [/each]
+</script>
+<script id="teacherTemplate" type="text/html">
+    [each list as user]
+    <div class="col-sm-4">
+        <div class="file">
+            <a href="#">
+                <span class="corner"></span>
+                <div class="icon"><i class="fa fa-user-secret"></i></div>
+                <div class="file-name">
+                    [user.uid]
+                    <div>
+                        <small>添加时间:[user.addtime]</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    [/each]
+</script>
+<script id="studentTemplate" type="text/html">
+[each list as user]
+<div class="col-sm-4">
+        <div class="file">
+            <a href="#">
+                <span class="corner"></span>
+                <div class="icon">
+                    <i class="fa fa-user"></i>
+                </div>
+                <div class="file-name">
+                    [user.uid]
+                    <div>
+                        <small>添加时间:[user.addtime]</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+</div>
+[/each]
+</script>
+<script id="usersTemplate" type="text/html">
+    [ each list as user ]
+    <tr>
+        <td><input type="checkbox" value="[user.uid]"></td>
+        <td class="contact-type"><i class="fa fa-mobile-phone"> </i></td>
+        <td> [user.username]</td>
+    </tr>
+    [/each]
+</script>
 <script>
     $(document).ready(function () {
-        jQuery('.list-toggle').on('click', function () {
-            jQuery(this).toggleClass('active');
+        var limit=9;
+        template.config('openTag', '[');
+        template.config('closeTag', ']');
+        jQuery('.accordion-toggle').on('click', function () {
+            jQuery(this).parent().toggleClass('active');
         });
-        $('.ui-datepicker').datetimepicker({
-            language: 'zh-CN',
-            format: 'yyyy-mm-dd hh:ii:ss',
-            weekStart: 1,
-            todayBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            forceParse: 0,
-            showMeridian: 1
+        $(document).on('click', 'ul.collapse.in>li>a', function () {
+            var active = $('ul.collapse>li.active').not($(this).parent());
+            if (typeof active === 'undefined') return;
+            active.removeClass('active');
         });
-        '{% if admin >= 1%}'
+        $('.xx').on('show.bs.tab',function(){
+           var $id=$(this).attr('href'),$cid=$id.substring($id.lastIndexOf('-')+1,$id.length),
+                   $yunbook=$('#yunbook-'+$cid),
+                   $file = $('#file-'+$cid);
+            //如果其中一个有内容则不刷新
+            if($yunbook.html()&&$file.html()){
+                getYunbook($cid);
+                getFiles($cid);
+            }
 
-        '{% endif %}'
-        '{%if admin>1 %}'
-        $('form').submit(function (e) {
-            e.preventDefault();
-            var title = $('#title').val(),
-                    remark = $('#remark').val(),
-                    file = $('#file').get(0).files[0],
-                    start = $('#start').val(),
-                    end = $('#end').val(),
-                    formData = new FormData();
-
-            formData.append('uploadfile', file);
+        });
+        $('a[href="#teachers"]').on('show.bs.tab',function(){
+           var $teachers = $('#tList');
+            if($teachers.html()===''){
+                getTeachers($teachers,50,1);
+            }
+        });
+        $('a[href="#students"]').on('show.bs.tab',function(){
+            var $students=$('#sList');
+           if($students.html()===''){
+                var count = getStudentCount(),$sPage=$('#studentPage');
+               if(count>0){
+                   getStudents($students,limit,1);
+                   $sPage.jqPagination({
+                       max_page: Math.ceil(count / limit),
+                       page_string: '第{current_page}页,共{max_page}页',
+                       paged: function (page) {
+                           getStudents($students,limit,page);
+                       }
+                   });
+                   $sPage.removeClass('fade');
+               }
+           }
+        });
+        function getYunbook(cid){
             $.ajax({
-                url: '{{config.url.upload}}/file/',
-                data: formData,
-                processData: false,
-                contentType: false,
-                type: 'POST',
-                timeout: 300000
+                url:'{{config.url.api}}yunbook/get',
+                data:{
+                    cid:cid
+                }
+            }).done(function(data){
+                if(data.code === 0){
+                    if(!data.get) {
+                        $('#yunbook-' + cid).html('<div class="col-sm-3 file"><a href="/yunbook/show?yid=' + data.get.yid + '">'
+                                + '<div class="icon">'
+                                + '<i class="fa fa-book"></i>'
+                                + '</div>'
+                                + '<div class="file-name">'
+                                + data.get.title
+                                + '</div></a></div>');
+                    }
+                }else{
+                    alert('获取课堂云板书出错!');
+                }
+            }).fail(function(){
+                alert('获取课堂云板书超时!');
+            });
+        }
+        function getFiles(cid){
+            $.ajax({
+                url:'{{config.url.api}}file/list',
+                data:{
+                    cid:cid,
+                    limit:50,
+                    offset:1
+                }
+            }).done(function(data){
+                if(data.code === 0){
+                    $('#file-'+cid).html(template('fileTemplate',data));
+                }else{
+                    alert(data.msg===''?'获取课堂文件出错':data.msg);
+                }
+            }).fail(function(){
+                alert('获取课堂文件超时');
+            });
+        }
+        function getTeacherCount(){
+            var count = 0;
+            $.ajax({
+                url: '{{config.url.api}}lessonAdmin/info',
+                data:{
+                    lid:'{{lesson.lid}}',
+                    state:4
+                },
+                async: false
             }).done(function (data) {
                 if (data.code === 0) {
-                    $.ajax({
-                        url: '{{config.url.api}}/Classroom/Add/',
-                        data: {
-                            lid: '{{lesson.lid}}',
-                            title: title,
-                            remark: remark,
-                            starttime: start,
-                            endtime: end,
-                            coverpath: '{{config.url.domain}}/cover/' + data.cover_path,
-                            zoom: 4,
-                            point: 'POINT(0 0)',
-                            key: '{{key}}',
-                            token: '{{token}}'
-                        }
-                    }).done(function (data) {
-                        if (data.code == 0) {
-                            alert('新建成功！');
-                        } else {
-                            alert(data.msg === '' ? "新建失败！" : data.msg);
-                        }
-                    }).fail(function () {
-                        alert('新建课堂失败！');
-                    });
+                    count = data.info.Count;
                 } else {
-                    alert(data.msg === '' ? "上传失败，请重新上传！" : data.msg);
+                    alert(data.msg === '' ? '获取学生数量出错!' : data.msg);
                 }
             }).fail(function () {
-                alert('文件上传超时！');
+                alert('获取学生数量超时！');
             });
-            return false;
-        });
-        '{% endif %}'
+            return count;
+        }
+        function getStudentCount() {
+            var count = 0;
+            $.ajax({
+                url: '{{config.url.api}}lessonUser/info',
+                data:{
+                  lid:'{{lesson.lid}}',
+                    state:4
+                },
+                async: false
+            }).done(function (data) {
+                if (data.code === 0) {
+                    count = data.info.Count;
+                } else {
+                    alert(data.msg === '' ? '获取学生数量出错!' : data.msg);
+                }
+            }).fail(function () {
+                alert('获取学生数量超时！');
+            });
+            return count;
+        }
+        function getTeachers(object,limit,offset){
+            $.ajax({
+                url: '{{config.url.api}}lessonUser/list',
+                data: {
+                    offset: offset,
+                    limit: limit,
+                    lid:'{{lesson.lid}}',
+                    state:4
+                }
+            }).done(function (data) {
+                if (data.code === 0) {
+                    object.html('<div class="col-sm-4">'
+                            +'<div class="file easy-block-v2">'
+                            +'<a href="#">'
+                            +'<span class="corner"></span>'
+                            +'<div class="icon"><i class="fa fa-user-secret"></i></div>'
+                            +'<div class="easy-bg-v2 rgba-default">主讲</div>'
+                    +'<div class="file-name">{{lesson.uid}}<div><small>添加时间:{{lesson.puttime}}</small> </div></div>'
+                    +'</a></div> </div>');
+                    object.append(template('teacherTemplate', data));
+                } else {
+                    alert(data.msg === '' ? '获取学生失败!' : data.msg);
+                }
+            }).fail(function () {
+                alert('获取学生超时!');
+            });
+        }
+        function getStudents(object, limit ,offset) {
+            $.ajax({
+                url: '{{config.url.api}}lessonUser/list',
+                data: {
+                    offset: offset,
+                    limit: limit,
+                    lid:'{{lesson.lid}}',
+                    state:4
+                }
+            }).done(function (data) {
+                if (data.code === 0) {
+                    object.html(template('studentTemplate', data));
+                } else {
+                    alert(data.msg === '' ? '获取学生失败!' : data.msg);
+                }
+            }).fail(function () {
+                alert('获取学生超时!');
+            });
+        }
     });
 </script>
 {% endblock %}

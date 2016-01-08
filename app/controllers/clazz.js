@@ -6,7 +6,7 @@ var request = require('request-promise'),
     key, token;
 module.exports={
     edit:function *(){
-        var cid = this.query.cid,clazz,lesson;
+        var cid = this.query.cid,clazz,lesson,yunbook;
         if (typeof cid === 'undefined'){
             this.redirect('/clazz');
         }
@@ -47,9 +47,6 @@ module.exports={
                 console.error('lesson/get',err.message);
             });
         }
-        //yield request({
-        //
-        //});
         yield this.render('clazz/edit',{
             key:key,
             token:token,

@@ -111,7 +111,7 @@
                     file.focus();
                     return false;
                 }
-                var ext = getFileExt(file.name);
+                var ext = getFileExt(file.get(0).files[0].name);
                 if(ext!=='.JPG'&&ext!=='.PNG'&&ext!=='.JPEG'&&ext!=='.GIF'){
                     err.html('请选择图片上传').show().fadeOut(5000);
                     file.focus();
@@ -190,7 +190,8 @@
             todayHighlight: 1,
             startView: 2,
             forceParse: 0,
-            showMeridian: 1
+            showMeridian: 1,
+            pickerPosition:"top-left"
         });
     });
 </script>

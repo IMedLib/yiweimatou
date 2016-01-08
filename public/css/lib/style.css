@@ -1502,9 +1502,13 @@ img.img-mouse {
 .font-red{
 	color: red;
 }
-.file-box {
-	float: left;
-	width: 220px;
+.file {
+    border: 1px solid #e7eaec;
+    padding: 0;
+    background-color: #ffffff;
+    position: relative;
+    margin-bottom: 20px;
+    margin-right: 20px;
 }
 .file .icon i {
 	font-size: 70px;
