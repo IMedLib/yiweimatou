@@ -8,10 +8,8 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-12">
         {% for yunbook in yunbooks %}
-        <div class="file-box">
-            <div class="file">
+            <div class="col-sm-4 file">
                 <a href="/yunbook/show?yid={{yunbook.yid}}">
                     <span class="corner"></span>
                     <div class="image">
@@ -24,9 +22,7 @@
                     </div>
                 </a>
             </div>
-        </div>
         {% endfor %}
-    </div>
 </div>
 {% endblock %}
 {% block js %}

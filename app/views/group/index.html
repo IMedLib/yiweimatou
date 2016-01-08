@@ -5,10 +5,8 @@
 {% endblock %}
 {% block body %}
 <div class="row">
-    <div class="col-md-12">
     {% for group in groups %}
-    <div class="file-box">
-        <div class="file">
+        <div class="col-sm-4 file">
             <a href="/group/show?oid={{group.oid}}">
                 <span class="corner"></span>
                 <div class="image">
@@ -21,9 +19,7 @@
                 </div>
             </a>
         </div>
-    </div>
     {% endfor %}
-    </div>
 </div>
 
 {% endblock%}
