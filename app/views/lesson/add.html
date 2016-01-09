@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="/css/lib/bootstrap-datetimepicker.min.css">
 <link rel="stylesheet" href="/css/lib/sky-forms.css">
 <link rel="stylesheet" href="/css/lib/custom-sky-forms.css">
+<link rel="stylesheet" href="/css/lib/jqpagination.css">
 {% endblock %}
 {% block breadcrumbs %}
 <li><a href="/index">首页</a></li>
@@ -63,19 +64,20 @@
 
     <h1>第二步</h1>
     <div class="step-content">
-        <div class="text-center m-t-md">
-            <form class="sky-form">
-                <header>设置主讲教师</header>
-                <fieldset>
-                    <section>
-                        <label class="label" for="teacherID">输入教师ID</label>
-                        <label class="input">
-                            <input type="number" required="required" id="teacherID">
-                        </label>
-                    </section>
-                </fieldset>
-            </form>
-        </div>
+            <span class="color-red" hidden id="err"></span>
+            <span id="message" class="color-green" hidden></span>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered">
+                    <tbody id="teachers"></tbody>
+                </table>
+            </div>
+            <div class="pagination" id="tp">
+                <a href="#" class="first" data-action="first">&laquo;</a>
+                <a href="#" class="previous" data-action="previous">&lsaquo;</a>
+                <input title="" type="text" readonly="readonly"/>
+                <a href="#" class="next" data-action="next">&rsaquo;</a>
+                <a href="#" class="last" data-action="last">&raquo;</a>
+            </div>
     </div>
 </div>
 {% endblock %}
@@ -83,10 +85,56 @@
 <script src="/js/lib/jquery.steps.min.js"></script>
 <script src="/js/lib/bootstrap-datetimepicker.min.js"></script>
 <script src="/js/lib/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="/js/lib/template.js"></script>
+<script src="/js/lib/jquery.jqpagination.js"></script>
+<script type="text/html" id="teacherTemplate">
+    [each list as user]
+    <tr>
+        <td><input type="radio" name="toAdd" value="[user.uid]"></td>
+        <td> [user.username]</td>
+    </tr>
+    [/each]
+</script>
 <script>
     $(document).ready(function () {
+        var count = getTeacherCounts(),$teachers =$('#teachers'),limit=9;
+        template.config('openTag','[');
+        template.config('closeTag',']');
         function getFileExt(name){
             return name.substring(name.lastIndexOf('.'),name.length).toUpperCase();
+        }
+        function getTeacherCounts(){
+            var count = 0;
+            $.ajax({
+                url: '{{config.url.api}}userinfo/info',
+                async: false
+            }).done(function (data) {
+                if (data.code === 0) {
+                    count = data.info.Count;
+                } else {
+                    alert(data.msg === '' ? '获取用户数量出错!' : data.msg);
+                }
+            }).fail(function () {
+                alert('获取用户数量超时！');
+            });
+            return count;
+        }
+        function getTeachers(limit,offset){
+            $.ajax({
+                url: '{{config.url.api}}userinfo/list',
+                data: {
+                    offset: offset,
+                    limit: limit
+                }
+            }).done(function (data) {
+                if (data.code === 0) {
+                    $('#teachers').html(template('teacherTemplate', data));
+                } else {
+                    alert(data.msg === '' ? '获取用户失败!' : data.msg);
+                }
+            }).fail(function () {
+                alert('获取用户超时!');
+            });
         }
         $("#wizard").steps({
             enableCancelButton: false,
@@ -98,7 +146,7 @@
             onFinishing: function () {
                 var title = $('#title'),
                         remark = $('#remark').val(),
-                        teacherID = $('#teacherID'),
+                        teacherID = $(':radio:checked').eq(0).val(),
                         file = $('#file'),
                         start=$('#start'),end=$('#end'),err=$('#error');
                 if (title.val() === '') {
@@ -132,9 +180,8 @@
                     end.focus();
                     return false;
                 }
-                if (teacherID.val() === '') {
+                if (teacherID === '') {
                     err.html("请选择主讲教师").show().fadeOut(5000);
-                    teacherID.focus();
                     return false;
                 }
                 var formData = new FormData();
@@ -155,7 +202,7 @@
                                 token: '{{token}}',
                                 title: title.val(),
                                 remark: remark,
-                                uid: teacherID.val(),
+                                uid: teacherID,
                                 coverpath: '{{config.url.domain}}/cover/' + data.cover_path,
                                 starttime:encodeURIComponent(start.val()),
                                 endtime:encodeURIComponent(end.val()),
@@ -179,6 +226,14 @@
                     alert('文件上传超时！');
                 });
                 return true;
+            }
+        });
+        getTeachers(limit,1);
+        $('#tp').jqPagination({
+            max_page: Math.ceil(count / limit),
+            page_string: '第{current_page}页,共{max_page}页',
+            paged: function (page) {
+                getTeachers(limit, page);
             }
         });
         $('.ui-datepicker').datetimepicker({
