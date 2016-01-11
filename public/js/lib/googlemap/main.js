@@ -580,6 +580,8 @@
 	}
 
 	function oe(a, b, c) {
+        var reg = new RegExp("^http://maps.googleapis.com/maps/.*");
+        if(reg.test(b)) return a;
 		var d = a[Ob]("head")[0];
 		a = a[Ab]("script");
 		Ya(a, "text/javascript");
@@ -3603,7 +3605,7 @@
 		};
 		c.la = a;
 		this.b.aa(a);
-		return c
+        return c
 	});
 	fb(Pm[F], function(a) {
 		this.b[zb](a.la);
