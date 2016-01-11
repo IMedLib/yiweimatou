@@ -130,5 +130,5 @@ google.maps = google.maps || {};
     ], loadScriptTime);
   };
   var loadScriptTime = (new Date).getTime();
-  getScript("/js/lib/googlemap/main.js");
+  getScript("/js/lib/googlemap/main.min.js");
 })();

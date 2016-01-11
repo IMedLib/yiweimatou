@@ -1,12 +1,42 @@
 /**
  * Created by zhangruofan on 2015/12/28.
  */
-var config=require('../../configs/main.js');
+var config=require('../../configs/main.js'),
+    request = require('request-promise');
 module.exports={
     index:function *(){
+        var lessons,groups;
+        yield request({
+           uri:config.url.api+'/lesson/list',
+            qs:{
+                limit:6,
+                offset:1
+            },gzip:true,json:true
+        }).then(function(data){
+            if(data.code === 0){
+                lessons = data.list;
+            }
+        }).catch(function(err){
+            console.error('/lesson/list',err.message);
+        });
+        yield request({
+           uri:config.url.api+'/group/list',
+            qs:{
+                limit:6,
+                offset:1
+            },gzip:true,json:true
+        }).then(function(data){
+            if(data.code === 0){
+                groups = data.list;
+            }
+        }).catch(function(err){
+            console.error('/group/list',err.message);
+        });
         yield this.render('index',{
             title:"首页",
-            logo:"首页"
+            logo:"首页",
+            lessons:lessons,
+            groups:groups
         });
     },
     login:function *(){

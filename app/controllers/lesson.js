@@ -108,8 +108,30 @@ module.exports = {
         });
         yield this.render('lesson/me',{
             lessons:lessons,
-            title:'我管理的课程',
+            title:'主讲课程',
             logo:'云课程'
+        });
+    },
+    admin:function *(){
+      var lessons;
+        key = this.cookies.get('key');
+        if (typeof key === 'undefined'){
+            this.redirect('/login?redirect=' + encodeURIComponent(this.url));
+        }
+        yield request({
+            uri: config.url.api + 'lessonAdmin/list',
+            qs: {
+                uid: key
+            }, gzip: true, json: true
+        }).then(function(data){
+            if(data.code === 0){
+
+            }
+        });
+        yield this.render('lesson/admin',{
+           title:'讲师课程',
+            logo:"云课程",
+            lessons:lessons
         });
     },
     show:function *(){

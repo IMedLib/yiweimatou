@@ -23,12 +23,20 @@
         </div>
     </div>
     {% endfor %}
+    <nav id="page"></nav>
 {% endblock %}
 
 {% block js %}
+<script src="/js/lib/jquery.simplePagination.js"></script>
 <script>
     $(document).ready(function () {
-        $('.list-group-item').eq(2).addClass('active');
+        var $lessonCollapse = $('#collapse-lesson');
+        $lessonCollapse.addClass('in');
+        $lessonCollapse.find('li').eq(0).addClass('active');
+        $('#page').pagination({
+            items:10,
+            listStyle:"pagination"
+        })
     });
 </script>
 {% endblock %}
