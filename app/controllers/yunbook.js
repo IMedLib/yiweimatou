@@ -39,7 +39,7 @@ module.exports = {
                 qs: {
                     pixelX: parseFloat(yunbook.width / 2),
                     pixelY: parseFloat(yunbook.height / 2),
-                    zoom: 3
+                    zoom: yunbook.zoomnum
                 },
                 gzip: true,
                 json: true
@@ -51,7 +51,7 @@ module.exports = {
             });
         }
         yield this.render('yunbook/show', {
-            title: '云板书显示',
+            title: yunbook.title,
             logo: "云板书",
             yunbook: yunbook,
             lat: lat,

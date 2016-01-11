@@ -16,6 +16,7 @@
 {% block js %}
 <script src="/js/lib/googlemap/mapapi.min.js"></script>
 <script src="/js/lib/googlemap/drawing.js"></script>
+<script src="/js/lib/googlemap/blitz-gmap-editor-ea7son.js"></script>
 <script>
 
     $(document).ready(function () {
@@ -44,11 +45,11 @@
             map = new google.maps.Map(document.getElementById('map'), mapOptions);
             var moonMapType = new google.maps.ImageMapType({
                 getTileUrl: function (coord, zoom) {
-                    return '{{yunbook.uri}}' + '/' + zoom + '/' + coord.x + '/' + coord.y + '.png';
+                    return '{{yunbook.uri}}' + zoom + '/' + coord.x + '/' + coord.y + '.png';
                 },
                 tileSize: new google.maps.Size(256, 256),
                 maxZoom: parseInt('{{yunbook.zoomnum}}', 10),
-                minZoom: 2,
+                minZoom:3,
                 radius: 1738000,
                 name: '云板书'
             });
@@ -97,6 +98,34 @@
                 google.maps.event.addListenerOnce(map, 'mouseup', function (e) {//addListenerOnce
                     google.maps.event.removeListener(move);
                 });
+
+            });
+            // 监听drawing事件
+            google.maps.event.addListener(drawingManager, 'overlaycomplete', function (event) {
+//                if (event.type == google.maps.drawing.OverlayType.MARKER) {
+//                    $('#modal1').modal();
+//
+//
+//                    $('#submit').on('click', function () {
+//                        var contentString = $('.summernote').code();
+//                        if (contentString == '') return;
+//                        var infowindow = new google.maps.InfoWindow({
+//                            content: contentString
+//                        });
+//                        event.overlay.addListener('click', function () {
+//                            infowindow.open(map, event.overlay);
+//                        });
+//                        event.overlay.content = contentString;
+//                        event.overlay.type = event.type;
+//                        BlitzMap.push(event.overlay);
+//                        save();
+//                        $('#modal1').modal('hide');
+//                    })
+//                } else {
+                    event.overlay.type = event.type;
+                    BlitzMap.push(event.overlay);
+//                }
+
 
             });
         }

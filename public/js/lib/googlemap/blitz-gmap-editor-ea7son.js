@@ -1,20 +1,20 @@
 
 var BlitzMap =new function(){
-    var mapOverlays=new Array();
+    var mapOverlays=[];
 
 	function mapToObject(){
-        var tmpMap = new Object;
+        var tmpMap = {};
         var tmpOverlay, paths;
         // tmpMap.zoom = map.getZoom();
         // tmpMap.tilt = map.getTilt();
         // tmpMap.mapTypeId = map.getMapTypeId();
         // tmpMap.center = { lat: map.getCenter().lat(), lng: map.getCenter().lng() };
-        tmpMap.overlays = new Array();
+        tmpMap.overlays = [];
         for( var i=0; i < mapOverlays.length; i++ ){
             if( mapOverlays[i].getMap() == null ){
                 continue;
             }
-            tmpOverlay = new Object;
+            tmpOverlay = {};
             tmpOverlay.type = mapOverlays[i].type;
             tmpOverlay.title = mapOverlays[i].title;
             tmpOverlay.content = mapOverlays[i].content;
@@ -48,17 +48,17 @@ var BlitzMap =new function(){
             }
 
             if( mapOverlays[i].type == "polygon" ){
-                tmpOverlay.paths = new Array();
+                tmpOverlay.paths = [];
                 paths = mapOverlays[i].getPaths();
                 for( var j=0; j < paths.length; j++ ){
-                    tmpOverlay.paths[j] = new Array();
+                    tmpOverlay.paths[j] = [];
                     for( var k=0; k < paths.getAt(j).length; k++ ){
                         tmpOverlay.paths[j][k] = { lat: paths.getAt(j).getAt(k).lat().toString() , lng: paths.getAt(j).getAt(k).lng().toString() };
                     }
                 }
 
             }else if( mapOverlays[i].type == "polyline" ){
-                tmpOverlay.path = new Array();
+                tmpOverlay.path = [];
                 path = mapOverlays[i].getPath();
                 for( var j=0; j < path.length; j++ ){
                     tmpOverlay.path[j] = { lat: path.getAt(j).lat().toString() , lng: path.getAt(j).lng().toString() };
@@ -112,9 +112,9 @@ var BlitzMap =new function(){
 
 
         var tmpOverlay, ovrOptions;
-        var properties = new Array( 'fillColor', 'fillOpacity', 'strokeColor', 'strokeOpacity','strokeWeight', 'icon');
+        var properties = ['fillColor', 'fillOpacity', 'strokeColor', 'strokeOpacity','strokeWeight', 'icon'];
         for( var m = inputData.overlays.length-1; m >= 0; m-- ){
-            ovrOptions = new Object();
+            ovrOptions = {};
 
             for( var x=properties.length; x>=0; x-- ){
                 if( inputData.overlays[m][ properties[x] ] ){
@@ -125,10 +125,10 @@ var BlitzMap =new function(){
 
             if( inputData.overlays[m].type == "polygon" ){
 
-                var tmpPaths = new Array();
+                var tmpPaths = [];
                 for( var n=0; n < inputData.overlays[m].paths.length; n++ ){
 
-                    var tmpPath = new Array();
+                    var tmpPath = [];
                     for( var p=0; p < inputData.overlays[m].paths[n].length; p++ ){
                         tmpPath.push(  new google.maps.LatLng( inputData.overlays[m].paths[n][p].lat, inputData.overlays[m].paths[n][p].lng ) );
                     }
@@ -139,7 +139,7 @@ var BlitzMap =new function(){
 
             }else if( inputData.overlays[m].type == "polyline" ){
 
-                var tmpPath = new Array();
+                var tmpPath = [];
                 for( var p=0; p < inputData.overlays[m].path.length; p++ ){
                     tmpPath.push(  new google.maps.LatLng( inputData.overlays[m].path[p].lat, inputData.overlays[m].path[p].lng ) );
                 }
@@ -204,19 +204,17 @@ var BlitzMap =new function(){
 
         }
 
-    }
+    };
     function uniqid(){
         var newDate=new Date;
         return newDate.getTime();
     }
     this.push=function(overlay){
         mapOverlays.push(overlay);
-    }
+    };
     
 	this.toJSONString=function(){
-        var result = JSON.stringify( mapToObject() );
-
-        return result;
+        return JSON.stringify(mapToObject());
     }
     
 };
