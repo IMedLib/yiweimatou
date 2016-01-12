@@ -18,9 +18,9 @@
 <script src="/js/lib/googlemap/drawing.js"></script>
 <script src="/js/lib/googlemap/blitz-gmap-editor-ea7son.js"></script>
 <script>
-
     $(document).ready(function () {
-        var lat = parseFloat('{{lat}}'), lng = parseFloat('{{lng}}'), map;
+        var lat = parseFloat('{{lat}}'), lng = parseFloat('{{lng}}'), map
+                ,key = '{{key}}',token = "{{token}}";
         var polyOptions = {
             fillColor: "#ff7f00",
             fillOpacity: 0.45,
@@ -97,6 +97,8 @@
                 //mouseup-listener
                 google.maps.event.addListenerOnce(map, 'mouseup', function (e) {//addListenerOnce
                     google.maps.event.removeListener(move);
+//                    poly.type = 'polyline';
+//                    BlitzMap.push(poly);
                 });
 
             });
@@ -122,8 +124,8 @@
 //                        $('#modal1').modal('hide');
 //                    })
 //                } else {
-                    event.overlay.type = event.type;
-                    BlitzMap.push(event.overlay);
+//                    event.overlay.type = event.type;
+//                    BlitzMap.push(event.overlay);
 //                }
 
 

@@ -18,6 +18,7 @@ var BlitzMap =new function(){
             tmpOverlay.type = mapOverlays[i].type;
             tmpOverlay.title = mapOverlays[i].title;
             tmpOverlay.content = mapOverlays[i].content;
+            tmpOverlay.group = mapOverlays[i].group || "未分组";
 
             if( mapOverlays[i].fillColor ){
                 tmpOverlay.fillColor = mapOverlays[i].fillColor;
