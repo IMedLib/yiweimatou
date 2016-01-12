@@ -67,6 +67,7 @@
                 if(data.code===0){
                     $.ajax({
                         url: "{{config.url.api}}/Useryunbook/Add/",
+                        type:'post',
                         data: {
                             title: title,
                             key: '{{key}}',
