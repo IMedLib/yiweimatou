@@ -65,7 +65,8 @@ module.exports = {
             logo: '机构号',
             group:group,
             domain:config.url.domain,
-            admin:admin
+            admin:admin,
+            key:key
         });
     },
     me: function *() {
@@ -92,7 +93,8 @@ module.exports = {
             title: '我管理的机构',
             groupList: gourpList,
             logo: "机构号",
-            config: config
+            config: config,
+            key:key
         });
     },
     edit: function*() {
@@ -100,5 +102,52 @@ module.exports = {
             title: "机构管理",
             logo: '机构号'
         });
+    },
+    add:function*(){
+        var count = 0 ,users;
+        key = this.cookies.get('key');
+        token = this.cookies.get('token');
+        if (typeof key === 'undefined' || typeof token === 'undefined') {
+            this.redirect('/login?redirect=' + encodeURIComponent(this.url));
+        }
+        if(key > 10){
+            this.redirect('/index');
+        }
+        yield request({
+           uri:config.url.api+"userInfo/info",
+            gzip:true,json:true
+        }).then(function(data){
+            if(data.code === 0){
+                count=Math.ceil(data.info.Count/9);
+            }else{
+                console.error("userInfo/info",data);
+            }
+        }).catch(function(err){
+            console.error("userInfo/info",err.message);
+        });
+        yield request({
+            uri:config.url.api+"userInfo/list",
+            qs:{
+                limit:9,
+                offset:1
+            },gzip:true,json:true
+        }).then(function(data){
+            if(data.code ===0 ){
+                users = data.list;
+            }else{
+                console.error("userInfo/list",data);
+            }
+        }).catch(function(err){
+           console.error("userInfo/list",err.message);
+        });
+        yield this.render('group/add',{
+            title:'新增机构',
+            logo:'机构号',
+            count:count,
+            users:users,
+            config:config,
+            key:key,
+            token:token
+        })
     }
 };

@@ -10,5 +10,6 @@ router.get('/index',yunbookCtrl.index);
 router.get('/add',yunbookCtrl.add);
 router.get('/show',yunbookCtrl.show);
 router.get('/edit',yunbookCtrl.edit);
+router.get('/showfull',yunbookCtrl.showFull);
 
 module.exports=router;

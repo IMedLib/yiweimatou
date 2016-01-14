@@ -20,7 +20,7 @@ module.exports={
             console.error('/lesson/list',err.message);
         });
         yield request({
-           uri:config.url.api+'/group/list',
+           uri:config.url.api+'/Organ/list',
             qs:{
                 limit:6,
                 offset:1

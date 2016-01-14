@@ -30,7 +30,8 @@ module.exports = {
             title:'我的文件',
             logo:'资源加',
             files:files,
-            config:config
+            config:config,
+            key:key
         });
     },
     add: function *() {

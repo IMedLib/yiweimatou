@@ -8,5 +8,6 @@ router.get('/',groupCtrl.index);
 router.get('/show',groupCtrl.show);
 router.get('/me',groupCtrl.me);
 router.get('/edit',groupCtrl.edit);
+router.get('/add',groupCtrl.add);
 
 module.exports=router;

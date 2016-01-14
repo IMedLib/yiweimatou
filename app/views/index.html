@@ -28,10 +28,10 @@
 <div class="row">
     {% for group in groups %}
     <div class="col-sm-4 file">
-        <a href="/group/show?oid={{lesson.oid}}">
+        <a href="/group/show?oid={{group.oid}}">
             <span class="corner"></span>
             <div class="img">
-                <img src="{{group.coverpath}}256_256.png" class="img-responsive" alt="">
+                <img src="{{group.coverpath}}512_512.png" class="img-responsive" alt="">
             </div>
             <div class="file-name text-center">
                 {{group.title}}

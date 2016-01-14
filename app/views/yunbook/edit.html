@@ -2,6 +2,7 @@
 
 {%block css%}
 <link rel="stylesheet" href="/css/lib/summernote.css">
+<link rel="stylesheet" href="/css/lib/Ply.css">
 {%endblock%}
 
 {% block breadcrumbs %}
@@ -31,39 +32,53 @@
                 <button id="submit" class="btn-u">提交</button>
             </div>
         </div>
-            <div id="multi" style="margin-left: 30px;margin-bottom: 30px">
-                <div class="tile">
-                    <div class="tile__name">未分组</div>
-                    <ul class="tile__list">
-                        <li>YY<i class="fa fa-times"></i></li>
-                        <li>XX</li>
-                    </ul>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a href="#collapse-group" data-toggle="collapse" class="accordion-toggle">批注分组</a>
                 </div>
+            </div>
+            <div id="collapse-group" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <div id="multi" class="row margin-bottom-20">
+                        <div class="tile 3">
+                            <div class="tile__name">掌握</div>
+                            <ul id="group1" class="tile__list">
 
-                <div class="tile">
-                    <div class="tile__name">熟练的</div>
-                    <ul class="tile__list">
-                        <li>YY</li>
-                        <li>XX</li>
-                    </ul>
+                            </ul>
+                        </div>
+
+                        <div class="tile col-sm-3">
+                            <div class="tile__name">熟悉</div>
+                            <ul id="group2" class="tile__list">
+
+                            </ul>
+                        </div>
+
+                        <div class="tile col-sm-3">
+                            <div class="tile__name">扩展知识</div>
+                            <ul id="group3" class="tile__list">
+
+                            </ul>
+                        </div>
+                        <div class="tile col-sm-3">
+                            <div class="tile__name">未分组</div>
+                            <ul id="group4" class="tile__list">
+
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="layer tile">
-                    <div class="tile__name">掌握的</div>
-                    <ul class="tile__list">
-                        <li>YY</li>
-                        <li>XX</li>
-                    </ul>
-                </div>
-
             </div>
         </div>
-        <div id="map"></div>
-        <button id="save" class="pull-right btn-u margin-top-10">保存更改</button>
     </div>
+    <div id="map"></div>
+    <a href="/yunbook/showfull?yid={{yunbook.yid}}" target="_blank" class="btn-u margin-top-10">全屏显示</a>
+    <button id="save" class="pull-right btn-u margin-top-10">保存更改</button>
     <div id="formTab" class="tab-pane fade in">
     </div>
 </div>
+
 {%endblock%}
 
 {%block js%}
@@ -73,114 +88,79 @@
 <script src="/js/lib/summernote.js"></script>
 <script src="/js/lib/summernote-zh-CN.js"></script>
 <script src="/js/lib/Sortable.min.js"></script>
+<script src="/js/lib/Ply.min.js"></script>
 <script>
     $(document).ready(function () {
         var lat = parseFloat('{{lat}}'), lng = parseFloat('{{lng}}'), map
                 , key = '{{key}}', token = "{{token}}", $summernote = $('.summernote')
-                , $cancel = $('#cancel'), $submit = $('#submit'),marker,container = document.getElementById('multi');
-        var polyOptions = {
-            fillColor: "#ff7f00",
-            fillOpacity: 0.45,
-            strokeColor: "rgba(255, 0, 0, 0.8)",
-            strokeOpacity: 0.4,
-            strokeWeight: 5,
-            editable: false,
-            draggable: false,
-            clickable: false
-        };
-        var mapData=replaceAll('{{mapData}}','&quot;','"');
-        function replaceAll(str,a,b){
-            while (str.indexOf(a)>-1){
-                str = str.replace(a,b);
+                , $cancel = $('#cancel'), $submit = $('#submit'), marker, container = document.getElementById('multi'),
+                polyOptions = {
+                    fillColor: "#ff7f00",
+                    fillOpacity: 0.45,
+                    strokeColor: "rgba(255, 0, 0, 0.8)",
+                    strokeOpacity: 0.4,
+                    strokeWeight: 5,
+                    editable: false,
+                    draggable: false,
+                    clickable: false
+                }, mapData = replaceAll('{{mapData}}', '&quot;', '"'),
+                PlyOption = {
+                    title: "给批注取个名字",
+                    form: {text: "批注名称"},
+                    ok: '确认',
+                    cancel: '取消'
+                };
+
+        function replaceAll(str, a, b) {
+            while (str.indexOf(a) > -1) {
+                str = str.replace(a, b);
             }
             return str;
         }
-        Sortable.create(container, {
-            animation: 150,
-            draggable: '.tile',
-            handle: '.tile__name'
-        });
 
-        [].forEach.call(container.getElementsByClassName('tile__list'), function (el){
-            Sortable.create(el, {
-                group: 'group',
-                animation: 150,
-                filter:'.fa-times',
-                onFilter:function(event){
-                    event.item.parentNode.removeChild(event.item);
-                    console.log(event);
-                },
-                onUpdate:function(event){
-
-                }
-            });
-        });
-
-        $summernote.summernote({
-            focus: true,
-            height: 300,
-            lang: 'zh-CN'
-        });
-
-        $submit.on('click',function(){
-            $summernote.parent().hide();
-            var contentString = $summernote.code();
-            if(contentString != ''){
-                var infoWindow = new google.maps.InfoWindow({
-                    content:contentString
-                });
-                marker.addListener('click',function(){
-                    infoWindow.open(map,marker);
-                });
-            }
-            BlitzMap.push(marker);
-        });
-        $cancel.on('click',function(){
-            $summernote.parent().hide();
-            marker.setMap(null);
-        });
         $('#map').attr('style', 'height:' + 0.7 * document.body.scrollHeight + "px");
         initMap();
-
-        BlitzMap.setMapData(map,false,mapData);
-        $('#save').on('click',function(){
+        BlitzMap.setMapData(map, false, mapData);
+        initSortable();
+        initSummernote();
+        $('#save').on('click', function () {
             var remark = BlitzMap.toJSONString();
             '{%if id%}'
             $.ajax({
-                url:'{{url}}',
-                type:'post',
-                data:{
-                    id:'{{id}}',
-                    remark:remark,
-                    key:key,
-                    token:token
+                url: '{{url}}',
+                type: 'post',
+                data: {
+                    id: '{{id}}',
+                    remark: remark,
+                    key: key,
+                    token: token
                 }
-            }).done(function(data){
-                if(data.code === 0){
+            }).done(function (data) {
+                if (data.code === 0) {
                     alert('保存成功！');
-                }else{
-                    alert('保存失败！');
+                } else {
+                    alert(data.msg === '' ? '保存失败！' : data.msg);
                 }
-            }).fail(function(){
-               alert('保存失败，请稍后重试！');
+            }).fail(function () {
+                alert('保存失败，请稍后重试！');
             });
             '{% else %}'
             $.ajax({
-                url:'{{url}}',
-                type:'POST',
-                data:{
-                    yid:'{{yunbook.yid}}',
-                    remark:remark,
-                    key:key,
-                    token:token
+                url: '{{url}}',
+                type: 'POST',
+                data: {
+                    yid: '{{yunbook.yid}}',
+                    remark: remark,
+                    key: key,
+                    token: token
                 }
-            }).done(function(data){
-                if(data.code === 0){
+            }).done(function (data) {
+                if (data.code === 0) {
                     alert('保存成功！');
-                }else{
+                } else {
                     alert('保存失败！');
                 }
-            }).fail(function(){
+            }).fail(function () {
                 alert('保存失败，请稍后重试！');
             });
             '{% endif %}'
@@ -237,35 +217,146 @@
                 if (e.button != 2) {
                     return false;
                 }
-
                 var poly = new google.maps.Polyline(polyOptions);
                 poly.setMap(map);
 
                 var move = google.maps.event.addListener(map, 'mousemove', function (e) {
                     poly.getPath().push(e.latLng);
                 });
-                //mouseup-listener
                 google.maps.event.addListenerOnce(map, 'mouseup', function (e) {//addListenerOnce
                     google.maps.event.removeListener(move);
-                    poly.type = 'polyline';
-                    poly.uid = key;
-                    BlitzMap.push(poly);
-                });
+                    Ply.dialog("prompt",PlyOption).done(function (obj) {
+                        poly.type = 'polyline';
+                        poly.uid = key;
+                        poly.id = BlitzMap.getUniqueId();
+                        poly.title = obj.data.text;
+                        BlitzMap.push(poly);
+                        $('#group4').append('<li id="' + poly.id + '">' + poly.title + '<i class="fa fa-times"></i></li>');
+                    }).fail(function(){
+                        poly.setMap(null);
+                        alert('新建批注失败！');
+                    });
 
+                });
             });
             // 监听drawing事件
             google.maps.event.addListener(drawingManager, 'overlaycomplete', function (event) {
+                event.overlay.uid = key;
+                event.overlay.type = event.type;
                 if (event.type === "marker") {
                     marker = event.overlay;
-                    marker.type="marker";
-                    marker.uid = key;
                     $summernote.code('');
                     $summernote.parent().show();
                     return;
                 }
-                event.overlay.type = event.type;
-                event.overlay.uid = key;
-                BlitzMap.push(event.overlay);
+                Ply.dialog("prompt",PlyOption).done(function (obj) {
+                    event.overlay.title = obj.data.text;
+                    event.overlay.id = BlitzMap.getUniqueId();
+                    BlitzMap.push(event.overlay);
+                    $('#group4').append('<li id="' + event.overlay.id + '">' + event.overlay.title + '<i class="fa fa-times"></i></li>');
+                }).fail(function(){
+                    event.overlay.setMap(null);
+                    alert('新建批注失败！');
+                });
+            });
+        }
+
+        function initSortable() {
+            var $group4 = $('#group4'),
+                    $group3 = $('#group3'), $group2 = $('#group2'),
+                    $group1 = $('#group1');
+            BlitzMap.map(function (element) {
+                if (element.group === '未分组') {
+                    $group4.append('<li id="' + element.id + '">' + element.title + '<i class="fa fa-times"></i></li>');
+                } else if (element.group === '扩展知识') {
+                    $group3.append('<li id="' + element.id + '">' + element.title + '<i class="fa fa-times"></i></li>');
+                } else if (element.group === '熟悉') {
+                    $group2.append('<li id="' + element.id + '">' + element.title + '<i class="fa fa-times"></i>');
+                } else if (element.group === '掌握') {
+                    $group1.append('<li id="' + element.id + '">' + element.title + '<i class="fa fa-times"></i></li>');
+                }
+            });
+
+            Sortable.create(container, {
+                animation: 150,
+                draggable: '.tile',
+                handle: '.tile__name'
+            });
+
+            [].forEach.call(container.getElementsByClassName('tile__list'), function (el) {
+                Sortable.create(el, {
+                    group: 'group',
+                    animation: 150,
+                    filter: '.fa-times',
+                    onFilter: function (event) {
+                        var id = event.item.id;
+                        var overlay = BlitzMap.find(function (element) {
+                            if (element.id == id) {
+                                return true;
+                            }
+                        });
+                        if (BlitzMap.remove(overlay)) {
+                            event.item.parentNode.removeChild(event.item);
+                            alert('删除成功!');
+                        } else {
+                            alert('删除失败!');
+                        }
+                    },
+                    onRemove: function (event) {
+                        var id = event.item.id;
+                        var group =  event.item.parentNode.parentNode.firstChild.nextSibling.innerHTML;
+                        console.log(event.item.parentNode.parentNode.firstChild.nextSibling.innerHTML);
+                        var overlay = BlitzMap.find(function(element){
+                           if(element.id == id){
+                               return true;
+                           }
+                        });
+                        if(overlay){
+                            var temp = overlay;
+                            temp.group = group;
+                            BlitzMap.update(overlay,temp);
+                            alert('更新成功!');
+                        }else{
+                            alert('更新失败!');
+                        }
+                    }
+
+                });
+            });
+
+        }
+
+        function initSummernote() {
+            $summernote.summernote({
+                focus: true,
+                height: 300,
+                lang: 'zh-CN'
+            });
+            $submit.on('click', function () {
+                $summernote.parent().hide();
+                var contentString = $summernote.code();
+                if (contentString != '') {
+                    var infoWindow = new google.maps.InfoWindow({
+                        content: contentString
+                    });
+                    marker.addListener('click', function () {
+                        infoWindow.open(map, marker);
+                    });
+                }
+                Ply.dialog("prompt",PlyOption).done(function (obj) {
+                    marker.title = obj.data.text;
+                    marker.content = contentString;
+                    marker.id = BlitzMap.getUniqueId();
+                    BlitzMap.push(marker);
+                    $('#group4').append('<li id="' + marker.id + '">' + marker.title + '<i class="fa fa-times"></i></li>');
+                }).fail(function(){
+                    marker.setMap(null);
+                    alert('新建批注失败！');
+                });
+            });
+            $cancel.on('click', function () {
+                $summernote.parent().hide();
+                marker.setMap(null);
             });
         }
     });
