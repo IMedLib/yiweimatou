@@ -1499,9 +1499,6 @@ img.img-mouse {
 .project-details a {
   text-decoration: underline;
 }
-.font-red{
-	color: red;
-}
 .file {
     border: 1px solid #e7eaec;
     padding: 0;
@@ -1588,4 +1585,60 @@ img.img-mouse {
 }
 .client-detail .vertical-timeline-icon.gray-bg {
 	color: #a7aaab;
+}
+/*Sortable*/
+.tile {
+	width: 22%;
+	min-width: 245px;
+	color: #72c02c;
+	padding: 10px 30px;
+	text-align: center;
+	margin-top: 15px;
+	margin-left: 5px;
+	margin-right: 30px;
+	background-color: #fff;
+	display: inline-block;
+	vertical-align: top;
+	border: solid 1px #72c02c;
+}
+.tile__name {
+	cursor: move;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #72c02c;
+}
+
+.tile__list {
+	margin-top: 10px;
+	padding-left: 0px;
+}
+.tile__list:last-child {
+	margin-right: 0;
+	min-height: 80px;
+}
+.tile ul{
+  list-style: none;
+}
+.tile__list li {
+	position: relative;
+	display: list-item;
+	cursor: move;
+	margin: 10px;
+	/*background-color: #f0fff0;*/
+	border: solid 1px #72c02c;
+	padding: 10px 40px;
+}
+.tile__list li:hover i{
+	opacity: 1;
+}
+.tile__list i {
+	-webkit-transition: opacity .2s;
+	transition: opacity .2s;
+	opacity: 0;
+	display: block;
+	cursor: pointer;
+	color: #c00;
+	top: 10px;
+	right: 40px;
+	position: absolute;
+	font-style: normal;
 }

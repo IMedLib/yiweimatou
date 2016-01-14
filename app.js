@@ -11,7 +11,7 @@ mount(app,__dirname+'/app/routes');
 app.context.render=render({
     root:__dirname+'/app/views',
     autoescape: true,
-    cache: 'memory',
+    cache: false,//'memory',
     ext: 'html'
 });
 app.use(favicon(__dirname+"/public/img/logo/favicon.ico"));

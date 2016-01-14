@@ -276,6 +276,7 @@
         function postAdd(file) {
             $.ajax({
                 url: '{{config.url.api}}file/add',
+                type:'post',
                 data: {
                     key: '{{key}}',
                     token: '{{token}}',
@@ -477,11 +478,10 @@
                 if (/^image\/\w+$/.test(file.type)) {
                     fileReader.readAsDataURL(file);
                     fileReader.onload = function () {
-//                        $inputImage.val("");
                         $image.attr('src', this.result);
                     };
                 } else {
-                    showMessage("请选择图片!");
+                    alert("请选择图片!");
                 }
             });
         } else {
@@ -506,6 +506,7 @@
                 if (data.code === 0) {
                     $.ajax({
                         url: '{{config.url.api}}/classroom/put',
+                        type:'post',
                         data: {
                             cid: '{{clazz.cid}}',
                             coverpath: '{{config.url.domain}}cover/' + data.cover_path,
@@ -532,6 +533,7 @@
             e.preventDefault();
             $.ajax({
                 url: '{{config.url.api}}classroom/put',
+                type:'post',
                 data: {
                     cid: '{{clazz.cid}}',
                     starttime: $('#start').val(),

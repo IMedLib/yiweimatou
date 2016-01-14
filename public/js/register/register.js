@@ -57,9 +57,7 @@ $(document).ready(function () {
         getCode(mobile);
     });
     function isMobile(mobile) {
-        if (mobile.length === 11 && /^(((13)|(15)|(17)|(18))+\d{9})$/.test(mobile))
-            return true;
-        return false;
+        return !!(mobile.length === 11 && /^(((13)|(15)|(17)|(18))+\d{9})$/.test(mobile));
     }
 
     function getCode(mobile) {
@@ -71,7 +69,7 @@ $(document).ready(function () {
                     .fadeOut(5000);
                 return false;
             }
-            $('#code').val(data.verifycode);
+            alert(data.msg===''?'验证码已发送,请注意查收!':data.msg);
         }).fail(function () {
             $('#codeErr').text("请求超时！").fadeOut(5000);
         });

@@ -1,0 +1,273 @@
+{% extends '../layout/header.html' %}
+
+{%block css%}
+<link rel="stylesheet" href="/css/lib/summernote.css">
+{%endblock%}
+
+{% block breadcrumbs %}
+<li><a href="/index">首页</a></li>
+<li><a href="/yunbook">云板书</a></li>
+<li class="active">编辑{{yunbook.title}}</li>
+{% endblock %}
+
+{%block body%}
+<div class="tab-v1 margin-bottom-10">
+    <ul class="nav nav-tabs">
+        <li>
+            <a href="#formTab" data-toggle="tab">编辑信息</a>
+        </li>
+        <li class="active">
+            <a href="#mapTab" data-toggle="tab">编辑批注</a>
+        </li>
+    </ul>
+</div>
+
+<div class="tab-content">
+    <div id="mapTab" class="tab-pane fade in active">
+        <div hidden="hidden">
+            <div class="summernote"></div>
+            <div class="button-group">
+                <button id="cancel" class="btn-u btn-u-default">取消</button>
+                <button id="submit" class="btn-u">提交</button>
+            </div>
+        </div>
+            <div id="multi" style="margin-left: 30px;margin-bottom: 30px">
+                <div class="tile">
+                    <div class="tile__name">未分组</div>
+                    <ul class="tile__list">
+                        <li>YY<i class="fa fa-times"></i></li>
+                        <li>XX</li>
+                    </ul>
+                </div>
+
+                <div class="tile">
+                    <div class="tile__name">熟练的</div>
+                    <ul class="tile__list">
+                        <li>YY</li>
+                        <li>XX</li>
+                    </ul>
+                </div>
+
+                <div class="layer tile">
+                    <div class="tile__name">掌握的</div>
+                    <ul class="tile__list">
+                        <li>YY</li>
+                        <li>XX</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+        <div id="map"></div>
+        <button id="save" class="pull-right btn-u margin-top-10">保存更改</button>
+    </div>
+    <div id="formTab" class="tab-pane fade in">
+    </div>
+</div>
+{%endblock%}
+
+{%block js%}
+<script src="/js/lib/googlemap/mapapi.min.js"></script>
+<script src="/js/lib/googlemap/drawing.js"></script>
+<script src="/js/lib/googlemap/blitz-gmap-editor-ea7son.js"></script>
+<script src="/js/lib/summernote.js"></script>
+<script src="/js/lib/summernote-zh-CN.js"></script>
+<script src="/js/lib/Sortable.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var lat = parseFloat('{{lat}}'), lng = parseFloat('{{lng}}'), map
+                , key = '{{key}}', token = "{{token}}", $summernote = $('.summernote')
+                , $cancel = $('#cancel'), $submit = $('#submit'),marker,container = document.getElementById('multi');
+        var polyOptions = {
+            fillColor: "#ff7f00",
+            fillOpacity: 0.45,
+            strokeColor: "rgba(255, 0, 0, 0.8)",
+            strokeOpacity: 0.4,
+            strokeWeight: 5,
+            editable: false,
+            draggable: false,
+            clickable: false
+        };
+        var mapData=replaceAll('{{mapData}}','&quot;','"');
+        function replaceAll(str,a,b){
+            while (str.indexOf(a)>-1){
+                str = str.replace(a,b);
+            }
+            return str;
+        }
+        Sortable.create(container, {
+            animation: 150,
+            draggable: '.tile',
+            handle: '.tile__name'
+        });
+
+        [].forEach.call(container.getElementsByClassName('tile__list'), function (el){
+            Sortable.create(el, {
+                group: 'group',
+                animation: 150,
+                filter:'.fa-times',
+                onFilter:function(event){
+                    event.item.parentNode.removeChild(event.item);
+                    console.log(event);
+                },
+                onUpdate:function(event){
+
+                }
+            });
+        });
+
+        $summernote.summernote({
+            focus: true,
+            height: 300,
+            lang: 'zh-CN'
+        });
+
+        $submit.on('click',function(){
+            $summernote.parent().hide();
+            var contentString = $summernote.code();
+            if(contentString != ''){
+                var infoWindow = new google.maps.InfoWindow({
+                    content:contentString
+                });
+                marker.addListener('click',function(){
+                    infoWindow.open(map,marker);
+                });
+            }
+            BlitzMap.push(marker);
+        });
+        $cancel.on('click',function(){
+            $summernote.parent().hide();
+            marker.setMap(null);
+        });
+        $('#map').attr('style', 'height:' + 0.7 * document.body.scrollHeight + "px");
+        initMap();
+
+        BlitzMap.setMapData(map,false,mapData);
+        $('#save').on('click',function(){
+            var remark = BlitzMap.toJSONString();
+            '{%if id%}'
+            $.ajax({
+                url:'{{url}}',
+                type:'post',
+                data:{
+                    id:'{{id}}',
+                    remark:remark,
+                    key:key,
+                    token:token
+                }
+            }).done(function(data){
+                if(data.code === 0){
+                    alert('保存成功！');
+                }else{
+                    alert('保存失败！');
+                }
+            }).fail(function(){
+               alert('保存失败，请稍后重试！');
+            });
+            '{% else %}'
+            $.ajax({
+                url:'{{url}}',
+                type:'POST',
+                data:{
+                    yid:'{{yunbook.yid}}',
+                    remark:remark,
+                    key:key,
+                    token:token
+                }
+            }).done(function(data){
+                if(data.code === 0){
+                    alert('保存成功！');
+                }else{
+                    alert('保存失败！');
+                }
+            }).fail(function(){
+                alert('保存失败，请稍后重试！');
+            });
+            '{% endif %}'
+        });
+        function initMap() {
+            var mapOptions = {
+                center: {lat: lat, lng: lng},
+                zoom: 3,
+                streetViewControl: false,
+                mapTypeControlOptions: {
+                    mapTypeIds: ['moon']
+                }
+            };
+            map = new google.maps.Map(document.getElementById('map'), mapOptions);
+            var moonMapType = new google.maps.ImageMapType({
+                getTileUrl: function (coord, zoom) {
+                    return '{{yunbook.uri}}' + zoom + '/' + coord.x + '/' + coord.y + '.png';
+                },
+                tileSize: new google.maps.Size(256, 256),
+                maxZoom: parseInt('{{yunbook.zoomnum}}', 10),
+                minZoom: 3,
+                radius: 1738000,
+                name: '云板书'
+            });
+
+            map.mapTypes.set('moon', moonMapType);
+            map.setMapTypeId('moon');
+            var drawingManager = new google.maps.drawing.DrawingManager({
+                //drawingMode: google.maps.drawing.OverlayType.MARKER,
+                drawingControl: true,
+                drawingControlOptions: {
+                    position: google.maps.ControlPosition.TOP_LEFT,
+                    drawingModes: [
+                        google.maps.drawing.OverlayType.MARKER,
+                        google.maps.drawing.OverlayType.CIRCLE,
+                        google.maps.drawing.OverlayType.POLYGON,
+                        google.maps.drawing.OverlayType.POLYLINE,
+                        google.maps.drawing.OverlayType.RECTANGLE
+                    ]
+                },
+                markerOptions: {icon: '/js/lib/googlemap/markers2/marker_sprite.png'},
+                circleOptions: {
+                    fillColor: '#ffff00',
+                    fillOpacity: 1,
+                    strokeWeight: 5,
+                    clickable: false,
+                    editable: true,
+                    zIndex: 1
+                }
+            });
+            drawingManager.setMap(map);
+            google.maps.event.addDomListener(map.getDiv(), 'mousedown', function (e) {
+                //do it with the right mouse-button only
+                if (e.button != 2) {
+                    return false;
+                }
+
+                var poly = new google.maps.Polyline(polyOptions);
+                poly.setMap(map);
+
+                var move = google.maps.event.addListener(map, 'mousemove', function (e) {
+                    poly.getPath().push(e.latLng);
+                });
+                //mouseup-listener
+                google.maps.event.addListenerOnce(map, 'mouseup', function (e) {//addListenerOnce
+                    google.maps.event.removeListener(move);
+                    poly.type = 'polyline';
+                    poly.uid = key;
+                    BlitzMap.push(poly);
+                });
+
+            });
+            // 监听drawing事件
+            google.maps.event.addListener(drawingManager, 'overlaycomplete', function (event) {
+                if (event.type === "marker") {
+                    marker = event.overlay;
+                    marker.type="marker";
+                    marker.uid = key;
+                    $summernote.code('');
+                    $summernote.parent().show();
+                    return;
+                }
+                event.overlay.type = event.type;
+                event.overlay.uid = key;
+                BlitzMap.push(event.overlay);
+            });
+        }
+    });
+</script>
+{%endblock%}

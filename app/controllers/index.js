@@ -41,13 +41,13 @@ module.exports={
     },
     login:function *(){
         yield this.render('login',{
-            account:config.url.account,
+            account:config.url.api,
             expire:config.cookie.expire
         });
     },
     register:function *(){
         yield this.render('register',{
-            account:config.url.account,
+            account:config.url.api,
             expire:config.cookie.expire
         });
     }

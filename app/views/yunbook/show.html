@@ -85,20 +85,19 @@
                 if (e.button != 2) {
                     return false;
                 }
-                //the polygon
-                //if(!poly){
-                var poly = new google.maps.Polyline(polyOptions);//{map:map,clickable:false}
+
+                var poly = new google.maps.Polyline(polyOptions);
                 poly.setMap(map);
-                //}
-                //move-listener
+
                 var move = google.maps.event.addListener(map, 'mousemove', function (e) {
                     poly.getPath().push(e.latLng);
                 });
                 //mouseup-listener
                 google.maps.event.addListenerOnce(map, 'mouseup', function (e) {//addListenerOnce
                     google.maps.event.removeListener(move);
-//                    poly.type = 'polyline';
-//                    BlitzMap.push(poly);
+                    poly.type = 'polyline';
+                    poly.uid=key;
+                    BlitzMap.push(poly);
                 });
 
             });
@@ -124,10 +123,10 @@
 //                        $('#modal1').modal('hide');
 //                    })
 //                } else {
-//                    event.overlay.type = event.type;
-//                    BlitzMap.push(event.overlay);
+                    event.overlay.type = event.type;
+                    event.overlay.uid = key;
+                    BlitzMap.push(event.overlay);
 //                }
-
 
             });
         }

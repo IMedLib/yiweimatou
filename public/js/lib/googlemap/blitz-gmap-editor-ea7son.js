@@ -19,6 +19,7 @@ var BlitzMap =new function(){
             tmpOverlay.title = mapOverlays[i].title;
             tmpOverlay.content = mapOverlays[i].content;
             tmpOverlay.group = mapOverlays[i].group || "未分组";
+            tmpOverlay.uid = mapOverlays[i].uid;
 
             if( mapOverlays[i].fillColor ){
                 tmpOverlay.fillColor = mapOverlays[i].fillColor;
@@ -81,7 +82,7 @@ var BlitzMap =new function(){
         return tmpMap;
 
     }
-    this.setMapData=function( jsonString ){
+    this.setMapData=function( map,isEditable,jsonString){
         if( typeof jsonString == 'undefined' || jsonString.length == 0 ){
             return false;
         }
@@ -163,20 +164,20 @@ var BlitzMap =new function(){
             }else if( inputData.overlays[m].type == "marker" ){
                 var pos = new google.maps.LatLng( inputData.overlays[m].position.lat, inputData.overlays[m].position.lng );
                 ovrOptions.position = pos;
-                // if( inputData.overlays[m].icon ){
-                //     ovrOptions.icon = inputData.overlays[m].icon ;
-                // }
+                 if( inputData.overlays[m].icon ){
+                     ovrOptions.icon = inputData.overlays[m].icon ;
+                 }
                 if( isEditable ){
                     ovrOptions.draggable =true;
                 }
                 tmpOverlay = new google.maps.Marker( ovrOptions );
                 if( inputData.overlays[m].content ){
                     tmpOverlay.content = inputData.overlays[m].content;
-                    var infoWindows=new new google.maps.InfoWindow({
+                    var infoWindow=new new google.maps.InfoWindow({
                       content: inputData.overlays[m].content
                     });
                     inputData.overlays[m].addListener('click', function() {
-                      infowindow.open(map, inputData.overlays[m]);
+                      infoWindow.open(map, inputData.overlays[m]);
                     });
                 }else{
                     tmpOverlay.content = "";
@@ -184,21 +185,15 @@ var BlitzMap =new function(){
 
             }
             tmpOverlay.type = inputData.overlays[m].type;
-            tmpOverlay.setMap( map );
             if( isEditable && inputData.overlays[m].type != "marker"){
                 tmpOverlay.setEditable( true );
-
             }
-
-            // var uniqueid =  uniqid();
-            // tmpOverlay.uniqueid =  uniqueid;
-            // if( inputData.overlays[m].title ){
-            //     tmpOverlay.title = inputData.overlays[m].title;
-            // }else{
-            //     tmpOverlay.title = "";
-            // }
-
-            
+            tmpOverlay.setMap( map );
+            if( inputData.overlays[m].title ){
+                 tmpOverlay.title = inputData.overlays[m].title;
+             }else{
+                 tmpOverlay.title = "";
+             }
 
             //save the overlay in the array
             mapOverlays.push( tmpOverlay );
@@ -206,12 +201,39 @@ var BlitzMap =new function(){
         }
 
     };
-    function uniqid(){
+    this.getUniqueId = function(){
         var newDate=new Date;
         return newDate.getTime();
-    }
+    };
     this.push=function(overlay){
-        mapOverlays.push(overlay);
+       return mapOverlays.push(overlay)-1;
+    };
+
+    this.indexOf =function(overlay){
+        return mapOverlays.indexOf(overlay);
+    };
+    this.update = function(oldOverlay,newOverlay){
+        var i = index(oldOverlay);
+        if(i === -1) return;
+        mapOverlays[i]=newOverlay;
+    };
+    this.getByUser = function(key){
+        var array = [];
+        for(var i=0;i<mapOverlays.length;i++){
+            if(mapOverlays[i].uid === key){
+                array.push(mapOverlays[i]);
+            }
+        }
+        return array;
+    };
+    this.getByGroup =  function(value){
+        var array=[];
+       for(var i=0;i<mapOverlays.length;i++){
+            if(mapOverlays[i].group === value){
+                array.push(mapOverlays[i]);
+            }
+       }
+        return array;
     };
     
 	this.toJSONString=function(){
