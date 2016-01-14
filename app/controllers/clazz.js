@@ -16,7 +16,7 @@ module.exports={
             this.redirect('/login?redirect='+encodeURIComponent(this.url));
         }
         yield request({
-           uri:config.url.api+'Classroom/Get/',
+           uri:config.url.inside.api+'Classroom/Get/',
             qs:{
                 cid:cid
             },gzip:true,json:true
@@ -33,7 +33,7 @@ module.exports={
             this.redirect('/lesson');
         }else{
             yield request({
-                uri:config.url.api+'lesson/get',
+                uri:config.url.inside.api+'lesson/get',
                 qs:{
                     lid:clazz.lid
                 },gzip:true,json:true

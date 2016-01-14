@@ -9,7 +9,7 @@ module.exports = {
     index: function *() {
         var groups;
         yield request({
-            uri: config.url.api + '/Organ/List/',
+            uri: config.url.inside.api + '/Organ/List/',
             qs: {
                 offset: 1,
                 limit: 9
@@ -29,7 +29,7 @@ module.exports = {
             title: '机构列表',
             logo: '机构号',
             groups: groups,
-            domain:config.url.domain
+            domain:config.url.inside.domain
         });
     },
     show: function*() {
@@ -38,7 +38,7 @@ module.exports = {
             this.redirect('/group');
         }
         yield request({
-            uri: config.url.api + "Organ/get",
+            uri: config.url.inside.api + "Organ/get",
             gzip: true,
             json: true,
             qs: {
@@ -75,7 +75,7 @@ module.exports = {
         }
         var gourpList;
         yield request({
-            uri: config.url.api + "/Organ/List/",
+            uri: config.url.inside.api + "/Organ/List/",
             gzip: true,
             json: true,
             qs: {

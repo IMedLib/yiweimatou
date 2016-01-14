@@ -13,7 +13,7 @@ module.exports = {
             this.redirect('/login?redirect='+encodeURIComponent(this.url));
         }
         yield request({
-            uri:config.url.api+'userfile/list',
+            uri:config.url.inside.api+'userfile/list',
             qs:{
                 uid:key
             },gzip:true,json:true

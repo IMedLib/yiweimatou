@@ -9,7 +9,7 @@ module.exports = {
         var oid = this.query.oid,lessons;
         oid = oid === 'undefined'?'':oid;
         yield request({
-            uri:config.url.api+'/lesson/list',
+            uri:config.url.inside.api+'/lesson/list',
             qs:{
                 limit:9,
                 offset:1,
@@ -42,7 +42,7 @@ module.exports = {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri: config.url.api + 'Lesson/Get/',
+            uri: config.url.inside.api + 'Lesson/Get/',
             qs: {
                 lid: lid
             }, gzip: true, json: true
@@ -58,7 +58,7 @@ module.exports = {
         //如果不是主讲教师，继续查是不是讲师
         if (key !== lesson.uid.toString()) {
             yield request({
-                uri: config.url.api + '/Lessonadmin/List/',
+                uri: config.url.inside.api + '/Lessonadmin/List/',
                 qs: {
                     lid: lid,
                     state: 4//已审核
@@ -93,7 +93,7 @@ module.exports = {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri:config.url.api+'/lesson/list',
+            uri:config.url.inside.api+'/lesson/list',
             qs:{
                 uid:key
             },gzip:true,json:true
@@ -119,7 +119,7 @@ module.exports = {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri: config.url.api + 'lessonAdmin/list',
+            uri: config.url.inside.api + 'lessonAdmin/list',
             qs: {
                 uid: key
             }, gzip: true, json: true
@@ -146,7 +146,7 @@ module.exports = {
         }
         //获取课堂列表
         yield request({
-            uri:config.url.api+'Classroom/List/',
+            uri:config.url.inside.api+'Classroom/List/',
             qs:{
                 offset:1,
                 limit:50,
@@ -163,7 +163,7 @@ module.exports = {
         });
         //获取课程详情
         yield request({
-            uri: config.url.api + '/Lesson/Get/',
+            uri: config.url.inside.api + '/Lesson/Get/',
             qs: {
                 lid: lid
             },
@@ -184,7 +184,7 @@ module.exports = {
         //如果不是主讲教师，继续查是不是讲师
         if (key !== lesson.uid.toString()) {
             yield request({
-                uri: config.url.api + '/Lessonadmin/List/',
+                uri: config.url.inside.api + '/Lessonadmin/List/',
                 qs: {
                     lid: lid,
                     state: 4//已审核
@@ -201,7 +201,7 @@ module.exports = {
         }
         //获取机构信息
         yield request({
-            uri:config.url.api+'organ/get',
+            uri:config.url.inside.api+'organ/get',
             qs:{
                 oid:lesson.oid
             },gzip:true,json:true
@@ -237,7 +237,7 @@ module.exports = {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri:config.url.api+'Organ/Get/',
+            uri:config.url.inside.api+'Organ/Get/',
             qs:{
                 oid:oid
             },gzip:true,json:true
