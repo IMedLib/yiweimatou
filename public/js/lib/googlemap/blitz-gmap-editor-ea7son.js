@@ -20,6 +20,7 @@ var BlitzMap =new function(){
             tmpOverlay.content = mapOverlays[i].content;
             tmpOverlay.group = mapOverlays[i].group || "未分组";
             tmpOverlay.uid = mapOverlays[i].uid;
+            tmpOverlay.id = mapOverlays[i].id || getUniqueId();
 
             if( mapOverlays[i].fillColor ){
                 tmpOverlay.fillColor = mapOverlays[i].fillColor;
@@ -41,9 +42,9 @@ var BlitzMap =new function(){
                 tmpOverlay.strokeWeight = mapOverlays[i].strokeWeight;
             }
 
-            // if( mapOverlays[i].icon ){
-            //     tmpOverlay.icon = mapOverlays[i].icon;
-            // }
+             if( mapOverlays[i].icon ){
+                 tmpOverlay.icon = mapOverlays[i].icon;
+             }
 
             if( mapOverlays[i].flat ){
                 tmpOverlay.flat = mapOverlays[i].flat;
@@ -173,11 +174,11 @@ var BlitzMap =new function(){
                 tmpOverlay = new google.maps.Marker( ovrOptions );
                 if( inputData.overlays[m].content ){
                     tmpOverlay.content = inputData.overlays[m].content;
-                    var infoWindow=new new google.maps.InfoWindow({
+                    var infoWindow= new google.maps.InfoWindow({
                       content: inputData.overlays[m].content
                     });
-                    inputData.overlays[m].addListener('click', function() {
-                      infoWindow.open(map, inputData.overlays[m]);
+                    tmpOverlay.addListener('click', function() {
+                      infoWindow.open(map, tmpOverlay);
                     });
                 }else{
                     tmpOverlay.content = "";
@@ -189,21 +190,22 @@ var BlitzMap =new function(){
                 tmpOverlay.setEditable( true );
             }
             tmpOverlay.setMap( map );
-            if( inputData.overlays[m].title ){
-                 tmpOverlay.title = inputData.overlays[m].title;
-             }else{
-                 tmpOverlay.title = "";
-             }
-
+            tmpOverlay.id = inputData.overlays[m].id || this.getUniqueId();
+            tmpOverlay.title = inputData.overlays[m].title || '';
+            tmpOverlay.uid = inputData.overlays[m].uid || 0;
+            tmpOverlay.group = inputData.overlays[m].group || '未分组';
             //save the overlay in the array
             mapOverlays.push( tmpOverlay );
 
         }
 
     };
-    this.getUniqueId = function(){
+    function getUniqueId (){
         var newDate=new Date;
         return newDate.getTime();
+    }
+    this.getUniqueId = function(){
+        return getUniqueId();
     };
     this.push=function(overlay){
        return mapOverlays.push(overlay)-1;
@@ -213,27 +215,26 @@ var BlitzMap =new function(){
         return mapOverlays.indexOf(overlay);
     };
     this.update = function(oldOverlay,newOverlay){
-        var i = index(oldOverlay);
+        var i = mapOverlays.indexOf(oldOverlay);
         if(i === -1) return;
         mapOverlays[i]=newOverlay;
+        console.log(mapOverlays[i]);
     };
-    this.getByUser = function(key){
-        var array = [];
-        for(var i=0;i<mapOverlays.length;i++){
-            if(mapOverlays[i].uid === key){
-                array.push(mapOverlays[i]);
-            }
+    this.remove = function(overlay){
+        var index  = this.indexOf(overlay);
+        if(index > -1){
+            mapOverlays.splice(index,1);
+            return true;
+        }else{
+            return false;
         }
-        return array;
     };
-    this.getByGroup =  function(value){
-        var array=[];
-       for(var i=0;i<mapOverlays.length;i++){
-            if(mapOverlays[i].group === value){
-                array.push(mapOverlays[i]);
-            }
-       }
-        return array;
+    this.find=function(func){
+        return mapOverlays.find(func);
+    };
+
+    this.map =  function(func){
+        return mapOverlays.map(func);
     };
     
 	this.toJSONString=function(){

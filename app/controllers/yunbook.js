@@ -195,6 +195,50 @@ module.exports = {
             token:token
         });
     },
+    showFull:function *(){
+        var yid = this.query.yid,
+            yunbook, lat, lng;
+        if (typeof yid === 'undefined') {
+            this.redirect('/yunbook');
+        }
+        yield request({
+            uri: config.url.api + '/Useryunbook/Get/',
+            qs: {
+                yid: yid
+            },
+            gzip: true,
+            json: true
+        }).then(function (data) {
+            if (data.code == 0 && data.get !== {}) {
+                yunbook = data.get;
+            }
+        }).catch(function (err) {
+            console.error(err.message);
+        });
+        if (typeof yunbook !== 'undefined') {
+            yield request({
+                uri: config.url.upload + 'PixelLngLat',
+                qs: {
+                    pixelX: parseFloat(yunbook.width / 2),
+                    pixelY: parseFloat(yunbook.height / 2),
+                    zoom: yunbook.zoomnum
+                },
+                gzip: true,
+                json: true
+            }).then(function (data) {
+                lat = data.lat;
+                lng = data.lng;
+            }).catch(function (err) {
+                console.error(err.message);
+            });
+        }
+        yield this.render('yunbook/showfull', {
+            title: yunbook.title,
+            yunbook: yunbook,
+            lat: lat,
+            lng: lng
+        });
+    },
     add: function *() {
         key = this.cookies.get('key');
         token = this.cookies.get('token');
@@ -234,7 +278,8 @@ module.exports = {
         yield this.render('yunbook/me', {
             title: "我的云板书",
             logo: "云板书",
-            yunbooks: yunBookList
+            yunbooks: yunBookList,
+            key:key
         });
     }
 };

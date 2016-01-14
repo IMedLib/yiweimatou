@@ -9,23 +9,29 @@
             <li class="list-group-item">
                 <a href="/user/home"><i class="fa fa-user"></i>&nbsp;我的主页</a>
             </li>
-            <li class="list-group-item">
-                <a href="/group/me"><i class="fa fa-group"></i>&nbsp;我管理的机构</a>
+            <li class="list-group-item list-toggle">
+                <a href="#collapse-group" class="accordion-toggle" data-toggle="collapse"><i class="fa fa-group"></i>&nbsp;机构</a>
+                <ul id="collapse-group" class="collapse">
+                    <li><a href="/group/me">&nbsp;我的机构</a></li>
+                    {% if key=<10 %}
+                    <li><a href="/group/add">&nbsp;新建机构</a></li>
+                    {% endif %}
+                </ul>
             </li>
             <li class="list-group-item list-toggle">
                 <a class="accordion-toggle" href="#collapse-lesson" data-toggle="collapse">
-                    <i class="fa fa-cube"></i>&nbsp;我管理的课程</a>
+                    <i class="fa fa-cube"></i>&nbsp;课程</a>
                 <ul id="collapse-lesson" class="collapse">
                     <li><a href="/lesson/me">&nbsp;主讲课程 </a></li>
                     <li><a href="/lesson/admin">&nbsp;讲师课程</a></li>
                 </ul>
             </li>
             <li class="list-group-item">
-                <a href="#"><i class="fa fa-comments"></i>&nbsp;我的评论 </a>
+                <a href="#"><i class="fa fa-comments"></i>&nbsp;评论 </a>
             </li>
             <li class="list-group-item list-toggle">
                 <a class="accordion-toggle" href="#collapse-yunbook" data-toggle="collapse">
-                    <i class="fa fa-book"></i>&nbsp;我的云板书 </a>
+                    <i class="fa fa-book"></i>&nbsp;云板书 </a>
                 <ul id="collapse-yunbook" class="collapse">
                     <li>
                         <a href="/yunbook/me"><i class="fa fa-book"></i>&nbsp;我的云板书</a>
@@ -36,7 +42,7 @@
             </li>
             <li class="list-group-item list-toggle">
                 <a href="#collapse-file" class="accordion-toggle" data-toggle="collapse">
-                    <i class="fa fa-file"></i>&nbsp;我的文件 </a>
+                    <i class="fa fa-file"></i>&nbsp;文件 </a>
                 <ul id="collapse-file" class="collapse">
                     <li><a href="/file/me"><i class="fa fa-file"></i>&nbsp;我的文件 </a></li>
                     <li><a href="/file/add"><i class="fa fa-plus"></i>&nbsp;上传文件 </a></li>

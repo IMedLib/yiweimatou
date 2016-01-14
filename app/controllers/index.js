@@ -7,7 +7,7 @@ module.exports={
     index:function *(){
         var lessons,groups;
         yield request({
-           uri:config.url.inside.api+'/lesson/list',
+           uri:config.url.api+'/lesson/list',
             qs:{
                 limit:6,
                 offset:1
@@ -20,7 +20,7 @@ module.exports={
             console.error('/lesson/list',err.message);
         });
         yield request({
-           uri:config.url.inside.api+'/group/list',
+           uri:config.url.api+'/Organ/list',
             qs:{
                 limit:6,
                 offset:1

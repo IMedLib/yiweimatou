@@ -109,7 +109,8 @@ module.exports = {
         yield this.render('lesson/me',{
             lessons:lessons,
             title:'主讲课程',
-            logo:'云课程'
+            logo:'云课程',
+            key:key
         });
     },
     admin:function *(){
@@ -131,7 +132,8 @@ module.exports = {
         yield this.render('lesson/admin',{
            title:'讲师课程',
             logo:"云课程",
-            lessons:lessons
+            lessons:lessons,
+            key:key
         });
     },
     show:function *(){
