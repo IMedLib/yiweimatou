@@ -61,8 +61,12 @@ $(document).ready(function () {
     }
 
     function getCode(mobile) {
-        $.getJSON(url + '/Captcha/Add', {
-            mobile:mobile
+        $.ajax({
+            url: url + '/Captcha/Add',
+            data: {
+                mobile: mobile
+            },
+            type: 'POST'
         }).done(function (data) {
             if (data.code !== 0) {
                 $('#codeErr').text(data.msg === "" ? "获取失败，请重新尝试！" : data.msg)
