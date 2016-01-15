@@ -659,8 +659,9 @@
                         } else {
                             alert(data.msg === '' ? "新建失败！" : data.msg);
                         }
-                    }).fail(function () {
-                        alert('新建课堂失败！');
+                    }).fail(function (obj) {
+                        console.log(obj);
+//                        alert('新建课堂失败！');
                     });
                 } else {
                     alert(data.msg === '' ? "上传失败，请重新上传！" : data.msg);
