@@ -55,7 +55,7 @@ module.exports={
             title:clazz.title,
             logo:'云课堂',
             config:{
-                url:config.url
+                url:config.url.outside
             }
         })
     }

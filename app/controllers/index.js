@@ -7,7 +7,7 @@ module.exports={
     index:function *(){
         var lessons,groups;
         yield request({
-           uri:config.url.api+'/lesson/list',
+           uri:config.url.inside.api+'/lesson/list',
             qs:{
                 limit:6,
                 offset:1
@@ -20,7 +20,7 @@ module.exports={
             console.error('/lesson/list',err.message);
         });
         yield request({
-           uri:config.url.api+'/Organ/list',
+           uri:config.url.inside.api+'/Organ/list',
             qs:{
                 limit:6,
                 offset:1
@@ -41,13 +41,13 @@ module.exports={
     },
     login:function *(){
         yield this.render('login',{
-            account:config.url.api,
+            account:config.url.outside.api,
             expire:config.cookie.expire
         });
     },
     register:function *(){
         yield this.render('register',{
-            account:config.url.api,
+            account:config.url.outside.api,
             expire:config.cookie.expire
         });
     }

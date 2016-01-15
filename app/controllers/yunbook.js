@@ -25,9 +25,9 @@ module.exports = {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         if(yid){
-            url = config.url.api+'userYunbook/put';
+            url = config.url.inside.api+'userYunbook/put';
             yield request({
-               uri:config.url.api+'userYunbook/get',
+               uri:config.url.inside.api+'userYunbook/get',
                 qs:{
                     yid:yid
                 },gzip:true,json:true
@@ -42,9 +42,9 @@ module.exports = {
                 console.error('userYunbook/get',err.message);
             });
         }else{
-            url = config.url.api+'yunbook/put';
+            url = config.url.inside.api+'yunbook/put';
             yield request({
-                uri:config.url.api+'yunbook/get',
+                uri:config.url.inside.api+'yunbook/get',
                 qs:{
                     id:id
                 },gzip:true,json:true
@@ -60,7 +60,7 @@ module.exports = {
                 console.error('yunbook/get',err.message);
             }).then(function(){
                request({
-                   uri:config.url.api+'userYunbook/get',
+                   uri:config.url.inside.api+'userYunbook/get',
                    qs:{
                        yid:yid
                    },gzip:true,json:true
@@ -77,7 +77,7 @@ module.exports = {
         }
         if (typeof yunbook !== 'undefined') {
             yield request({
-                uri: config.url.upload + 'PixelLngLat',
+                uri: config.url.inside.upload + 'PixelLngLat',
                 qs: {
                     pixelX: parseFloat(yunbook.width / 2),
                     pixelY: parseFloat(yunbook.height / 2),
@@ -95,7 +95,7 @@ module.exports = {
 
         if(typeof id !== 'undefined' && typeof lessonId !== 'undefined'){
             yield request({
-               uri:config.url.api+'lesson/get',
+               uri:config.url.inside.api+'lesson/get',
                 qs:{
                     lid:lessonId
                 },gzip:true,json:true
@@ -116,7 +116,7 @@ module.exports = {
         //判断是否课程讲师
         if (typeof id !== 'undefined' && typeof lessonId !== 'undefined' &&admin === false){
             yield request({
-                uri:config.url.api+'lessonAdmin/list',
+                uri:config.url.inside.api+'lessonAdmin/list',
                 qs:{
                     lid:lessonId
                 },gzip:true,json:true
@@ -155,7 +155,7 @@ module.exports = {
         key =  this.cookies.get('key');
         token = this.cookies.get('token');
         yield request({
-            uri: config.url.api + '/Useryunbook/Get/',
+            uri: config.url.inside.api + '/Useryunbook/Get/',
             qs: {
                 yid: yid
             },
@@ -170,7 +170,7 @@ module.exports = {
         });
         if (typeof yunbook !== 'undefined') {
             yield request({
-                uri: config.url.upload + 'PixelLngLat',
+                uri: config.url.inside.upload + 'PixelLngLat',
                 qs: {
                     pixelX: parseFloat(yunbook.width / 2),
                     pixelY: parseFloat(yunbook.height / 2),
@@ -202,7 +202,7 @@ module.exports = {
             this.redirect('/yunbook');
         }
         yield request({
-            uri: config.url.api + '/Useryunbook/Get/',
+            uri: config.url.inside.api + '/Useryunbook/Get/',
             qs: {
                 yid: yid
             },
@@ -217,7 +217,7 @@ module.exports = {
         });
         if (typeof yunbook !== 'undefined') {
             yield request({
-                uri: config.url.upload + 'PixelLngLat',
+                uri: config.url.inside.upload + 'PixelLngLat',
                 qs: {
                     pixelX: parseFloat(yunbook.width / 2),
                     pixelY: parseFloat(yunbook.height / 2),
@@ -260,7 +260,7 @@ module.exports = {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri: config.url.api + '/Useryunbook/List/',
+            uri: config.url.inside.api + '/Useryunbook/List/',
             qs: {
                 limit: 8,
                 offset: 1,
