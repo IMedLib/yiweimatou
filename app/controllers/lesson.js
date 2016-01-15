@@ -87,15 +87,31 @@ module.exports = {
         });
     },
     me:function *(){
-        var lessons;
+        var lessons,count;
         key = this.cookies.get('key');
         if (typeof key === 'undefined'){
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri:config.url.api+'/lesson/list',
+           uri:config.url.api+'lesson/info',
             qs:{
                 uid:key
+            },gzip:true,json:true
+        }).then(function(data){
+            if(data.code === 0){
+                count = Math.ceil(data.info.Count/9);
+            }else{
+                console.error('lesson/info',data);
+            }
+        }).catch(function(err){
+            console.error('lesson/info',err.message);
+        });
+        yield request({
+            uri:config.url.api+'/lesson/list',
+            qs:{
+                uid:key,
+                limit:9,
+                offset:1
             },gzip:true,json:true
         }).then(function(data){
             if(data.code === 0){
@@ -110,11 +126,12 @@ module.exports = {
             lessons:lessons,
             title:'主讲课程',
             logo:'云课程',
-            key:key
+            key:key,
+            count:count
         });
     },
     admin:function *(){
-      var lessons;
+      var lessons=[],lids;
         key = this.cookies.get('key');
         if (typeof key === 'undefined'){
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
@@ -126,14 +143,39 @@ module.exports = {
             }, gzip: true, json: true
         }).then(function(data){
             if(data.code === 0){
-
+                lids = data.list;
+            }else{
+                console.error('lessonAdmin/list',data);
             }
+        }).catch(function(err){
+            console.error('lessonAdmin/list',err.message);
         });
+        if(lids!=='undefined'&&lids.length >0){
+            lids.map(function(ele){
+                request({
+                    uri:config.url.api+'/lesson/get',
+                    qs:{
+                        lid:ele.lid
+                    },gzip:true,json:true
+                }).then(function(data){
+                    if(data.code === 0){
+                        lessons.push(data.get);
+                    }else{
+                        console.error('/lesson/get',data);
+                    }
+                }).catch(function(err){
+                    console.error('/lesson/get',err.message);
+                });
+            });
+
+        }
+
         yield this.render('lesson/admin',{
            title:'讲师课程',
             logo:"云课程",
             lessons:lessons,
             key:key
+            //count:Math.ceil(lids.length/9)
         });
     },
     show:function *(){
