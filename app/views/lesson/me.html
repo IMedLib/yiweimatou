@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-    <div id="lessons">
+<div id="lessons" class="row">
     {% for lesson in lessons %}
     <div class="col-sm-4">
         <div class="file">
@@ -24,8 +24,9 @@
         </div>
     </div>
     {% endfor %}
-    </div>
-    <nav id="page"></nav>
+</div>
+<div class="row">
+<nav id="page" class="pull-right"></nav></div>
 {% endblock %}
 
 {% block js %}
@@ -57,21 +58,21 @@
         $lessonCollapse.find('li').eq(0).addClass('active');
         '{% if count>0 %}'
         $('#page').pagination({
-            items:'{{count}}',
-            listStyle:"pagination",
-            onPageClick:function(page){
+            items: '{{count}}',
+            listStyle: "pagination",
+            onPageClick: function (page) {
                 $.ajax({
-                   url:'{{config.url.api}}lesson/list',
-                    data:{
-                        limit:9,
-                        offset:page,
-                        uid:'{{key}}'
+                    url: '{{config.url.api}}lesson/list',
+                    data: {
+                        limit: 9,
+                        offset: page,
+                        uid: '{{key}}'
                     }
-                }).done(function(data){
-                    if(data.code ===0){
-                        $('#lessons').html(template('lessonTemplate',data));
+                }).done(function (data) {
+                    if (data.code === 0) {
+                        $('#lessons').html(template('lessonTemplate', data));
                     }
-                }).catch(function(){
+                }).catch(function () {
                     alert('获取课程失败!');
                 });
             }
