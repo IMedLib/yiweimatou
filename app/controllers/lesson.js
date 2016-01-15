@@ -2,7 +2,7 @@
  * Created by zhangruofan on 2016/1/5.
  */
 var request = require('request-promise'),
-    config = require('../../configs/main'),
+    config = require('../../configs/index'),
     key, token;
 module.exports = {
     index:function *(){
