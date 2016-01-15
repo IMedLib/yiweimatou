@@ -87,6 +87,7 @@
 <script src="/js/lib/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/js/lib/template.js"></script>
 <script src="/js/lib/jquery.jqpagination.js"></script>
+<script type="text/javascript" src="/js/lib/jquery.blockUI.js"></script>
 <script type="text/html" id="teacherTemplate">
     [each list as user]
     <tr>
@@ -186,6 +187,7 @@
                 }
                 var formData = new FormData();
                 formData.append('uploadfile', file.get(0).files[0]);
+                $('#wizard').block();
                 $.ajax({
                     url: '{{config.url.upload}}/file',
                     data: formData,
@@ -225,6 +227,8 @@
                     }
                 }).fail(function () {
                     alert('文件上传超时！');
+                }).always(function(){
+                    $('#wizard').unblock();
                 });
                 return true;
             }
