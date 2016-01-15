@@ -130,7 +130,7 @@
                         }
                     }).done(function(data){
                         if(data.code==0){
-                            alert('新建成功！');
+                            window.location.href="/group/show?oid="+data.identity;
                         }else {
                             alert(data.msg === '' ? "新建失败！" : data.msg);
                         }

@@ -207,15 +207,15 @@
                                 remark: remark,
                                 uid: teacherID,
                                 coverpath: '{{config.url.domain}}/cover/' + data.cover_path,
-                                starttime:encodeURIComponent(start.val()),
-                                endtime:encodeURIComponent(end.val()),
+                                starttime:start.val(),
+                                endtime:end.val(),
                                 zoom:4,
                                 point:"POINT(0 0)",
                                 oid:'{{group.oid}}'
                             }
                         }).done(function (data) {
                             if (data.code == 0) {
-                                alert('新建成功！');
+                                window.location.href = "/lesson/show?lid="+data.identity;
                             } else {
                                 alert(data.msg === '' ? "新建失败！" : data.msg);
                             }

@@ -74,7 +74,7 @@ module.exports = {
         if (typeof key === 'undefined') {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
-        var gourpList;
+        var groups;
         yield request({
             uri: config.url.inside.api + "/Organ/List/",
             gzip: true,
@@ -84,14 +84,14 @@ module.exports = {
             }
         }).then(function (data) {
             if (data.code === 0) {
-                gourpList = data.list;
+                groups = data.list;
             }
         }).catch(function (err) {
             console.error(err.message);
         });
         yield this.render('group/me', {
             title: '我管理的机构',
-            groupList: gourpList,
+            groups: groups,
             logo: "机构号",
             key:key
         });
