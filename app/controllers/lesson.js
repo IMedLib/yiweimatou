@@ -9,7 +9,7 @@ module.exports = {
         var oid = this.query.oid,lessons;
         oid = oid === 'undefined'?'':oid;
         yield request({
-            uri:config.url.inside.api+'/lesson/list',
+            uri:config.url.api+'/lesson/list',
             qs:{
                 limit:9,
                 offset:1,
@@ -42,7 +42,7 @@ module.exports = {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri: config.url.inside.api + 'Lesson/Get/',
+            uri: config.url.api + 'Lesson/Get/',
             qs: {
                 lid: lid
             }, gzip: true, json: true
@@ -58,7 +58,7 @@ module.exports = {
         //如果不是主讲教师，继续查是不是讲师
         if (key !== lesson.uid.toString()) {
             yield request({
-                uri: config.url.inside.api + '/Lessonadmin/List/',
+                uri: config.url.api + '/Lessonadmin/List/',
                 qs: {
                     lid: lid,
                     state: 4//已审核
@@ -87,15 +87,31 @@ module.exports = {
         });
     },
     me:function *(){
-        var lessons;
+        var lessons,count;
         key = this.cookies.get('key');
         if (typeof key === 'undefined'){
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri:config.url.inside.api+'/lesson/list',
+           uri:config.url.api+'lesson/info',
             qs:{
                 uid:key
+            },gzip:true,json:true
+        }).then(function(data){
+            if(data.code === 0){
+                count = Math.ceil(data.info.Count/9);
+            }else{
+                console.error('lesson/info',data);
+            }
+        }).catch(function(err){
+            console.error('lesson/info',err.message);
+        });
+        yield request({
+            uri:config.url.api+'/lesson/list',
+            qs:{
+                uid:key,
+                limit:9,
+                offset:1
             },gzip:true,json:true
         }).then(function(data){
             if(data.code === 0){
@@ -110,30 +126,56 @@ module.exports = {
             lessons:lessons,
             title:'主讲课程',
             logo:'云课程',
-            key:key
+            key:key,
+            count:count
         });
     },
     admin:function *(){
-      var lessons;
+      var lessons=[],lids;
         key = this.cookies.get('key');
         if (typeof key === 'undefined'){
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri: config.url.inside.api + 'lessonAdmin/list',
+            uri: config.url.api + 'lessonAdmin/list',
             qs: {
                 uid: key
             }, gzip: true, json: true
         }).then(function(data){
             if(data.code === 0){
-
+                lids = data.list;
+            }else{
+                console.error('lessonAdmin/list',data);
             }
+        }).catch(function(err){
+            console.error('lessonAdmin/list',err.message);
         });
+        if(lids!=='undefined'&&lids.length >0){
+            lids.map(function(ele){
+                request({
+                    uri:config.url.api+'/lesson/get',
+                    qs:{
+                        lid:ele.lid
+                    },gzip:true,json:true
+                }).then(function(data){
+                    if(data.code === 0){
+                        lessons.push(data.get);
+                    }else{
+                        console.error('/lesson/get',data);
+                    }
+                }).catch(function(err){
+                    console.error('/lesson/get',err.message);
+                });
+            });
+
+        }
+
         yield this.render('lesson/admin',{
            title:'讲师课程',
             logo:"云课程",
             lessons:lessons,
             key:key
+            //count:Math.ceil(lids.length/9)
         });
     },
     show:function *(){
@@ -148,7 +190,7 @@ module.exports = {
         }
         //获取课堂列表
         yield request({
-            uri:config.url.inside.api+'Classroom/List/',
+            uri:config.url.api+'Classroom/List/',
             qs:{
                 offset:1,
                 limit:50,
@@ -165,7 +207,7 @@ module.exports = {
         });
         //获取课程详情
         yield request({
-            uri: config.url.inside.api + '/Lesson/Get/',
+            uri: config.url.api + '/Lesson/Get/',
             qs: {
                 lid: lid
             },
@@ -186,7 +228,7 @@ module.exports = {
         //如果不是主讲教师，继续查是不是讲师
         if (key !== lesson.uid.toString()) {
             yield request({
-                uri: config.url.inside.api + '/Lessonadmin/List/',
+                uri: config.url.api + '/Lessonadmin/List/',
                 qs: {
                     lid: lid,
                     state: 4//已审核
@@ -203,7 +245,7 @@ module.exports = {
         }
         //获取机构信息
         yield request({
-            uri:config.url.inside.api+'organ/get',
+            uri:config.url.api+'organ/get',
             qs:{
                 oid:lesson.oid
             },gzip:true,json:true
@@ -239,7 +281,7 @@ module.exports = {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri:config.url.inside.api+'Organ/Get/',
+            uri:config.url.api+'Organ/Get/',
             qs:{
                 oid:oid
             },gzip:true,json:true

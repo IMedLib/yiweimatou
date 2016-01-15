@@ -25,5 +25,18 @@
 
     {% endfor %}
 </div>
-
+<nav id="page"></nav>
 {% endblock%}
+{% block js %}
+<script src="/js/lib/jquery.simplePagination.js"></script>
+<script>
+    $(document).ready(function(){
+        '{{if count>0}}'
+        $('#page').pagination({
+            items:'{{count}}',
+            listStyle:"pagination"
+        });
+        '{{endif}}'
+    });
+</script>
+{% endblock %}

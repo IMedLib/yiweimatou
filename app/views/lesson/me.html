@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+    <div id="lessons">
     {% for lesson in lessons %}
     <div class="col-sm-4">
         <div class="file">
@@ -23,20 +24,59 @@
         </div>
     </div>
     {% endfor %}
+    </div>
     <nav id="page"></nav>
 {% endblock %}
 
 {% block js %}
 <script src="/js/lib/jquery.simplePagination.js"></script>
+<script src="/js/lib/template.js"></script>
+<script id="lessonTemplate" type="text/html">
+    [each list as lesson]
+    <div class="col-sm-4">
+        <div class="file">
+            <a href="/lesson/show?lid=[lesson.lid]">
+                <span class="corner"></span>
+                <div class="image">
+                    <img src="[lesson.coverpath]512_256.png" class="img-responsive" alt="">
+                </div>
+                <div class="file-name">
+                    [lesson.title]
+                    <br/>
+                    <small>[lesson.puttime]</small>
+                </div>
+            </a>
+        </div>
+    </div>
+    [/each]
+</script>
 <script>
     $(document).ready(function () {
         var $lessonCollapse = $('#collapse-lesson');
         $lessonCollapse.addClass('in');
         $lessonCollapse.find('li').eq(0).addClass('active');
+        '{% if count>0 %}'
         $('#page').pagination({
-            items:10,
-            listStyle:"pagination"
-        })
+            items:'{{count}}',
+            listStyle:"pagination",
+            onPageClick:function(page){
+                $.ajax({
+                   url:'{{config.url.api}}lesson/list',
+                    data:{
+                        limit:9,
+                        offset:page,
+                        uid:'{{key}}'
+                    }
+                }).done(function(data){
+                    if(data.code ===0){
+                        $('#lessons').html(template('lessonTemplate',data));
+                    }
+                }).catch(function(){
+                    alert('获取课程失败!');
+                });
+            }
+        });
+        '{%endif%}'
     });
 </script>
 {% endblock %}
