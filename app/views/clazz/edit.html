@@ -164,6 +164,7 @@
 <script src="/js/lib/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/js/lib/jquery.jqpagination.min.js"></script>
 <script src="/js/lib/template.js"></script>
+<script type="text/javascript" src="/js/lib/jquery.blockUI.js"></script>
 <script type="text/html" id="yunbookTemplate">
     [each list as yunbook]
     <tr>
@@ -274,6 +275,7 @@
             });
         });
         function postAdd(file) {
+            $.block();
             $.ajax({
                 url: '{{config.url.api}}file/add',
                 type:'post',
@@ -295,6 +297,8 @@
                 }
             }).fail(function () {
                 $error.html(file.title + '操作超时').show().fadeOut(5000);
+            }).always(function(){
+                $.unblock();
             });
         }
 
@@ -495,6 +499,7 @@
             }
             var formData = new FormData();
             formData.append('uploadfile', uploadfile);
+            $.block();
             $.ajax({
                 url: '{{config.url.upload}}/file',
                 data: formData,
@@ -527,10 +532,13 @@
                 }
             }).fail(function () {
                 alert('上传超时，请稍后再试！');
+            }).always(function(){
+                $.unblock();
             });
         });
         $('form').submit(function (e) {
             e.preventDefault();
+            $('form').block();
             $.ajax({
                 url: '{{config.url.api}}classroom/put',
                 type:'post',
@@ -551,6 +559,8 @@
                 }
             }).fail(function () {
                 alert('修改超时，请重新提交！');
+            }).always(function(){
+                $('form').unblock();
             });
             return false;
         });

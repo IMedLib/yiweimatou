@@ -253,6 +253,7 @@
 <script src="/js/lib/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/js/lib/template.js"></script>
 <script src="/js/lib/jquery.jqpagination.js"></script>
+<script type="text/javascript" src="/js/lib/jquery.blockUI.js"></script>
 <script id="stuTemplate" type="text/html">
     [each list as user]
     <div class="col-sm-4" id="stu[user.id]">
@@ -580,13 +581,14 @@
             }
             var formData = new FormData();
             formData.append('uploadfile', uploadfile);
+            $('#cover').block();
             $.ajax({
                 url: '{{config.url.upload}}/file',
                 data: formData,
                 processData: false,
                 contentType: false,
                 type: 'POST',
-                timeout: 300000
+                timeout: 600000
             }).done(function (data) {
                 if (data.code === 0) {
                     $.ajax({
@@ -612,6 +614,8 @@
                 }
             }).fail(function () {
                 alert('上传超时，请稍后再试！');
+            }).always(function(){
+                $('#cover').unblock();
             });
         });
         $('#addClassForm').submit(function (e) {
@@ -624,13 +628,14 @@
                     formData = new FormData();
 
             formData.append('uploadfile', file);
+            $('#addClassForm').block();
             $.ajax({
                 url: '{{config.url.upload}}/file/',
                 data: formData,
                 processData: false,
                 contentType: false,
                 type: 'POST',
-                timeout: 300000
+                timeout: 600000
             }).done(function (data) {
                 if (data.code === 0) {
                     $.ajax({
@@ -662,11 +667,14 @@
                 }
             }).fail(function () {
                 alert('文件上传超时！');
+            }).always(function(){
+                $('#addClassForm').unblock();
             });
             return false;
         });
         $('#editInfoForm').submit(function (e) {
             e.preventDefault();
+            $('#editInfoForm').block();
             $.ajax({
                 url: '{{config.url.api}}lesson/put',
                 type:'post',
@@ -687,6 +695,8 @@
                 }
             }).fail(function () {
                 alert('修改超时，请重新提交！');
+            }).always(function(){
+                $('#editInfoForm').unblock();
             });
             return false;
         });
