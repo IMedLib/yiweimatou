@@ -41,6 +41,11 @@ module.exports = {
             }).catch(function(err){
                 console.error('userYunbook/get',err.message);
             });
+            if(typeof yunbook ==='undefined' || key !== yunbook.uid){
+                this.redirect('/index');
+            }else{
+                admin = true;
+            }
         }else{
             url = config.url.inside.api+'yunbook/put';
             yield request({
@@ -58,41 +63,22 @@ module.exports = {
                 }
             }).catch(function(err){
                 console.error('yunbook/get',err.message);
-            }).then(function(){
-               request({
-                   uri:config.url.inside.api+'userYunbook/get',
-                   qs:{
-                       yid:yid
-                   },gzip:true,json:true
-               }).then(function(data){
-                   if(data.code === 0){
-                       yunbook = data.get;
-                   }else {
-                       console.error('userYunbook/get',data);
-                   }
-               }).catch(function(err){
-                   console.error('userYunbook/get',err.message);
-               });
             });
-        }
-        if (typeof yunbook !== 'undefined') {
             yield request({
-                uri: config.url.inside.upload + 'PixelLngLat',
-                qs: {
-                    pixelX: parseFloat(yunbook.width / 2),
-                    pixelY: parseFloat(yunbook.height / 2),
-                    zoom: yunbook.zoomnum
-                },
-                gzip: true,
-                json: true
-            }).then(function (data) {
-                lat = data.lat;
-                lng = data.lng;
-            }).catch(function (err) {
-                console.error(err.message);
+                uri:config.url.inside.api+'userYunbook/get',
+                qs:{
+                    yid:yid
+                },gzip:true,json:true
+            }).then(function(data){
+                if(data.code === 0){
+                    yunbook = data.get;
+                }else {
+                    console.error('userYunbook/get',data);
+                }
+            }).catch(function(err){
+                console.error('userYunbook/get',err.message);
             });
         }
-
         if(typeof id !== 'undefined' && typeof lessonId !== 'undefined'){
             yield request({
                uri:config.url.inside.api+'lesson/get',
@@ -131,6 +117,26 @@ module.exports = {
             }).catch(function(err){
                 console.error('lessonAdmin/list',err.message);
             })
+        }
+        if(!admin){
+            this.redirect('/index');
+        }
+        if (typeof yunbook !== 'undefined') {
+            yield request({
+                uri: config.url.inside.upload + 'PixelLngLat',
+                qs: {
+                    pixelX: parseFloat(yunbook.width / 2),
+                    pixelY: parseFloat(yunbook.height / 2),
+                    zoom: yunbook.zoomnum
+                },
+                gzip: true,
+                json: true
+            }).then(function (data) {
+                lat = data.lat;
+                lng = data.lng;
+            }).catch(function (err) {
+                console.error(err.message);
+            });
         }
         yield this.render('yunbook/edit',{
             yunbook:yunbook,
@@ -248,7 +254,9 @@ module.exports = {
         yield this.render('yunbook/add', {
             title: "新建云板书",
             logo: "云板书",
-            config: config,
+            config: {
+                url:config.url.outside
+            },
             key: key,
             token: token
         });

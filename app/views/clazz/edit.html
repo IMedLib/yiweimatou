@@ -43,7 +43,7 @@
                 <ul class="collapse" id="collapse-yunbook">
                     <li><a href="#addYunbook" data-toggle="tab">新增云板书</a></li>
                     <li>
-                        <a href="#yunbook" data-toggle="tab">删除云板书</a></li>
+                        <a href="#yunbook" data-toggle="tab">管理云板书</a></li>
                 </ul>
             </li>
         </ul>
@@ -255,6 +255,7 @@
             var checked = $(':radio:checked').eq(0);
             $.ajax({
                 url: '{{config.url.api}}yunbook/add',
+                type:'post',
                 data: {
                     cid: '{{clazz.cid}}',
                     yid: checked.val(),
@@ -383,14 +384,14 @@
                     var $yunbookEdit = $('#yunbookEdit');
                     if (data.get.id !== undefined) {
                         $yunbookEdit.html('<div class="col-sm-3 file"><a href="javascript:yunbookDel(' + data.get.id +
-                                ')" class="pull-right color-red"><i class="fa fa-close"></i></a>' +
-                                '<a href="/yunbook/show?yid=' + data.get.yid + '">'
+                                ')" class="pull-right color-red"><i class="fa fa-close"></i></a>'
                                 + '<div class="icon">'
                                 + '<i class="fa fa-book"></i>'
                                 + '</div>'
                                 + '<div class="file-name">'
-                                + data.get.title
-                                + '<br/></div> </a></div>');
+                                +'<a href="/yunbook/show?yid=' + data.get.yid + '">'
+                                + data.get.title+'</a><a class="pull-right" href="/yunbook/edit?id='+data.get.id+'">编辑</a>'
+                                + '</div></div>');
                     }
                 });
             }

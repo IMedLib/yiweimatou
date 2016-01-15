@@ -3,19 +3,21 @@
  */
 var app =  require('koa')(),
     render = require('koa-swig'),
-    //favicon = require('koa-favicon'),
-    mount = require('mount-koa-routes')
-    ;
+    favicon = require('koa-favicon'),
+    mount = require('mount-koa-routes'),
+    cache = 'memory';
 
+if(process.env.NODE_ENV.toLowerCase() != 'production') {
+    app.use(favicon(__dirname + "/public/img/logo/favicon.ico"));
+    app.use(require('koa-static')(__dirname + '/public'));
+    cache = false;
+}
 mount(app,__dirname+'/app/routes');
 app.context.render=render({
     root:__dirname+'/app/views',
     autoescape: true,
-    cache: 'memory',
+    cache: cache,
     ext: 'html'
 });
-//app.use(favicon(__dirname+"/public/img/logo/favicon.ico"));
-//app.use(require('koa-static')(__dirname+'/public'));
-
 module.exports = app;
 

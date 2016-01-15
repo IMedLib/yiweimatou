@@ -15,11 +15,11 @@
     <div class="col-sm-3">
         <ul class="list-group sidebar-nav-v1" id="siderbar">
             {%if admin > 1%}
-            <li class="list-group-item list-toggle">
+            <li class="list-group-item list-toggle active">
                 <a href="#collapse-lesson" class="accordion-toggle" data-toggle="collapse">
                     <i class="fa fa-graduation-cap"></i>&nbsp;课程管理</a>
-                <ul class="collapse" id="collapse-lesson">
-                    <li>
+                <ul class="collapse in" id="collapse-lesson">
+                    <li class="active">
                         <a href="#editInfo" data-toggle="tab" data-parent="#siderbar"> 修改信息 </a>
                     </li>
                     <li><a href="#cover" data-toggle="tab">更改封面</a></li>
@@ -34,8 +34,11 @@
                 <ul class="collapse" id="collapse-clazz">
                     <li>
                         <a href="#addClass" data-toggle="tab">
-                            <i class="fa fa-plus"></i> 添加课堂 </a>
+                            <i class="fa fa-plus"></i>&nbsp;添加课堂 </a>
                     </li>
+                    <li><a href="#classList" data-toggle="tab">
+                        <i class="fa fa-building">&nbsp;课堂列表</i>
+                    </a></li>
                 </ul>
 
             </li>
@@ -104,7 +107,6 @@
             </div>
             <div id="cover" class="tab-pane fade in">
                 <div class="row">
-                    <h3 class="page-header">预览</h3>
                     <img src="{{lesson.coverpath}}1024_512.png" class="img-responsive center-block" id="image"
                          alt="封面图片">
                 </div>
@@ -168,6 +170,10 @@
                         </footer>
                     </form>
                 </div>
+            </div>
+            <div id="classList" class="tab-pane fade in">
+                <div class="row"><div id="classes"></div></div>
+                <nav id="classPage"></nav>
             </div>
             <div id="addTeacher" class="tab-pane fade in">
                 <!--<div class="input-group">-->
@@ -254,6 +260,24 @@
 <script src="/js/lib/template.js"></script>
 <script src="/js/lib/jquery.jqpagination.js"></script>
 <script type="text/javascript" src="/js/lib/jquery.blockUI.js"></script>
+<script src="/js/lib/jquery.simplePagination.js"></script>
+<script id="classTemplate" type="text/html">
+    [each list as clazz]
+    <div class="col-sm-4">
+        <div class="file">
+                <div class="img">
+                    <img src="[clazz.coverpath]512_256.png" alt="" class="img-responsive">
+                </div>
+                <div class="file-name">
+                    <a href="/clazz/show?cid=[clazz.cid]">[clazz.title]</a>
+                    <a class="pull-right" href="/clazz/edit?cid=[clazz.cid]">编辑</a>
+                    <br/>
+                    <small>最近修改时间:[clazz.puttime]</small>
+                </div>
+        </div>
+    </div>
+    [/each]
+</script>
 <script id="stuTemplate" type="text/html">
     [each list as user]
     <div class="col-sm-4" id="stu[user.id]">
@@ -508,6 +532,59 @@
 
         '{% if admin>1 %}'
         var $inputImage = $("#inputImage"), $image = $('#image');
+        <!--edit class-->
+        function getClassCount(){
+            var c = 0;
+            $.ajax({
+                url:'{{config.url.api}}classRoom/info',
+                data:{
+                    lid:'{{lesson.lid}}'
+                },
+                async:false
+            }).done(function(data){
+                if(data.code === 0){
+                    c = data.info.Count;
+                }
+            }).fail(function(){
+               alert('获取课堂数失败!');
+            });
+            return c;
+        }
+        function getClasses(page,obj){
+            $.ajax({
+                url:'{{config.url.api}}classRoom/list',
+                data:{
+                    lid:'{{lesson.lid}}',
+                    limit:9,
+                    offset:page
+                }
+            }).done(function(data){
+                if(data.code === 0){
+                    obj.html(template('classTemplate',data));
+                }else{
+                    alert(data.msg===''?'获取课堂出错!':data.msg);
+                }
+            }).fail(function(){
+                alert('获取课堂出错!');
+            });
+        }
+        $('a[href="#classList"]').on('show.bs.tab',function(){
+            var $classes = $('#classes'),$classPage = $('#classPage');
+            if($classes.html() !='') return;
+            var count = getClassCount();
+            if(count > 0){
+                var items = Math.ceil(count/9);
+                $classPage.pagination({
+                   items:items,
+                    listStyle:"pagination",
+                    onPageClick:function(page){
+                        getClasses(page,$classes);
+                    }
+                });
+                getClasses(1,$classes);
+            }
+        });
+        <!-- end edit class-->
         <!--del teacher-->
         function getTeachers(){
             $.ajax({

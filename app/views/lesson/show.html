@@ -25,7 +25,7 @@
                     </li>
                     <li>
                         <a href="#teachers" data-toggle="tab">
-                            <i class="fa fa-user-plus"></i>&nbsp;讲师团队
+                            <i class="fa fa-users"></i>&nbsp;讲师团队
                         </a>
                     </li>
                     <li>
@@ -75,7 +75,7 @@
                         </dl>
                     </div>
                     <div class="col-md-5">
-                        <img src="{{lesson.coverpath}}256_256.png" class="img-responsive" alt="课程封面">
+                        <img src="{{lesson.coverpath}}512_256.png" class="img-responsive" alt="课程封面">
                     </div>
                 </div>
                 <hr>
@@ -254,7 +254,7 @@
                 }
             }).done(function(data){
                 if(data.code === 0){
-                    if(!data.get) {
+                    if(data.get.id !== undefined) {
                         $('#yunbook-' + cid).html('<div class="col-sm-3 file"><a href="/yunbook/show?yid=' + data.get.yid + '">'
                                 + '<div class="icon">'
                                 + '<i class="fa fa-book"></i>'
@@ -330,7 +330,7 @@
         }
         function getTeachers(object,limit,offset){
             $.ajax({
-                url: '{{config.url.api}}lessonUser/list',
+                url: '{{config.url.api}}lessonAdmin/list',
                 data: {
                     offset: offset,
                     limit: limit,
