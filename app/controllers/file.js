@@ -13,7 +13,7 @@ module.exports = {
             this.redirect('/login?redirect='+encodeURIComponent(this.url));
         }
         yield request({
-            uri:config.url.api+'userfile/list',
+            uri:config.url.inside.api+'userfile/list',
             qs:{
                 uid:key
             },gzip:true,json:true
@@ -30,7 +30,9 @@ module.exports = {
             title:'我的文件',
             logo:'资源加',
             files:files,
-            config:config,
+            config:{
+                url:config.url.outside
+            },
             key:key
         });
     },
@@ -45,7 +47,9 @@ module.exports = {
             logo:'资源加',
             key:key,
             token:token,
-            config:config
+            config:{
+                url:config.url.outside
+            }
         })
     }
 };

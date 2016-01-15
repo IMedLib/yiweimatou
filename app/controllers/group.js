@@ -9,7 +9,7 @@ module.exports = {
     index: function *() {
         var groups;
         yield request({
-            uri: config.url.api + '/Organ/List/',
+            uri: config.url.inside.api + '/Organ/List/',
             qs: {
                 offset: 1,
                 limit: 9
@@ -29,7 +29,7 @@ module.exports = {
             title: '机构列表',
             logo: '机构号',
             groups: groups,
-            domain:config.url.domain
+            domain:config.url.outside.domain
         });
     },
     show: function*() {
@@ -38,7 +38,7 @@ module.exports = {
             this.redirect('/group');
         }
         yield request({
-            uri: config.url.api + "Organ/get",
+            uri: config.url.inside.api + "Organ/get",
             gzip: true,
             json: true,
             qs: {
@@ -64,7 +64,7 @@ module.exports = {
             title: group.title,
             logo: '机构号',
             group:group,
-            domain:config.url.domain,
+            domain:config.url.outside.domain,
             admin:admin,
             key:key
         });
@@ -76,7 +76,7 @@ module.exports = {
         }
         var gourpList;
         yield request({
-            uri: config.url.api + "/Organ/List/",
+            uri: config.url.inside.api + "/Organ/List/",
             gzip: true,
             json: true,
             qs: {
@@ -113,7 +113,7 @@ module.exports = {
             this.redirect('/index');
         }
         yield request({
-           uri:config.url.api+"userInfo/info",
+           uri:config.url.inside.api+"userInfo/info",
             gzip:true,json:true
         }).then(function(data){
             if(data.code === 0){
@@ -125,7 +125,7 @@ module.exports = {
             console.error("userInfo/info",err.message);
         });
         yield request({
-            uri:config.url.api+"userInfo/list",
+            uri:config.url.inside.api+"userInfo/list",
             qs:{
                 limit:9,
                 offset:1
@@ -144,7 +144,9 @@ module.exports = {
             logo:'机构号',
             count:count,
             users:users,
-            config:config,
+            config:{
+                url:config.url.outside
+            },
             key:key,
             token:token
         })

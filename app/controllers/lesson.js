@@ -9,7 +9,7 @@ module.exports = {
         var oid = this.query.oid,lessons;
         oid = oid === 'undefined'?'':oid;
         yield request({
-            uri:config.url.api+'/lesson/list',
+            uri:config.url.inside.api+'/lesson/list',
             qs:{
                 limit:9,
                 offset:1,
@@ -28,7 +28,7 @@ module.exports = {
             title:'课程列表',
             logo:'云课程',
             lessons:lessons,
-            domain:config.url.domain
+            domain:config.url.outside.domain
         })
     },
     edit: function *() {
@@ -42,7 +42,7 @@ module.exports = {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri: config.url.api + 'Lesson/Get/',
+            uri: config.url.inside.api + 'Lesson/Get/',
             qs: {
                 lid: lid
             }, gzip: true, json: true
@@ -58,7 +58,7 @@ module.exports = {
         //如果不是主讲教师，继续查是不是讲师
         if (key !== lesson.uid.toString()) {
             yield request({
-                uri: config.url.api + '/Lessonadmin/List/',
+                uri: config.url.inside.api + '/Lessonadmin/List/',
                 qs: {
                     lid: lid,
                     state: 4//已审核
@@ -83,7 +83,9 @@ module.exports = {
             token: token,
             lesson: lesson,
             admin:admin,
-            config:config
+            config:{
+                url:config.url.outside
+            }
         });
     },
     me:function *(){
@@ -93,7 +95,7 @@ module.exports = {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-           uri:config.url.api+'lesson/info',
+           uri:config.url.inside.api+'lesson/info',
             qs:{
                 uid:key
             },gzip:true,json:true
@@ -107,7 +109,7 @@ module.exports = {
             console.error('lesson/info',err.message);
         });
         yield request({
-            uri:config.url.api+'/lesson/list',
+            uri:config.url.inside.api+'/lesson/list',
             qs:{
                 uid:key,
                 limit:9,
@@ -137,7 +139,7 @@ module.exports = {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri: config.url.api + 'lessonAdmin/list',
+            uri: config.url.inside.api + 'lessonAdmin/list',
             qs: {
                 uid: key
             }, gzip: true, json: true
@@ -153,7 +155,7 @@ module.exports = {
         if(lids!=='undefined'&&lids.length >0){
             lids.map(function(ele){
                 request({
-                    uri:config.url.api+'/lesson/get',
+                    uri:config.url.inside.api+'/lesson/get',
                     qs:{
                         lid:ele.lid
                     },gzip:true,json:true
@@ -190,7 +192,7 @@ module.exports = {
         }
         //获取课堂列表
         yield request({
-            uri:config.url.api+'Classroom/List/',
+            uri:config.url.inside.api+'Classroom/List/',
             qs:{
                 offset:1,
                 limit:50,
@@ -207,7 +209,7 @@ module.exports = {
         });
         //获取课程详情
         yield request({
-            uri: config.url.api + '/Lesson/Get/',
+            uri: config.url.inside.api + '/Lesson/Get/',
             qs: {
                 lid: lid
             },
@@ -228,7 +230,7 @@ module.exports = {
         //如果不是主讲教师，继续查是不是讲师
         if (key !== lesson.uid.toString()) {
             yield request({
-                uri: config.url.api + '/Lessonadmin/List/',
+                uri: config.url.inside.api + '/Lessonadmin/List/',
                 qs: {
                     lid: lid,
                     state: 4//已审核
@@ -245,7 +247,7 @@ module.exports = {
         }
         //获取机构信息
         yield request({
-            uri:config.url.api+'organ/get',
+            uri:config.url.inside.api+'organ/get',
             qs:{
                 oid:lesson.oid
             },gzip:true,json:true
@@ -265,7 +267,9 @@ module.exports = {
             lesson: lesson,
             key: key,
             token: token,
-            config: config,
+            config: {
+                url:config.url.outside
+            },
             clazzes:clazzes,
             group:group
         });
@@ -281,7 +285,7 @@ module.exports = {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri:config.url.api+'Organ/Get/',
+            uri:config.url.inside.api+'Organ/Get/',
             qs:{
                 oid:oid
             },gzip:true,json:true
@@ -298,7 +302,9 @@ module.exports = {
             title: '添加课程',
             logo: '云课程加',
             group: group,
-            config: config,
+            config: {
+                url:config.url.outside
+            },
             key: key,
             token: token
         });
