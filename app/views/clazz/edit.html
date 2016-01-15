@@ -561,6 +561,7 @@
         }
         $.ajax({
             url: '{{config.url.api}}file/del',
+            type:'post',
             data: {
                 id: id,
                 key: '{{key}}',
@@ -584,6 +585,7 @@
         }
         $.ajax({
             url: '{{config.url.api}}yunbook/del',
+            type:'post',
             data: {
                 id: id,
                 key: "{{key}}",

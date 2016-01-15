@@ -311,6 +311,7 @@
         }
         $.ajax({
             url:'{{config.url.api}}lessonUser/Del/',
+            type:'post',
             data:{
                 id:id,
                 key:'{{key}}',
@@ -335,6 +336,7 @@
         }
         $.ajax({
            url:'{{config.url.api}}lessonAdmin/Del/',
+            type:'post',
             data:{
                 id:id,
                 key:'{{key}}',
@@ -444,6 +446,7 @@
             var $error = $('#error2'), $msg = $('#msg2');
             $.ajax({
                 url: '{{config.url.api}}lessonUser/Add/',
+                type:'post',
                 data: {
                     lid: '{{lesson.lid}}',
                     uid: uid,
@@ -549,6 +552,7 @@
             var $error = $('#error'), $msg = $('#msg');
             $.ajax({
                 url: '{{config.url.api}}lessonAdmin/Add/',
+                type:'post',
                 data: {
                     lid: '{{lesson.lid}}',
                     uid: uid,
@@ -587,6 +591,7 @@
                 if (data.code === 0) {
                     $.ajax({
                         url: '{{config.url.api}}/lesson/put',
+                        type:'post',
                         data: {
                             cid: '{{lesson.cid}}',
                             coverpath: '{{config.url.domain}}cover/' + data.cover_path,
@@ -630,6 +635,7 @@
                 if (data.code === 0) {
                     $.ajax({
                         url: '{{config.url.api}}/Classroom/Add/',
+                        type:'post',
                         data: {
                             lid: '{{lesson.lid}}',
                             title: title,
@@ -663,6 +669,7 @@
             e.preventDefault();
             $.ajax({
                 url: '{{config.url.api}}lesson/put',
+                type:'post',
                 data: {
                     lid: '{{lesson.lid}}',
                     starttime: $('#lessonStart').val(),

@@ -2,7 +2,7 @@
  * Created by zhangruofan on 2016/1/5.
  */
 var request = require('request-promise'),
-    config = require('../../configs/main'),
+    config = require('../../configs'),
     key, token;
 module.exports={
     edit:function *(){
@@ -54,7 +54,9 @@ module.exports={
             lesson:lesson,
             title:clazz.title,
             logo:'云课堂',
-            config:config
+            config:{
+                url:config.url
+            }
         })
     }
 };

@@ -2,7 +2,7 @@
  * Created by zhangruofan on 2016/1/4.
  */
 var request = require('request-promise'),
-    config = require('../../configs/main'),
+    config = require('../../configs/index'),
     key, token;
 
 module.exports = {
@@ -93,7 +93,6 @@ module.exports = {
             title: '我管理的机构',
             groupList: gourpList,
             logo: "机构号",
-            config: config,
             key:key
         });
     },

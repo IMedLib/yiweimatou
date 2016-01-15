@@ -197,6 +197,7 @@
                     if (data.code === 0) {
                         $.ajax({
                             url: '{{config.url.api}}/Lesson/Add/',
+                            type:'post',
                             data: {
                                 key: '{{key}}',
                                 token: '{{token}}',

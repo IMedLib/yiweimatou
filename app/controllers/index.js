@@ -1,7 +1,7 @@
 /**
  * Created by zhangruofan on 2015/12/28.
  */
-var config=require('../../configs/main.js'),
+var config=require('../../configs/index.js'),
     request = require('request-promise');
 module.exports={
     index:function *(){
