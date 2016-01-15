@@ -3,7 +3,7 @@
  */
 var app =  require('koa')(),
     render = require('koa-swig'),
-    favicon = require('koa-favicon'),
+    //favicon = require('koa-favicon'),
     mount = require('mount-koa-routes')
     ;
 
@@ -14,8 +14,8 @@ app.context.render=render({
     cache: 'memory',
     ext: 'html'
 });
-app.use(favicon(__dirname+"/public/img/logo/favicon.ico"));
-app.use(require('koa-static')(__dirname+'/public'));
+//app.use(favicon(__dirname+"/public/img/logo/favicon.ico"));
+//app.use(require('koa-static')(__dirname+'/public'));
 
 module.exports = app;
 
