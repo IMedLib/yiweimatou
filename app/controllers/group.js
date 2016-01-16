@@ -33,7 +33,7 @@ module.exports = {
         });
     },
     show: function*() {
-        var oid = this.query.oid,group,admin=false;
+        var oid = this.query.oid,group,admin=false,lessons;
         if (typeof oid === 'undefined'){
             this.redirect('/group');
         }
@@ -56,6 +56,22 @@ module.exports = {
         if (typeof group === 'undefined' || group === '{}'){
             this.redirect('/group');
         }
+        yield request({
+            uri:config.url.inside.api+'/lesson/list',
+            qs:{
+                limit:3,
+                offset:1,
+                oid:oid
+            },gzip:true,json:true
+        }).then(function(data){
+            if(data.code === 0){
+                lessons = data.list;
+            }else{
+                console.error('/lesson/list',data);
+            }
+        }).catch(function(err){
+            console.error('/lesson/list',err.message);
+        });
         key = this.cookies.get('key');
         if(typeof key !== 'undefined' && key === group.uid.toString()){
                 admin=true;
@@ -66,7 +82,8 @@ module.exports = {
             group:group,
             domain:config.url.outside.domain,
             admin:admin,
-            key:key
+            key:key,
+            lessons:lessons
         });
     },
     me: function *() {

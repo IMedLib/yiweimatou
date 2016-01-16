@@ -5,9 +5,10 @@ var app =  require('koa')(),
     render = require('koa-swig'),
     favicon = require('koa-favicon'),
     mount = require('mount-koa-routes'),
-    cache = 'memory';
+    cache = 'memory'
+    ,env  = process.env.NODE_ENV || 'develop';
 
-if(process.env.NODE_ENV.toLowerCase() != 'production') {
+if(env.toLowerCase() != 'production') {
     app.use(favicon(__dirname + "/public/img/logo/favicon.ico"));
     app.use(require('koa-static')(__dirname + '/public'));
     cache = false;
