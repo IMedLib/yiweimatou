@@ -28,9 +28,29 @@
 
 <hr>
 <div class="row">
-    <a href="#" class="btn-u pull-right">显示全部</a>
+    <a href="/lesson?oid={{group.oid}}" class="btn-u pull-right">显示全部</a>
     <h3>热门课程</h3>
+</div>
+<div class="row">
+    {% for lesson in lessons %}
+    <div class="col-sm-4">
 
+        <div class="file">
+            <a href="/lesson/show?lid={{lesson.lid}}">
+                <span class="corner"></span>
+                <div class="image">
+                    <img src="{{lesson.coverpath}}512_256.png" class="img-responsive" alt="">
+                </div>
+                <div class="file-name">
+                    {{lesson.title}}
+                    <br/>
+                    <small>{{lesson.puttime}}</small>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    {% endfor %}
 </div>
 <hr>
 <div class="row">

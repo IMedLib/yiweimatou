@@ -6,6 +6,7 @@ var router = require('koa-router')(),
 
 router.get('/edit',lessonCtrl.edit);
 router.get('/',lessonCtrl.index);
+router.get('/index',lessonCtrl.index);
 router.get('/show',lessonCtrl.show);
 router.get('/me',lessonCtrl.me);
 router.get('/add',lessonCtrl.add);

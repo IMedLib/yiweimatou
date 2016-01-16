@@ -47,7 +47,7 @@ module.exports = {
                 admin = true;
             }
         }else{
-            url = config.url.inside.api+'yunbook/put';
+            url = config.url.outside.api+'yunbook/put';
             yield request({
                 uri:config.url.inside.api+'yunbook/get',
                 qs:{
