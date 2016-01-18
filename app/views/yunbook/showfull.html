@@ -13,10 +13,57 @@
         #map {
             height: 100%;
         }
+        #tools {
+            position: absolute;
+            z-index: 999;
+            margin-left: 35px;
+        }
+        #tools ul .menu{
+            display: inline-block;
+            width: 50px;height: 20px;
+            border: 1px solid #000;
+            text-align: center;
+            cursor: pointer;
+            background-color: #fff;
+        }
+        #tools ul li{
+            display: inline-block;
+            width: 50px;
+            height: 20px;
+            line-height: 18px;
+        }
+        .green{background-color: #72c02c !important;}
     </style>
 </head>
 <body>
-    <div id="map"></div>
+<div id="tools">
+    <ul>
+        <li class="menu">移动</li>
+        <li class="menu">标注</li>
+        <li class="menu">涂鸦</li>
+        <li class="menu">区域</li>
+        <li class="menu">直线</li>
+        <li class="menu">矩形</li>
+        <li>
+            <select id="color">
+                <option value="rgba(0,0,0,.5)">黑</option>
+                <option value="rgba(255, 0, 0, 0.5)">红</option>
+                <option value="rgba(0, 255, 0, 0.5)">绿</option>
+                <option value="rgba(0, 0, 255, 0.5)">蓝</option>
+            </select>
+        </li>
+        <li>
+            <select id="strokeWeight">
+                <option value="2">细</option>
+                <option value="8">中</option>
+                <option value="15">粗</option>
+                <option value="25">极粗</option>
+            </select>
+        </li>
+
+    </ul>
+</div>
+<div id="map"></div>
 </body>
 <script src="/js/lib/jquery.min.js"></script>
 <script src="/js/lib/googlemap/mapapi.min.js"></script>
@@ -24,17 +71,51 @@
 <script>
     $(document).ready(function () {
         var lat = parseFloat('{{lat}}'), lng = parseFloat('{{lng}}'), map;
-        var polyOptions = {
-            fillColor: "#ff7f00",
-            fillOpacity: 0.45,
-            strokeColor: "rgba(255, 0, 0, 0.8)",
-            strokeOpacity: 0.4,
-            strokeWeight: 5,
-            editable: false,
-            draggable: false,
-            clickable: false
-        };
+//        var polyOptions = {
+//            fillColor: "#ff7f00",
+//            fillOpacity: 0.45,
+//            strokeColor: "rgba(255, 0, 0, 0.8)",
+//            strokeOpacity: 0.4,
+//            strokeWeight: 5,
+//            editable: false,
+//            draggable: false,
+//            clickable: false
+//        };
         initMap();
+        initTools();
+        function initTools(){
+            $('#tools').find('.menu').click(function() {
+                pencil = 0;
+                if ($(this).html() == '涂鸦') {
+                    map.setOptions({
+                        draggable:false
+                    });
+                    $('.gmnoprint:last').children('div:eq(0)').find('div').click();
+                    pencil = 1;
+                } else if ($(this).html() == '移动') {
+                    map.setOptions({
+                        draggable:true
+                    });
+                    $('.gmnoprint:last').children('div:eq(0)').find('div').click();
+                } else if ($(this).html() == '标注') {
+                    $('.gmnoprint:last').children('div:eq(1)').find('div').click();
+                }else if ($(this).html() == '区域') {
+                    map.setOptions({
+                        draggable:false
+                    });
+                    $('.gmnoprint:last').children('div:eq(0)').find('div').click();
+                    pencil = 2;
+                } else if ($(this).html() == '直线') {
+                    $('.gmnoprint:last').children('div:eq(3)').find('div').click();
+                } else if ($(this).html() == '矩形') {
+                    $('.gmnoprint:last').children('div:eq(4)').find('div').click();
+                } else {
+                    return;
+                }
+                $('#tools').find('li').removeClass('green');
+                $(this).addClass('green');
+            });
+        }
         function initMap() {
             var mapOptions = {
                 center: {lat: lat, lng: lng},
@@ -51,7 +132,7 @@
                 },
                 tileSize: new google.maps.Size(256, 256),
                 maxZoom: parseInt('{{yunbook.zoomnum}}', 10),
-                minZoom:3,
+                minZoom: 3,
                 radius: 1738000,
                 name: '云板书'
             });
@@ -62,10 +143,10 @@
                 //drawingMode: google.maps.drawing.OverlayType.MARKER,
                 drawingControl: true,
                 drawingControlOptions: {
-                    position: google.maps.ControlPosition.TOP_LEFT,
+                    position: google.maps.ControlPosition.BOTTOM_LEFT,
                     drawingModes: [
                         google.maps.drawing.OverlayType.MARKER,
-                        google.maps.drawing.OverlayType.CIRCLE,
+//                        google.maps.drawing.OverlayType.CIRCLE,
                         google.maps.drawing.OverlayType.POLYGON,
                         google.maps.drawing.OverlayType.POLYLINE,
                         google.maps.drawing.OverlayType.RECTANGLE
@@ -82,13 +163,46 @@
                 }
             });
             drawingManager.setMap(map);
+            setTimeout("$('.gmnoprint:last').hide();", 500);
+            $('#color').change(function() {
+                changeDraw()
+            });
+            $('#strokeWeight').change(function() {
+                changeDraw()
+            });
+            function changeDraw() {
+                var $color = $('#color').val(),$strokeWeight = $('#strokeWeight').val();
+                drawingManager.setOptions({
+                    polylineOptions: {
+                        strokeColor: $color,
+                        fillColor: $color,
+                        strokeWeight: $strokeWeight,
+                        clickable: false,
+                        editable: false
+                    },
+                    rectangleOptions: {
+                        strokeColor: $color,
+                        fillColor: $color,
+                        strokeWeight: $strokeWeight,
+                        clickable: false,
+                        editable: false
+                    }
+                });
+            }
             google.maps.event.addDomListener(map.getDiv(), 'mousedown', function (e) {
-                //do it with the right mouse-button only
-                if (e.button != 2) {
+                if (e.button != 0 || pencil == 0) {
                     return false;
                 }
-
-                var poly = new google.maps.Polyline(polyOptions);
+                var $color = $('#color').val();
+                var poly = new google.maps.Polyline({
+                    map:map,
+                    editable: false,
+                    draggable: false,
+                    clickable: false,
+                    fillColor: $color,
+                    strokeColor: $color,
+                    strokeWeight: $('#strokeWeight').val()
+                });
                 poly.setMap(map);
 
                 var move = google.maps.event.addListener(map, 'mousemove', function (e) {
@@ -97,11 +211,19 @@
                 //mouseup-listener
                 google.maps.event.addListenerOnce(map, 'mouseup', function (e) {//addListenerOnce
                     google.maps.event.removeListener(move);
-                    poly.type = 'polyline';
-                    poly.uid=key;
-                    BlitzMap.push(poly);
+                    var $color = $('#color').val();
+                    if (pencil == 2) {
+                        var path = poly.getPath();
+                        poly = new google.maps.Polygon({
+                            map: map,
+                            path: path,
+                            strokeColor: $color,
+                            fillColor: $color,
+                            strokeWeight: $('#strokeWeight').val()
+                        });
+                        poly.setMap(map);
+                    }
                 });
-
             });
         }
     });

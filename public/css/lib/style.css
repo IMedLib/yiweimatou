@@ -1644,3 +1644,23 @@ img.img-mouse {
 	font-style: normal;
 	float:right;!important;
 }
+#tools {
+	position: absolute;
+	z-index: 999;
+	margin-left: 35px;
+}
+#tools ul .menu{
+	display: inline-block;
+	width: 50px;height: 20px;
+	border: 1px solid #000;
+	text-align: center;
+	cursor: pointer;
+	background-color: #fff;
+}
+#tools ul li{
+	display: inline-block;
+	width: 50px;
+	height: 20px;
+	line-height: 18px;
+}
+.green{background-color: #72c02c !important;}

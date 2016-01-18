@@ -190,6 +190,7 @@ module.exports = {
             }).catch(function (err) {
                 console.error(err.message);
             });
+        }else{
         }
         yield this.render('yunbook/show', {
             title: yunbook.title,
