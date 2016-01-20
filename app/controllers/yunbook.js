@@ -41,7 +41,7 @@ module.exports = {
             }).catch(function(err){
                 console.error('userYunbook/get',err.message);
             });
-            if(typeof yunbook ==='undefined' || key !== yunbook.uid){
+            if(typeof yunbook ==='undefined' || key !== yunbook.uid.toString()){
                 this.redirect('/index');
             }else{
                 admin = true;
