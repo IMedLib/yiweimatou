@@ -48,21 +48,13 @@
 <script>
     $(document).ready(function () {
         var lat = parseFloat('{{lat}}'), lng = parseFloat('{{lng}}'), map,pencil;
-//        var polyOptions = {
-//            fillColor: "#ff7f00",
-//            fillOpacity: 0.45,
-//            strokeColor: "rgba(255, 0, 0, 0.8)",
-//            strokeOpacity: 0.4,
-//            strokeWeight: 5,
-//            editable: false,
-//            draggable: false,
-//            clickable: false
-//        };
         $('#map').attr('style', 'height:' + 0.7 * document.body.scrollHeight + "px");
         initMap();
         initTools();
         function initTools(){
-            $('#tools').find('.menu').click(function() {
+            var tooles = $('#tools');
+            tooles.find('li').eq(0).addClass('green');
+            tooles.find('.menu').click(function() {
                 pencil = 0;
                 if ($(this).html() == '涂鸦') {
                     map.setOptions({
@@ -90,7 +82,7 @@
                 } else {
                     return;
                 }
-                $('#tools').find('li').removeClass('green');
+                tooles.find('li').removeClass('green');
                 $(this).addClass('green');
             });
         }
