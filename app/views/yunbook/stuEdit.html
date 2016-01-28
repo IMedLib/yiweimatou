@@ -8,104 +8,86 @@
 {% block breadcrumbs %}
 <li><a href="/index">首页</a></li>
 <li><a href="/yunbook">云板书</a></li>
-<li class="active">编辑{{yunbook.title}}</li>
+<li class="active">添加标注</li>
 {% endblock %}
 
 {%block body%}
-<div class="tab-v1 margin-bottom-10">
-    <ul class="nav nav-tabs">
-        <li>
-            <a href="#formTab" data-toggle="tab">编辑信息</a>
-        </li>
-        <li class="active">
-            <a href="#mapTab" data-toggle="tab">编辑批注</a>
-        </li>
-    </ul>
-</div>
-
-<div class="tab-content">
-    <div id="mapTab" class="tab-pane fade in active">
-        <div hidden="hidden">
-            <div class="summernote"></div>
-            <div class="button-group">
-                <button id="cancel" class="btn-u btn-u-default">取消</button>
-                <button id="submit" class="btn-u">提交</button>
+    <div hidden="hidden">
+        <div class="summernote"></div>
+        <div class="button-group">
+            <button id="cancel" class="btn-u btn-u-default">取消</button>
+            <button id="submit" class="btn-u">提交</button>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">
+                <a href="#collapse-group" data-toggle="collapse" class="accordion-toggle">批注分组</a>
             </div>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <div class="panel-title">
-                    <a href="#collapse-group" data-toggle="collapse" class="accordion-toggle">批注分组</a>
-                </div>
-            </div>
-            <div id="collapse-group" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <div id="multi" class="row margin-bottom-20">
-                        <div class="tile col-sm-3">
-                            <div class="tile__name">掌握</div>
-                            <ul id="group1" class="tile__list">
+        <div id="collapse-group" class="panel-collapse collapse">
+            <div class="panel-body">
+                <div id="multi" class="row margin-bottom-20">
+                    <div class="tile col-sm-3">
+                        <div class="tile__name">掌握</div>
+                        <ul id="group1" class="tile__list">
 
-                            </ul>
-                        </div>
+                        </ul>
+                    </div>
 
-                        <div class="tile col-sm-3">
-                            <div class="tile__name">熟悉</div>
-                            <ul id="group2" class="tile__list">
+                    <div class="tile col-sm-3">
+                        <div class="tile__name">熟悉</div>
+                        <ul id="group2" class="tile__list">
 
-                            </ul>
-                        </div>
+                        </ul>
+                    </div>
 
-                        <div class="tile col-sm-3">
-                            <div class="tile__name">扩展知识</div>
-                            <ul id="group3" class="tile__list">
+                    <div class="tile col-sm-3">
+                        <div class="tile__name">扩展知识</div>
+                        <ul id="group3" class="tile__list">
 
-                            </ul>
-                        </div>
-                        <div class="tile col-sm-3">
-                            <div class="tile__name">未分组</div>
-                            <ul id="group4" class="tile__list">
+                        </ul>
+                    </div>
+                    <div class="tile col-sm-3">
+                        <div class="tile__name">未分组</div>
+                        <ul id="group4" class="tile__list">
 
-                            </ul>
-                        </div>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div id="tools">
-        <ul>
-            <li class="menu">移动</li>
-            <li class="menu">标注</li>
-            <li class="menu">涂鸦</li>
-            <li class="menu">区域</li>
-            <li class="menu">直线</li>
-            <li class="menu">矩形</li>
-            <li>
-                <select id="color">
-                    <option value="rgba(0,0,0,.5)">黑</option>
-                    <option value="rgba(255, 0, 0, 0.5)">红</option>
-                    <option value="rgba(0, 255, 0, 0.5)">绿</option>
-                    <option value="rgba(0, 0, 255, 0.5)">蓝</option>
-                </select>
-            </li>
-            <li>
-                <select id="strokeWeight">
-                    <option value="2">细</option>
-                    <option value="8">中</option>
-                    <option value="15">粗</option>
-                    <option value="25">极粗</option>
-                </select>
-            </li>
+<div id="tools">
+    <ul>
+        <li class="menu">移动</li>
+        <li class="menu">标注</li>
+        <li class="menu">涂鸦</li>
+        <li class="menu">区域</li>
+        <li class="menu">直线</li>
+        <li class="menu">矩形</li>
+        <li>
+            <select id="color">
+                <option value="rgba(0,0,0,.5)">黑</option>
+                <option value="rgba(255, 0, 0, 0.5)">红</option>
+                <option value="rgba(0, 255, 0, 0.5)">绿</option>
+                <option value="rgba(0, 0, 255, 0.5)">蓝</option>
+            </select>
+        </li>
+        <li>
+            <select id="strokeWeight">
+                <option value="2">细</option>
+                <option value="8">中</option>
+                <option value="15">粗</option>
+                <option value="25">极粗</option>
+            </select>
+        </li>
 
-        </ul>
-    </div>
-    <div id="map"></div>
-    <a href="/yunbook/showfull?yid={{yunbook.yid}}" target="_blank" class="btn-u margin-top-10">全屏显示</a>
-    <button id="save" class="pull-right btn-u margin-top-10">保存更改</button>
-    <div id="formTab" class="tab-pane fade in">
-    </div>
+    </ul>
 </div>
-
+<div id="map"></div>
+<a href="/yunbook/showfull?yid={{yunbook.yid}}" target="_blank" class="btn-u margin-top-10">全屏显示</a>
+<button id="save" class="pull-right btn-u margin-top-10">保存更改</button>
 {%endblock%}
 
 {%block js%}
@@ -122,6 +104,7 @@
                 , key = '{{key}}', token = "{{token}}", $summernote = $('.summernote')
                 , $cancel = $('#cancel'), $submit = $('#submit'), marker, container = document.getElementById('multi'),
                 mapData = replaceAll('{{mapData}}', '&quot;', '"'),
+                tmapData = replaceAll('{{tmapData}}','&quot;', '"'),
                 pencil = 0,
                 PlyOption = {
                     title: "给批注取个名字",
@@ -139,30 +122,31 @@
 
         $('#map').attr('style', 'height:' + 0.7 * document.body.scrollHeight + "px");
         initMap();
+        BlitzMap.setMapData(map,false,tmapData);
         BlitzMap.setMapData(map, false, mapData);
         initSortable();
         initSummernote();
         initTools();
-        function initTools(){
+        function initTools() {
             $('.menu').eq(0).addClass('green');
-            $('#tools').find('.menu').click(function() {
+            $('#tools').find('.menu').click(function () {
                 pencil = 0;
                 if ($(this).html() == '涂鸦') {
                     map.setOptions({
-                        draggable:false
+                        draggable: false
                     });
                     $('.gmnoprint').eq(2).children('div:eq(0)').find('div').click();
                     pencil = 1;
                 } else if ($(this).html() == '移动') {
                     map.setOptions({
-                        draggable:true
+                        draggable: true
                     });
                     $('.gmnoprint').eq(2).children('div:eq(0)').find('div').click();
                 } else if ($(this).html() == '标注') {
                     $('.gmnoprint').eq(2).children('div:eq(1)').find('div').click();
-                }else if ($(this).html() == '区域') {
+                } else if ($(this).html() == '区域') {
                     map.setOptions({
-                        draggable:false
+                        draggable: false
                     });
                     $('.gmnoprint').eq(2).children('div:eq(0)').find('div').click();
                     pencil = 2;
@@ -177,47 +161,29 @@
                 $(this).addClass('green');
             });
         }
+
         $('#save').on('click', function () {
-            var remark = BlitzMap.toJSONString();
-            '{%if id%}'
+            var remark =  BlitzMap.toJSONString(key);
             $.ajax({
                 url: '{{url}}',
                 type: 'post',
                 data: {
                     id: '{{id}}',
                     remark: remark,
+                    cid:'{{cid}}',
+                    yid:'{{yid}}',
                     key: key,
                     token: token
                 }
             }).done(function (data) {
                 if (data.code === 0) {
-                    alert('保存成功！');
+                    swal('保存成功！','','success');
                 } else {
-                    alert(data.msg === '' ? '保存失败！' : data.msg);
+                    swal('保存失败！',data.msg,'error');
                 }
             }).fail(function () {
-                alert('保存失败，请稍后重试！');
+                swal('保存失败，请稍后重试！','','error');
             });
-            '{% else %}'
-            $.ajax({
-                url: '{{url}}',
-                type: 'POST',
-                data: {
-                    yid: '{{yunbook.yid}}',
-                    remark: remark,
-                    key: key,
-                    token: token
-                }
-            }).done(function (data) {
-                if (data.code === 0) {
-                    alert('保存成功！');
-                } else {
-                    alert('保存失败！');
-                }
-            }).fail(function () {
-                alert('保存失败，请稍后重试！');
-            });
-            '{% endif %}'
         });
         function initMap() {
             var mapOptions = {
@@ -267,14 +233,14 @@
             });
             drawingManager.setMap(map);
             setTimeout("$('.gmnoprint').eq(2).hide();", 500);
-            $('#color').change(function() {
+            $('#color').change(function () {
                 changeDraw()
             });
-            $('#strokeWeight').change(function() {
+            $('#strokeWeight').change(function () {
                 changeDraw()
             });
             function changeDraw() {
-                var $color = $('#color').val(),$strokeWeight = $('#strokeWeight').val();
+                var $color = $('#color').val(), $strokeWeight = $('#strokeWeight').val();
                 drawingManager.setOptions({
                     polylineOptions: {
                         strokeColor: $color,
@@ -292,6 +258,7 @@
                     }
                 });
             }
+
             google.maps.event.addDomListener(map.getDiv(), 'mousedown', function (e) {
                 //do it with the right mouse-button only
                 if (e.button != 0 || pencil == 0) {
@@ -299,7 +266,7 @@
                 }
                 var $color = $('#color').val();
                 var poly = new google.maps.Polyline({
-                    map:map,
+                    map: map,
                     editable: false,
                     draggable: false,
                     clickable: false,
@@ -314,7 +281,7 @@
                 });
                 google.maps.event.addListenerOnce(map, 'mouseup', function (e) {//addListenerOnce
                     google.maps.event.removeListener(move);
-                    Ply.dialog("prompt",PlyOption).done(function (obj) {
+                    Ply.dialog("prompt", PlyOption).done(function (obj) {
                         poly.type = 'polyline';
                         if (pencil == 2) {
                             var $color = $('#color').val();
@@ -326,7 +293,7 @@
                                 fillColor: $color,
                                 strokeWeight: $('#strokeWeight').val()
                             });
-                            poly.type='polygon';
+                            poly.type = 'polygon';
                         }
                         poly.uid = key;
                         poly.id = BlitzMap.getUniqueId();
@@ -334,7 +301,7 @@
                         poly.setMap(map);
                         BlitzMap.push(poly);
                         $('#group4').append('<li id="' + poly.id + '">' + poly.title + '<i class="fa fa-times"></i></li>');
-                    }).fail(function(){
+                    }).fail(function () {
                         poly.setMap(null);
                     });
 
@@ -350,12 +317,12 @@
                     $summernote.parent().show();
                     return;
                 }
-                Ply.dialog("prompt",PlyOption).done(function (obj) {
+                Ply.dialog("prompt", PlyOption).done(function (obj) {
                     event.overlay.title = obj.data.text;
                     event.overlay.id = BlitzMap.getUniqueId();
                     BlitzMap.push(event.overlay);
                     $('#group4').append('<li id="' + event.overlay.id + '">' + event.overlay.title + '<i class="fa fa-times"></i></li>');
-                }).fail(function(){
+                }).fail(function () {
                     event.overlay.setMap(null);
                 });
             });
@@ -397,26 +364,24 @@
                         });
                         if (BlitzMap.remove(overlay)) {
                             event.item.parentNode.removeChild(event.item);
-                            alert('删除成功!');
                         } else {
                             alert('删除失败!');
                         }
                     },
                     onRemove: function (event) {
                         var id = event.item.id;
-                        var group =  event.item.parentNode.parentNode.firstChild.nextSibling.innerHTML;
+                        var group = event.item.parentNode.parentNode.firstChild.nextSibling.innerHTML;
                         console.log(event.item.parentNode.parentNode.firstChild.nextSibling.innerHTML);
-                        var overlay = BlitzMap.find(function(element){
-                           if(element.id == id){
-                               return true;
-                           }
+                        var overlay = BlitzMap.find(function (element) {
+                            if (element.id == id) {
+                                return true;
+                            }
                         });
-                        if(overlay){
+                        if (overlay) {
                             var temp = overlay;
                             temp.group = group;
-                            BlitzMap.update(overlay,temp);
-                            alert('更新成功!');
-                        }else{
+                            BlitzMap.update(overlay, temp);
+                        } else {
                             alert('更新失败!');
                         }
                     }
@@ -443,13 +408,13 @@
                         infoWindow.open(map, marker);
                     });
                 }
-                Ply.dialog("prompt",PlyOption).done(function (obj) {
+                Ply.dialog("prompt", PlyOption).done(function (obj) {
                     marker.title = obj.data.text;
                     marker.content = contentString;
                     marker.id = BlitzMap.getUniqueId();
                     BlitzMap.push(marker);
                     $('#group4').append('<li id="' + marker.id + '">' + marker.title + '<i class="fa fa-times"></i></li>');
-                }).fail(function(){
+                }).fail(function () {
                     marker.setMap(null);
                     alert('新建批注失败！');
                 });

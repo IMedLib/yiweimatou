@@ -8,9 +8,9 @@
 
 /*Reset Styles
 ------------------------------------*/
-* {
-   border-radius: 0 !important;
-}
+/** {*/
+   /*border-radius: 0 !important;*/
+/*}*/
 
 a,
 a:focus, 
@@ -3403,6 +3403,7 @@ img.image-md {
 .margin-left-10 { margin-left: 10px;}
 .margin-right-5 { margin-right: 5px;}
 .margin-right-10 { margin-right: 10px;}
+.margin-right-95 {margin-right: 95px !important;}
 
 .padding-top-5 { padding-top: 5px;}
 .padding-left-5 { padding-left: 5px;}

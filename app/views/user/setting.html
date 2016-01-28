@@ -1,0 +1,103 @@
+{% extends '../layout/user_sidebar.html' %}
+{% block css %}
+<link rel="stylesheet" href="/css/lib/sky-forms.css">
+<link rel="stylesheet" href="/css/lib/custom-sky-forms.css">
+{% endblock%}
+{% block content %}
+<div class="tab-v1">
+    <ul class="nav nav-justified nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#profile">编辑个人信息</a></li>
+        <li><a data-toggle="tab" href="#face">更改头像</a></li>
+        <li><a data-toggle="tab" href="#cover">更改个人封面</a></li>
+        <li><a data-toggle="tab" href="#settings">系统设置</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade in active" id="profile">
+            <form class="sky-form">
+                <header>编辑</header>
+                <fieldset>
+                    <section>
+                        <label class="label" for="cname">姓名</label>
+                        <label class="input">
+                            <input type="text" value="{{user.cname}}" id="cname">
+                        </label>
+                    </section>
+                    <section>
+                        <label class="label" for="nickname">昵称</label>
+                        <label class="input">
+                            <input type="text" id="nickname" value="{{user.nickname}}">
+                        </label>
+                    </section>
+                    <section>
+                        <label class="label" for="studentId">学号</label>
+                        <label class="input">
+                            <input type="text" id="studentId" value="{{user.studentid}}">
+                        </label>
+                    </section>
+                </fieldset>
+                <footer>
+                    <button type="submit" class="btn-u pull-right">提交</button>
+                </footer>
+            </form>
+        </div>
+        <div class="tab-pane fade in" id="face"></div>
+        <div class="tab-pane fade in" id="cover"></div>
+        <div class="tab-pane fade in" id="settings"></div>
+    </div>
+</div>
+
+{% endblock %}
+{% block js %}
+<script type="text/javascript" src="/js/lib/jquery.blockUI.js"></script>
+<script>
+    $(document).ready(function () {
+        var key = '{{key}}',token='{{token}}';
+        jQuery('.list-group-item').on('click', function () {
+            jQuery(this).toggleClass('active');
+        });
+        $('.list-group-item').last().addClass('active');
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return r[2];
+            return null;
+        }
+        $('form').eq(0).submit(function(e){
+            e.preventDefault();
+            var $nickname = $('#nickname'),
+                    $cname = $('#cname'),$studentId=$('#studentId');
+            $('form').eq(0).block();
+            $.ajax({
+                url:'{{config.url.api}}userInfo/put',
+                data:{
+                    uid:key,
+                    nickname:$nickname.val(),
+                    cname:$cname.val(),
+                    studentId:$studentId.val(),
+                    key:key,
+                    token:token
+                }
+            }).done(function(data){
+                if(data.code === 0){
+                    swal({
+                        title:'更新成功!',
+                        type:'success'
+                    },function(){
+                        var redirect = getUrlParam('redirect');
+                        if(redirect != null){
+                            window.location.href=decodeURIComponent(redirect);
+                        }
+                    });
+
+                }else{
+                    swal('出错了',data.msg===''?'未知错误！':data.msg,'error');
+                }
+            }).fail(function(){
+                swal('出错了','网络延迟，请重新操作','error');
+            }).always(function(){
+                $('form').eq(0).unblock();
+            })
+        })
+    });
+</script>
+{% endblock %}

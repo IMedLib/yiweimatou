@@ -228,7 +228,7 @@ module.exports = {
             this.redirect('/lesson');
         }
         //如果不是主讲教师，继续查是不是讲师
-        if (key !== lesson.uid.toString()) {
+        if (lesson !== undefined && key !== lesson.uid.toString()) {
             yield request({
                 uri: config.url.inside.api + '/Lessonadmin/List/',
                 qs: {
@@ -245,6 +245,23 @@ module.exports = {
         } else {
             admin = 2;
         }
+        yield request({
+            uri:config.url.inside.api+'lessonUser/Get/',
+            qs:{
+                uid:key,
+                lid:lid
+            },gzip:true,json:true
+        }).then(function(data){
+            if(data.code === 0){
+                if(typeof data.get.id != 'undefined'){
+                    admin = -1
+                }else if(admin==0){
+                    admin = -2;
+                }
+            }
+        }).catch(function(err){
+            console.log('lessonUser/Get/',err.message);
+        });
         //获取机构信息
         yield request({
             uri:config.url.inside.api+'organ/get',

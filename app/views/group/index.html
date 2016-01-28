@@ -6,19 +6,21 @@
 {% block body %}
 <div class="row">
     {% for group in groups %}
-        <div class="col-sm-3 file">
+    <div class="col-sm-4">
+        <div class="file">
             <a href="/group/show?oid={{group.oid}}">
                 <span class="corner"></span>
-                <div class="image">
+                <div class="img">
                     <img src="{{group.coverpath}}512_256.png" class="img-responsive" alt="">
                 </div>
                 <div class="file-name">
                     {{group.title}}
                     <br/>
-                    <small>{{group.addtime}}</small>
+                    <small>{{group.puttime}}</small>
                 </div>
             </a>
         </div>
+    </div>
     {% endfor %}
 </div>
 

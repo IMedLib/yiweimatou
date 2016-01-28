@@ -7,11 +7,10 @@
 <div class="row">
     {% for lesson in lessons %}
     <div class="col-sm-4">
-
         <div class="file">
             <a href="/lesson/show?lid={{lesson.lid}}">
                 <span class="corner"></span>
-                <div class="image">
+                <div class="img">
                     <img src="{{lesson.coverpath}}512_256.png" class="img-responsive" alt="">
                 </div>
                 <div class="file-name">
@@ -22,7 +21,6 @@
             </a>
         </div>
     </div>
-
     {% endfor %}
 </div>
 <nav id="page"></nav>

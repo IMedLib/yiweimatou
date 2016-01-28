@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="/css/lib/sky-forms.css">
 <link rel="stylesheet" href="/css/lib/custom-sky-forms.css">
 <link rel="stylesheet" href="/css/lib/jqpagination.css">
+<link rel="stylesheet" href="/css/lib/table_search.css">
 {% endblock %}
 {% block breadcrumbs %}
 <li><a href="/index">首页</a></li>
@@ -57,9 +58,7 @@
                     <i class="fa fa-child"></i>&nbsp;&nbsp;学生管理</a>
                 <ul class="collapse" id="collapse-student">
                     <li>
-                        <a href="#addStu" data-toggle="tab"><i class="fa fa-plus"></i> 添加学生 </a>
-                    </li>
-                    <li><a href="#delStu" data-toggle="tab"><i class="fa fa-minus"></i> 删除学生 </a>
+                        <a href="#editStu" data-toggle="tab">&nbsp;学生管理 </a>
                     </li>
                 </ul>
             </li>
@@ -250,6 +249,39 @@
                     <a href="#" class="last" data-action="last">&raquo;</a>
                 </div>
             </div>
+            <div id="editStu" class="tab-pane fade in">
+                <div class="row search-block">
+                    <div class="col-md-6 col-md-offset-3">
+                        <h2>搜索课程学生</h2>
+                        <div class="input-group">
+                            <input id="search" type="text" class="form-control" placeholder="搜索学生姓名">
+                    <span class="input-group-btn">
+                        <button class="btn-u" type="button"><i class="fa fa-search"></i></button>
+                    </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-search-v2 panel panel-u">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-users"></i> 搜索结果 </h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <td>头像</td>
+                                    <td>姓名</td>
+                                    <td>学号</td>
+                                    <td>状态</td>
+                                    <td>操作</td>
+                                </tr>
+                            </thead>
+                            <tbody id="stuList"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <nav id="stuPage"></nav>
+            </div>
         </div>
     </div>
 </div>
@@ -329,7 +361,49 @@
     </tr>
     [/each]
 </script>
+<script id="stuListTemplate" type="text/html">
+    [each list as user]
+    <tr>
+        <td>
+            [if user.facepath!='']
+            <img class="rounded-x" src="/img/patterns/user.jpg" alt="头像">
+            [else]
+            <img class="rounded-x" src="[user.facepath]" alt="头像">
+            [/if]
+        </td>
+        <td>[user.cname]</td>
+        <td>[user.studentid]</td>
+        [if user.state==2]
+        <td>
+            <span class="label label-info">审核中</span>
+        </td>
+        <td>
+            <ul class="list-inline table-buttons">
+                <li><button onclick="apply([user.id],4)" type="button" class="btn-u btn-u-sm btn-u"><i class="fa fa-check"></i>通过</button></li>
+                <li><button onclick="apply([user.id],3)" type="button" class="btn-u-red btn-u-sm btn-u"><i class="fa fa-times"></i>拒绝</button></li>
+            </ul>
+        </td>
+        [else if user.state==3]
+        <td>
+            <span class="label label-error">审核未通过</span>
+        </td>
+        <td>
+            <ul class="list-inline table-buttons">
+                <li><button type="button" class="btn-u btn-u-sm btn-u"><i class="fa fa-check"></i>通过</button></li>
+            </ul>
+        </td>
+        [else if user.state==4]
+        <td>
+            <span class="label label-success">审核通过</span>
+        </td>
+        <td>
+        </td>
+        [/if]
+    </tr>
+    [/each]
+</script>
 <script>
+    var api = '{{config.url.api}}',key='{{key}}',token='{{token}}';
     function delStudent(id){
         if(typeof id === 'undefined'){
             return;
@@ -380,6 +454,27 @@
         });
     }
     '{% endif %}'
+    function apply(id,state){
+        if(id==undefined||state==undefined) return;
+        $.ajax({
+            url:api+'lessonUser/Put/Verify/',
+            data:{
+                id:id,
+                state:state,
+                key:key,
+                token:token
+            },
+            type:'post'
+        }).done(function(data){
+            if(data.code === 0){
+                swal('操作成功','','success');
+            }else{
+                swal('出错了!',data.msg,'error');
+            }
+        }).fail(function(){
+            swal('出错了!','','error');
+        })
+    }
     $(document).ready(function () {
         template.config('openTag', '[');
         template.config('closeTag', ']');
@@ -402,11 +497,82 @@
             forceParse: 0,
             showMeridian: 1
         });
+        <!-- manage student-->
+        $('a[href="#editStu"]').on('show.bs.tab',function(){
+            var $stuList = $('#stuList'),$stuPage = $('#stuPage');
+            if($stuList.html()!=''){
+                return false;
+            }
+            var count = getStuCount();
+            if(count > 0){
+                var items = Math.ceil(count/9);
+                $stuPage.pagination({
+                    items:items,
+                    listStyle:"pagination",
+                    onPageClick:function(page){
+                        getStuList(page,$stuList);
+                    }
+                });
+                getStuList(1,$stuList);
+            }
+        });
+        $('#search').on('click',function(){
+           getStuList(1,$('#search'));
+        });
+        function getStuList(page,object){
+            object.block();
+            $.ajax({
+                url:api+'lessonUser/list',
+                data:{
+                    cname:$('#search').val(),
+                    lid:'{{lesson.lid}}',
+                    limit:9,
+                    offset:page
+                }
+            }).done(function(data){
+                if(data.code === 0){
+                    data.list.forEach(function(element){
+                        $.getJSON(api+'userInfo/get?uid='+element.uid,function(user){
+                            if(user.code === 0) {
+                                element.facepath = user.get.facepath;
+                            }
+                        });
+                    });
+                    object.html(template('stuListTemplate',data));
+                }else{
+                    swal('出错了',data.msg,'error');
+                }
+            }).fail(function(){
+                swal('出错了','网络延迟,请稍后再试!','error');
+            }).always(function(){
+               object.unblock();
+            });
+        }
+        function getStuCount(){
+            var $search = $('#search'),count = 0;
+            $.ajax({
+                url:api+'lessonUser/info/',
+                data:{
+                    cname:$search.val()
+                },
+                async:false
+            }).done(function(data){
+                if(data.code === 0){
+                    count = data.info.Count;
+                }else{
+                    swal('出错了',data.msg,'error');
+                }
+            }).fail(function(){
+                swal('出错了','','error');
+            });
+            return count;
+        }
+        <!-- end manage student-->
         <!--del student-->
         function getStudentCount(){
             var count = 0;
             $.ajax({
-                url: '{{config.url.api}}lessonUser/info',
+                url: api+'lessonUser/info',
                 data:{
                     lid:"{{lesson.lid}}",
                     state:4
@@ -425,7 +591,7 @@
         }
         function getStudents(limit,offset){
             $.ajax({
-                url: '{{config.url.api}}lessonUser/list',
+                url: api+'lessonUser/list',
                 data: {
                     offset: offset,
                     limit: limit

@@ -2,7 +2,7 @@
 var BlitzMap =new function(){
     var mapOverlays=[];
 
-	function mapToObject(){
+	function mapToObject(uid){
         var tmpMap = {};
         var tmpOverlay, paths;
         // tmpMap.zoom = map.getZoom();
@@ -12,6 +12,9 @@ var BlitzMap =new function(){
         tmpMap.overlays = [];
         for( var i=0; i < mapOverlays.length; i++ ){
             if( mapOverlays[i].getMap() == null ){
+                continue;
+            }
+            if(uid && mapOverlays[i].uid !== uid){
                 continue;
             }
             tmpOverlay = {};
@@ -237,8 +240,8 @@ var BlitzMap =new function(){
         return mapOverlays.map(func);
     };
     
-	this.toJSONString=function(){
-        return JSON.stringify(mapToObject());
+	this.toJSONString=function(uid){
+        return JSON.stringify(mapToObject(uid));
     }
     
 };

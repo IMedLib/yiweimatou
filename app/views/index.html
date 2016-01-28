@@ -7,16 +7,18 @@
 </div>
 <div class="row">
     {% for lesson in lessons %}
-    <div class="col-sm-3 file">
-        <a href="/lesson/show?lid={{lesson.lid}}">
-            <span class="corner"></span>
-            <div class="img">
-                <img src="{{lesson.coverpath}}512_256.png" class="img-responsive" alt="">
-            </div>
-            <div class="file-name text-center">
-                {{lesson.title}}
-            </div>
-        </a>
+    <div class="col-sm-4">
+        <div class="file">
+            <a href="/lesson/show?lid={{lesson.lid}}">
+                <span class="corner"></span>
+                <div class="img">
+                    <img src="{{lesson.coverpath}}512_256.png" class="img-responsive" alt="">
+                </div>
+                <div class="file-name text-center">
+                    {{lesson.title}}
+                </div>
+            </a>
+        </div>
     </div>
     {% endfor %}
 </div>
@@ -27,16 +29,18 @@
 </div>
 <div class="row">
     {% for group in groups %}
-    <div class="col-sm-3 file">
-        <a href="/group/show?oid={{group.oid}}">
-            <span class="corner"></span>
-            <div class="img">
-                <img src="{{group.coverpath}}512_256.png" class="img-responsive" alt="">
-            </div>
-            <div class="file-name text-center">
-                {{group.title}}
-            </div>
-        </a>
+    <div class="col-sm-4">
+        <div class="file">
+            <a href="/group/show?oid={{group.oid}}">
+                <span class="corner"></span>
+                <div class="img">
+                    <img src="{{group.coverpath}}512_256.png" class="img-responsive" alt="">
+                </div>
+                <div class="file-name text-center">
+                    {{group.title}}
+                </div>
+            </a>
+        </div>
     </div>
     {% endfor %}
 </div>
