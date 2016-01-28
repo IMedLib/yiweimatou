@@ -20,10 +20,14 @@ $(document).ready(function () {
         if (code.length != 6) {
             $('#codeErr').text('验证码错误！').fadeOut(5000);
         }
-        $.getJSON(url + 'User/Add/Reg/', {
-            mobile: mobile,
-            recuid: $('#recuid').val(),
-            verifycode: code
+        $.ajax({
+            url:url + 'User/Add/Reg/',
+            data: {
+                mobile: mobile,
+                recuid: $('#recuid').val(),
+                verifycode: code
+            },
+            type:'post'
         }).done(function (data) {
             if (data.code !== 0) {
                 $('#registerErr').text(data.msg === "" ? "注册失败，请重新尝试！" : data.msg)

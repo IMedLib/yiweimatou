@@ -20,9 +20,13 @@ $(document).ready(function () {
         if (code.length != 6) {
             $('#codeErr').text('验证码错误！').fadeOut(5000);
         }
-        $.getJSON(url + 'User/Put/Login/', {
-            mobile: mobile,
-            verifycode: code
+        $.ajax({
+            url:url + 'User/Put/Login/',
+            data: {
+                mobile: mobile,
+                verifycode: code
+            },
+            type:'post'
         }).done(function (data) {
             if (data.code !== 0) {
                 $('#loginErr').text(data.msg === "" ? "登录失败，请重新尝试！" : data.msg)
