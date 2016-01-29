@@ -29,7 +29,11 @@
         this.$avatarForm = this.$avatarModal.find('.avatar-form');
         this.$avatarUpload = this.$avatarForm.find('.avatar-upload');
         this.$avatarSrc = this.$avatarForm.find('.avatar-src');
-        this.$avatarData = this.$avatarForm.find('.avatar-data');
+        this.$x = this.$avatarForm.find('input[name="x"]');
+        this.$y = this.$avatarForm.find('input[name="y"]');
+        this.$width = this.$avatarForm.find('input[name="width"]');
+        this.$height = this.$avatarForm.find('input[name="height"]');
+        this.$rotate = this.$avatarForm.find('input[name="rotate"]');
         this.$avatarInput = this.$avatarForm.find('.avatar-input');
         this.$avatarSave = this.$avatarForm.find('.avatar-save');
         this.$avatarBtns = this.$avatarForm.find('.avatar-btns');
@@ -116,7 +120,7 @@
 
                         _this.submitDone(data);
                     } else {
-                        _this.submitFail('Image upload failed!');
+                        _this.submitFail('上传失败!');
                     }
 
                     _this.submitEnd();
@@ -205,15 +209,19 @@
                     preview: this.$avatarPreview.selector,
                     strict: false,
                     crop: function (e) {
-                        var json = [
-                            '{"x":' + e.x,
-                            '"y":' + e.y,
-                            '"height":' + e.height,
-                            '"width":' + e.width,
-                            '"rotate":' + e.rotate + '}'
-                        ].join();
+                        //var json = [
+                        //    '{"x":' + e.x,
+                        //    '"y":' + e.y,
+                        //    '"height":' + e.height,
+                        //    '"width":' + e.width,
+                        //    '"rotate":' + e.rotate + '}'
+                        //].join();
 
-                        _this.$avatarData.val(json);
+                        _this.$x.val(e.x);
+                        _this.$y.val(e.y);
+                        _this.$width.val(e.width);
+                        _this.$height.val(e.height);
+                        _this.$rotate.val(e.rotate);
                     }
                 });
 
@@ -273,25 +281,24 @@
         },
 
         submitDone: function (data) {
-            //console.log(data);
-
             if ($.isPlainObject(data) && data.code === 0) {
-                //if (data.cover_path) {
-                //    this.url = data.cover_path;
-                //
-                //    if (this.support.datauri || this.uploaded) {
-                //        this.uploaded = false;
-                //        this.cropDone();
-                //    } else {
-                //        this.uploaded = true;
-                //        this.$avatarSrc.val(this.url);
-                //        this.startCropper();
-                //    }
-                //
-                //    this.$avatarInput.val('');
-                //} else if (data.msg) {
-                //    this.alert(data.msg);
-                //}
+                if (data.face_path) {
+                    console.log(this.url);
+                    this.url = data.face_path;
+                    console.log(this.support.datauri);
+                    console.log(this.uploaded);
+                    if (this.support.datauri || this.uploaded) {
+                        this.uploaded = false;
+                        this.cropDone();
+                    }
+                    //else {
+                    //    this.uploaded = true;
+                    //    this.$avatarSrc.val(this.url);
+                    //    this.startCropper();
+                    //}
+
+                    this.$avatarInput.val('');
+                }
             } else {
                 this.alert(data.msg);
             }

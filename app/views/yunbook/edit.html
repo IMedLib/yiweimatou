@@ -343,12 +343,13 @@
                 event.overlay.uid = key;
                 event.overlay.type = event.type;
                 if (event.type === "marker") {
-                    $summernote.code('');
+                    $summernote.summernote('destroy');
+                    initSummernote();
                     $summernote.parent().show();
                     $submit.unbind('click');
                     $submit.on('click', function () {
                         $summernote.parent().hide();
-                        var contentString = $summernote.code();
+                        var contentString = $summernote.summernote('code');
                         if (contentString != '') {
                             var infoWindow = new google.maps.InfoWindow({
                                 content: contentString
