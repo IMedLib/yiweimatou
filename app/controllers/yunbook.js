@@ -13,9 +13,9 @@ module.exports = {
             logo: "云板书"
         });
     },
-    edit:function *(){
-        var yid = this.query.yid,id = this.query.id
-            ,yunbook,admin=false,mapData,lat,lng,lessonId,url;
+    edit: function *() {
+        var yid = this.query.yid, id = this.query.id
+            , yunbook, admin = false, mapData, lat, lng, lessonId, url;
         if (typeof yid === 'undefined' && typeof id === 'undefined') {
             this.redirect('/index');
         }
@@ -24,101 +24,101 @@ module.exports = {
         if (typeof key === 'undefined' || typeof token === "undefined") {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
-        if(yid){
-            url = config.url.inside.api+'userYunbook/put';
+        if (yid) {
+            url = config.url.inside.api + 'userYunbook/put';
             yield request({
-               uri:config.url.inside.api+'userYunbook/get',
-                qs:{
-                    yid:yid
-                },gzip:true,json:true
-            }).then(function(data){
-                if(data.code === 0){
+                uri: config.url.inside.api + 'userYunbook/get',
+                qs: {
+                    yid: yid
+                }, gzip: true, json: true
+            }).then(function (data) {
+                if (data.code === 0) {
                     yunbook = data.get;
                     mapData = yunbook.remark;
-                }else{
-                    console.error('userYunbook/get',data);
+                } else {
+                    console.error('userYunbook/get', data);
                 }
-            }).catch(function(err){
-                console.error('userYunbook/get',err.message);
+            }).catch(function (err) {
+                console.error('userYunbook/get', err.message);
             });
-            if(typeof yunbook ==='undefined' || key !== yunbook.uid.toString()){
+            if (typeof yunbook === 'undefined' || key !== yunbook.uid.toString()) {
                 this.redirect('/index');
-            }else{
+            } else {
                 admin = true;
             }
-        }else{
-            url = config.url.outside.api+'yunbook/put';
+        } else {
+            url = config.url.outside.api + 'yunbook/put';
             yield request({
-                uri:config.url.inside.api+'yunbook/get',
-                qs:{
-                    id:id
-                },gzip:true,json:true
-            }).then(function(data){
-                if(data.code === 0){
+                uri: config.url.inside.api + 'yunbook/get',
+                qs: {
+                    id: id
+                }, gzip: true, json: true
+            }).then(function (data) {
+                if (data.code === 0) {
                     yid = data.get.yid;
                     mapData = data.get.remark;
                     lessonId = data.get.lid;
-                }else{
-                    console.error('yunbook/get',data);
+                } else {
+                    console.error('yunbook/get', data);
                 }
-            }).catch(function(err){
-                console.error('yunbook/get',err.message);
+            }).catch(function (err) {
+                console.error('yunbook/get', err.message);
             });
             yield request({
-                uri:config.url.inside.api+'userYunbook/get',
-                qs:{
-                    yid:yid
-                },gzip:true,json:true
-            }).then(function(data){
-                if(data.code === 0){
+                uri: config.url.inside.api + 'userYunbook/get',
+                qs: {
+                    yid: yid
+                }, gzip: true, json: true
+            }).then(function (data) {
+                if (data.code === 0) {
                     yunbook = data.get;
-                }else {
-                    console.error('userYunbook/get',data);
+                } else {
+                    console.error('userYunbook/get', data);
                 }
-            }).catch(function(err){
-                console.error('userYunbook/get',err.message);
+            }).catch(function (err) {
+                console.error('userYunbook/get', err.message);
             });
         }
-        if(typeof id !== 'undefined' && typeof lessonId !== 'undefined'){
+        if (typeof id !== 'undefined' && typeof lessonId !== 'undefined') {
             yield request({
-               uri:config.url.inside.api+'lesson/get',
-                qs:{
-                    lid:lessonId
-                },gzip:true,json:true
-            }).then(function(data){
-                if(data.code === 0){
-                    if (data.get.uid.toString() === key){
+                uri: config.url.inside.api + 'lesson/get',
+                qs: {
+                    lid: lessonId
+                }, gzip: true, json: true
+            }).then(function (data) {
+                if (data.code === 0) {
+                    if (data.get.uid.toString() === key) {
                         admin = true;
                     }
-                }else{
-                    console.error('lesson/get',data);
+                } else {
+                    console.error('lesson/get', data);
                 }
-            }).catch(function(err){
-                console.error('lesson/get',err.message);
+            }).catch(function (err) {
+                console.error('lesson/get', err.message);
             });
-        }else if(admin === false &&　yunbook.uid.toString() === key){
+        } else if (admin === false && yunbook.uid.toString() === key) {
             admin = true;
         }
         //判断是否课程讲师
-        if (typeof id !== 'undefined' && typeof lessonId !== 'undefined' &&admin === false){
+        if (typeof id !== 'undefined' && typeof lessonId !== 'undefined' && admin === false) {
             yield request({
-                uri:config.url.inside.api+'lessonAdmin/list',
-                qs:{
-                    lid:lessonId
-                },gzip:true,json:true
-            }).then(function(data){
-                if(data.code === 0){
-                    if(data.list.indexOf(key)>-1){
+                uri: config.url.inside.api + 'lessonAdmin/list',
+                qs: {
+                    lid: lessonId
+                }, gzip: true, json: true
+            }).then(function (data) {
+                if (data.code === 0) {
+                    if (data.list.indexOf(key) > -1) {
                         admin = true;
                     }
-                }else{
-                    console.error('lessonAdmin/list',data);
+                } else {
+                    console.error('lessonAdmin/list', data);
                 }
-            }).catch(function(err){
-                console.error('lessonAdmin/list',err.message);
+            }).catch(function (err) {
+                console.error('lessonAdmin/list', err.message);
             })
         }
-        if(!admin){
+        if (!admin) {
             this.redirect('/index');
         }
         if (typeof yunbook !== 'undefined') {
@@ -138,91 +138,91 @@ module.exports = {
                 console.error(err.message);
             });
         }
-        yield this.render('yunbook/edit',{
-            yunbook:yunbook,
-            admin:admin,
-            title:'云板书编辑',
-            logo:'云板书',
+        yield this.render('yunbook/edit', {
+            yunbook: yunbook,
+            admin: admin,
+            title: '云板书编辑',
+            logo: '云板书',
             lat: lat,
             lng: lng,
-            key:key,
-            token:token,
-            id:id,
-            mapData:mapData,
-            url:url
+            key: key,
+            token: token,
+            id: id,
+            mapData: mapData,
+            url: url
         })
     },
-    clazzShow:function*(){
-        var id = this.query.id,yunbook,yid=0,cid=0,lid=0,admin=false,
-            uid=0,lat,lng,tmapData,smapData,users=[],count=0;
-        if(typeof id === 'undefined'){
+    clazzShow: function*() {
+        var id = this.query.id, yunbook, yid = 0, cid = 0, lid = 0, admin = false,
+            uid = 0, lat, lng, tmapData, smapData, users = [], count = 0;
+        if (typeof id === 'undefined') {
             this.redirect('/index');
         }
         key = this.cookies.get('key');
         token = this.cookies.get('token');
         yield request({
-            uri:config.url.inside.api+'yunbook/get',
-            qs:{
-                id:id
-            },gzip:true,json:true
-        }).then(function(data){
-            if(data.code === 0){
+            uri: config.url.inside.api + 'yunbook/get',
+            qs: {
+                id: id
+            }, gzip: true, json: true
+        }).then(function (data) {
+            if (data.code === 0) {
                 yid = data.get.yid;
                 cid = data.get.cid;
                 lid = data.get.lid;
                 tmapData = data.get.remark;
             }
-        }).catch(function(err){
-            console.log('yunbook/get',err.message);
+        }).catch(function (err) {
+            console.log('yunbook/get', err.message);
         });
-        if(yid === 0 || cid ===0 || lid === 0){
+        if (yid === 0 || cid === 0 || lid === 0) {
             this.redirect('/index');
         }
         //判断是否是老师
         yield request({
-            uri:config.url.inside.api+'lesson/get',
-            qs:{
-                lid:lid
-            },gzip:true,json:true
-        }).then(function(data){
-            if(data.code === 0){
-                if(data.get.uid.toString()===key){
+            uri: config.url.inside.api + 'lesson/get',
+            qs: {
+                lid: lid
+            }, gzip: true, json: true
+        }).then(function (data) {
+            if (data.code === 0) {
+                if (data.get.uid.toString() === key) {
                     admin = true;
                 }
             }
         });
-        if(!admin){
+        if (!admin) {
             yield request({
-                uri:config.url.inside.api+'lessonAdmin/get',
-                qs:{
-                    uid:key,
-                    lid:lid
-                },gzip:true,json:true
-            }).then(function(data){
-                if(data.code === 0 && data.get.id!=undefined){
+                uri: config.url.inside.api + 'lessonAdmin/get',
+                qs: {
+                    uid: key,
+                    lid: lid
+                }, gzip: true, json: true
+            }).then(function (data) {
+                if (data.code === 0 && data.get.id != undefined) {
                     admin = true;
                 }
-            }).catch(function(err){
-                console.log('lessonAdmin/get',err.message);
+            }).catch(function (err) {
+                console.log('lessonAdmin/get', err.message);
             });
         }
-        if(admin){
+        if (admin) {
             var list;
             yield request({
-                uri:config.url.inside.api+'lessonUserYunbook/info',
-                qs:{
-                    cid:cid,
-                    key:key,
-                    token:encodeURIComponent(token)
-                },gzip:true,json:true
-            }).then(function(data){
-                if(data.code === 0){
+                uri: config.url.inside.api + 'lessonUserYunbook/info',
+                qs: {
+                    cid: cid,
+                    key: key,
+                    token: encodeURIComponent(token)
+                }, gzip: true, json: true
+            }).then(function (data) {
+                if (data.code === 0) {
                     count = data.info.Count;
                 }
-            }).catch(function(err){
-                console.log('lessonUserYunbook/info',err.message);
+            }).catch(function (err) {
+                console.log('lessonUserYunbook/info', err.message);
             });
-            if(count > 0) {
+            if (count > 0) {
                 yield request({
                     uri: config.url.inside.api + 'lessonUserYunbook/list',
                     qs: {
@@ -257,57 +257,57 @@ module.exports = {
             }
         }
         //是否课程学生
-        if(!admin){
+        if (!admin) {
             yield request({
-                uri:config.url.inside.api+'lessonUser/get',
-                qs:{
-                    lid:lid,
-                    uid:key
-                },gzip:true,json:true
-            }).then(function(data){
-                if(data.code === 0 && data.get.id!=undefined){
-                    uid=key;
+                uri: config.url.inside.api + 'lessonUser/get',
+                qs: {
+                    lid: lid,
+                    uid: key
+                }, gzip: true, json: true
+            }).then(function (data) {
+                if (data.code === 0 && data.get.id != undefined) {
+                    uid = key;
                 }
-            }).catch(function(err){
-                console.log('lessonUser/get',err.message);
+            }).catch(function (err) {
+                console.log('lessonUser/get', err.message);
             });
-            if(uid!=0){
+            if (uid != 0) {
                 yield request({
-                    uri:config.url.inside.api+'lessonUserYunbook/get',
-                    qs:{
-                        uid:key,
-                        lid:lid,
-                        key:key,
-                        token:encodeURIComponent(token)
-                    },gzip:true,json:true
-                }).then(function(data){
-                    if(data.code === 0){
+                    uri: config.url.inside.api + 'lessonUserYunbook/get',
+                    qs: {
+                        uid: key,
+                        lid: lid,
+                        key: key,
+                        token: encodeURIComponent(token)
+                    }, gzip: true, json: true
+                }).then(function (data) {
+                    if (data.code === 0) {
                         smapData = data.get.remark;
                     }
-                }).catch(function(err){
-                   console.log('lessonUserYunbook/get',err.message);
+                }).catch(function (err) {
+                    console.log('lessonUserYunbook/get', err.message);
                 });
             }
         }
         //既不是老师也不是学生
-        if(!admin && uid===0){
+        if (!admin && uid === 0) {
             this.redirect('/index');
         }
         yield request({
-            uri:config.url.inside.api+'userYunbook/get',
-            qs:{
-                yid:yid
-            },gzip:true,json:true
-        }).then(function(data){
-            if(data.code === 0){
+            uri: config.url.inside.api + 'userYunbook/get',
+            qs: {
+                yid: yid
+            }, gzip: true, json: true
+        }).then(function (data) {
+            if (data.code === 0) {
                 yunbook = data.get;
             }
-        }).catch(function(err){
-            console.log('userYunbook/get',err.message);
+        }).catch(function (err) {
+            console.log('userYunbook/get', err.message);
         });
-        if(yunbook===undefined){
+        if (yunbook === undefined) {
             this.redirect('/index');
-        }else{
+        } else {
             yield request({
                 uri: config.url.inside.upload + 'PixelLngLat',
                 qs: {
@@ -324,21 +324,21 @@ module.exports = {
                 console.log(err.message);
             });
         }
-        yield this.render('yunbook/clazzshow',{
-            admin:admin,
-            logo:'云板书',
-            yunbook:yunbook,
-            lat:lat,
-            lng:lng,
-            smapData:smapData,
-            tmapData:tmapData,
-            users:users,
-            cid:cid,
-            api:config.url.outside.api,
-            uid:uid,
-            key:key,
-            token:token,
-            count:count
+        yield this.render('yunbook/clazzshow', {
+            admin: admin,
+            logo: '云板书',
+            yunbook: yunbook,
+            lat: lat,
+            lng: lng,
+            smapData: smapData,
+            tmapData: tmapData,
+            users: users,
+            cid: cid,
+            api: config.url.outside.api,
+            uid: uid,
+            key: key,
+            token: token,
+            count: count
         });
     },
     show: function *() {
@@ -347,7 +347,7 @@ module.exports = {
         if (typeof yid === 'undefined') {
             this.redirect('/yunbook');
         }
-        key =  this.cookies.get('key');
+        key = this.cookies.get('key');
         token = this.cookies.get('token');
         yield request({
             uri: config.url.inside.api + '/userYunbook/Get/',
@@ -379,7 +379,7 @@ module.exports = {
             }).catch(function (err) {
                 console.error(err.message);
             });
-        }else{
+        } else {
             this.redirct('/index');
         }
         yield this.render('yunbook/show', {
@@ -388,18 +388,18 @@ module.exports = {
             yunbook: yunbook,
             lat: lat,
             lng: lng,
-            key:key,
-            token:token
+            key: key,
+            token: token
         });
     },
-    showFull:function *(){
-        var yid = this.query.yid,
-            yunbook, lat, lng;
+    showFull: function *() {
+        var yid = this.query.yid, id = this.query.id,
+            yunbook, lat, lng,tmapData,smapData,cid=0;
         if (typeof yid === 'undefined') {
             this.redirect('/yunbook');
         }
         yield request({
-            uri: config.url.inside.api + '/Useryunbook/Get/',
+            uri: config.url.inside.api + '/userYunbook/Get/',
             qs: {
                 yid: yid
             },
@@ -412,6 +412,39 @@ module.exports = {
         }).catch(function (err) {
             console.error(err.message);
         });
+        key = this.cookies.get('key');
+        if(typeof id !== 'undefined'){
+            yield request({
+                uri:config.url.inside.api+'yunbook/get',
+                qs:{
+                    id:id
+                },gzip:true,json:true
+            }).then(function(data){
+                if(data.code === 0){
+                    tmapData = data.get.remark;
+                    if(typeof key !== 'undefined'){
+                        cid = data.get.cid;
+                    }
+                }
+            }).catch(function(err){
+                console.log('yunbook/get',err.message);
+            })
+        }
+        if(cid>0){
+            yield request({
+                uri:config.url.inside.api+'lessonUserYunbook/get',
+                qs:{
+                    uid:key,
+                    cid:cid
+                },json:true,gzip:true
+            }).then(function(data){
+                if(data.code === 0){
+                    smapData = data.get.remark;
+                }
+            }).catch(function(err){
+               console.log('lessonUserYunbook/get',err.message);
+            });
+        }
         if (typeof yunbook !== 'undefined') {
             yield request({
                 uri: config.url.inside.upload + 'PixelLngLat',
@@ -433,7 +466,9 @@ module.exports = {
             title: yunbook.title,
             yunbook: yunbook,
             lat: lat,
-            lng: lng
+            lng: lng,
+            tmapData:tmapData,
+            smapData:smapData
         });
     },
     add: function *() {
@@ -446,7 +481,7 @@ module.exports = {
             title: "新建云板书",
             logo: "云板书",
             config: {
-                url:config.url.outside
+                url: config.url.outside
             },
             key: key,
             token: token
@@ -478,13 +513,13 @@ module.exports = {
             title: "我的云板书",
             logo: "云板书",
             yunbooks: yunBookList,
-            key:key
+            key: key
         });
     },
-    stuEdit:function *(){
-        var id = this.query.id,lid=0,yid=0,cid=0,admin=false
-            ,url,tmapData=[],mapData=[],lat,lng,yunbook,xid;
-        if(typeof id === 'undefined'){
+    stuEdit: function *() {
+        var id = this.query.id, lid = 0, yid = 0, cid = 0, admin = false
+            , url, tmapData = [], mapData = [], lat, lng, yunbook, xid;
+        if (typeof id === 'undefined') {
             this.redirect('/index');
         }
         key = this.cookies.get('key');
@@ -493,50 +528,50 @@ module.exports = {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri:config.url.inside.api+'yunbook/get',
-            qs:{
-                id:id
-            },gzip:true,json:true
-        }).then(function(data){
-            if(data.code === 0){
+            uri: config.url.inside.api + 'yunbook/get',
+            qs: {
+                id: id
+            }, gzip: true, json: true
+        }).then(function (data) {
+            if (data.code === 0) {
                 lid = data.get.lid;
                 yid = data.get.yid;
                 tmapData = data.get.remark;
                 cid = data.get.cid;
             }
-        }).catch(function(err){
-            console.log('yunbook/get',err.message);
+        }).catch(function (err) {
+            console.log('yunbook/get', err.message);
         });
-        if(yid===0||lid===0){
+        if (yid === 0 || lid === 0) {
             this.redirect('/index');
         }
         yield request({
-            uri:config.url.inside.api+'lessonUser/Get/',
-            qs:{
-                lid:lid,
-                uid:key
-            },gzip:true,json:true
-        }).then(function(data){
-            if(data.code === 0 && data.get.uid !== 'undefined'){
+            uri: config.url.inside.api + 'lessonUser/Get/',
+            qs: {
+                lid: lid,
+                uid: key
+            }, gzip: true, json: true
+        }).then(function (data) {
+            if (data.code === 0 && data.get.uid !== 'undefined') {
                 admin = true;
             }
-        }).catch(function(err){
-            console.log('lessonUser/get',err.message);
+        }).catch(function (err) {
+            console.log('lessonUser/get', err.message);
         });
-        if(!admin){
+        if (!admin) {
             this.redirect('/index');
         }
         yield request({
-            uri:config.url.inside.api+'userYunbook/get',
-            qs:{
-                yid:yid
-            },gzip:true,json:true
-        }).then(function(data){
-            if(data.code === 0){
+            uri: config.url.inside.api + 'userYunbook/get',
+            qs: {
+                yid: yid
+            }, gzip: true, json: true
+        }).then(function (data) {
+            if (data.code === 0) {
                 yunbook = data.get;
             }
-        }).catch(function(err){
-            console.log('userYunbook/get',err.message);
+        }).catch(function (err) {
+            console.log('userYunbook/get', err.message);
         });
         if (typeof yunbook !== 'undefined') {
             yield request({
@@ -556,41 +591,42 @@ module.exports = {
             });
         }
         yield request({
-           uri:config.url.inside.api+'lessonUserYunbook/Get/',
-            qs:{
-                uid:key,
-                cid:cid,
-                key:key,
-                token:encodeURIComponent(token)
-            },gzip:true,json:true
-        }).then(function(data){
-            if(data.code === 0){
-                if(data.get.id !== 'undefined') {
+            uri: config.url.inside.api + 'lessonUserYunbook/Get/',
+            qs: {
+                uid: key,
+                cid: cid,
+                key: key,
+                token: encodeURIComponent(token)
+            }, gzip: true, json: true
+        }).then(function (data) {
+            if (data.code === 0) {
+                if (data.get.id !== 'undefined') {
                     mapData = data.get.remark;
                     url = config.url.outside.api + 'lessonUserYunbook/put';
                     xid = data.get.id;
                 }
             }
-        }).catch(function(err){
+        }).catch(function (err) {
             console.log(err.message);
         });
-        if(typeof xid === 'undefined'){
+        if (typeof xid === 'undefined') {
             url = config.url.outside.api + 'lessonUserYunbook/add';
         }
-        yield this.render('yunbook/stuEdit',{
-            yunbook:yunbook,
-            title:'添加标注',
-            logo:'云板书',
+        yield this.render('yunbook/stuEdit', {
+            yunbook: yunbook,
+            title: '添加标注',
+            logo: '云板书',
             lat: lat,
             lng: lng,
-            key:key,
-            token:token,
-            id:xid,
-            mapData:mapData,
-            tmapData:tmapData,
-            url:url,
-            cid:cid,
-            yid:yid
+            key: key,
+            token: token,
+            xid: xid,
+            id:id,
+            mapData: mapData,
+            tmapData: tmapData,
+            url: url,
+            cid: cid,
+            yid: yid
         })
     }
 

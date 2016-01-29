@@ -15,12 +15,10 @@
             <li class="menu">标注</li>
             <li class="menu">涂鸦</li>
             <li class="menu">区域</li>
-            <li class="menu">直线</li>
-            <li class="menu">矩形</li>
             <li>
                 <select id="color">
                     <option value="rgba(0,0,0,.5)">黑</option>
-                    <option value="rgba(255, 0, 0, 0.5)">红</option>
+                    <option value="rgba(255, 0, 0, 0.5)" selected>红</option>
                     <option value="rgba(0, 255, 0, 0.5)">绿</option>
                     <option value="rgba(0, 0, 255, 0.5)">蓝</option>
                 </select>
@@ -28,7 +26,7 @@
             <li>
                 <select id="strokeWeight">
                     <option value="2">细</option>
-                    <option value="8">中</option>
+                    <option value="8" selected>中</option>
                     <option value="15">粗</option>
                     <option value="25">极粗</option>
                 </select>
@@ -48,7 +46,7 @@
 <script>
     $(document).ready(function () {
         var lat = parseFloat('{{lat}}'), lng = parseFloat('{{lng}}'), map,pencil;
-        $('#map').attr('style', 'height:' + 0.7 * document.body.scrollHeight + "px");
+        $('#map').attr('style', 'height:' + 0.68 * window.screen.availHeight + "px");
         initMap();
         initTools();
         function initTools(){
@@ -75,11 +73,7 @@
                     });
                     $('.gmnoprint:last').children('div:eq(0)').find('div').click();
                     pencil = 2;
-                } else if ($(this).html() == '直线') {
-                    $('.gmnoprint:last').children('div:eq(3)').find('div').click();
-                } else if ($(this).html() == '矩形') {
-                    $('.gmnoprint:last').children('div:eq(4)').find('div').click();
-                } else {
+                }else {
                     return;
                 }
                 tooles.find('li').removeClass('green');
@@ -118,9 +112,9 @@
                     drawingModes: [
                         google.maps.drawing.OverlayType.MARKER,
 //                        google.maps.drawing.OverlayType.CIRCLE,
-                        google.maps.drawing.OverlayType.POLYGON,
-                        google.maps.drawing.OverlayType.POLYLINE,
-                        google.maps.drawing.OverlayType.RECTANGLE
+                        google.maps.drawing.OverlayType.POLYGON
+//                        google.maps.drawing.OverlayType.POLYLINE,
+//                        google.maps.drawing.OverlayType.RECTANGLE
                     ]
                 },
                 markerOptions: {icon: '/js/lib/googlemap/markers2/marker_sprite.png'},
@@ -145,13 +139,6 @@
                 var $color = $('#color').val(),$strokeWeight = $('#strokeWeight').val();
                 drawingManager.setOptions({
                     polylineOptions: {
-                        strokeColor: $color,
-                        fillColor: $color,
-                        strokeWeight: $strokeWeight,
-                        clickable: false,
-                        editable: false
-                    },
-                    rectangleOptions: {
                         strokeColor: $color,
                         fillColor: $color,
                         strokeWeight: $strokeWeight,

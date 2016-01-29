@@ -6,9 +6,26 @@ var config = require('../../configs/index'),
     request = require('request-promise');
 module.exports={
     home:function *(){
+        let key = this.cookies.get('key'),user=[];
+        if(typeof key === 'undefined'){
+            this.redirect('/login?redirect='+encodeURIComponent(this.url));
+        }
+        yield request({
+            uri:config.url.inside.api+'userInfo/get',
+            qs:{
+                uid:key
+            },gzip:true,json:true,timeout:10000
+        }).then(function(data){
+            if (data.code === 0){
+                user =  data.get;
+            }
+        }).catch(function(err){
+            console.log('userInfo/get',err.message);
+        });
         yield this.render('user/home',{
             title:"我的主页",
-            logo : "我的主页"
+            logo : "我的主页",
+            user:user
         });
     },
     setting:function *(){
@@ -22,7 +39,7 @@ module.exports={
             uri:config.url.inside.api+'userInfo/get',
             qs:{
                 uid:key
-            },gzip:true,json:true
+            },gzip:true,json:true,timeout:10000
         }).then(function(data){
             if (data.code === 0){
                 user =  data.get;

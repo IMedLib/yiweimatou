@@ -42,12 +42,10 @@
         <li class="menu">标注</li>
         <li class="menu">涂鸦</li>
         <li class="menu">区域</li>
-        <li class="menu">直线</li>
-        <li class="menu">矩形</li>
         <li>
             <select id="color">
                 <option value="rgba(0,0,0,.5)">黑</option>
-                <option value="rgba(255, 0, 0, 0.5)">红</option>
+                <option value="rgba(255, 0, 0, 0.5)" selected>红</option>
                 <option value="rgba(0, 255, 0, 0.5)">绿</option>
                 <option value="rgba(0, 0, 255, 0.5)">蓝</option>
             </select>
@@ -55,7 +53,7 @@
         <li>
             <select id="strokeWeight">
                 <option value="2">细</option>
-                <option value="8">中</option>
+                <option value="8" selected>中</option>
                 <option value="15">粗</option>
                 <option value="25">极粗</option>
             </select>
@@ -68,51 +66,48 @@
 <script src="/js/lib/jquery.min.js"></script>
 <script src="/js/lib/googlemap/mapapi.min.js"></script>
 <script src="/js/lib/googlemap/drawing.js"></script>
+<script src="/js/lib/googlemap/blitz-gmap-editor-ea7son.js"></script>
 <script>
     $(document).ready(function () {
-        var lat = parseFloat('{{lat}}'), lng = parseFloat('{{lng}}'), map;
-//        var polyOptions = {
-//            fillColor: "#ff7f00",
-//            fillOpacity: 0.45,
-//            strokeColor: "rgba(255, 0, 0, 0.8)",
-//            strokeOpacity: 0.4,
-//            strokeWeight: 5,
-//            editable: false,
-//            draggable: false,
-//            clickable: false
-//        };
+        var lat = parseFloat('{{lat}}'), lng = parseFloat('{{lng}}')
+                ,map,pencil= 0,tmapData=replaceAll('{{tmapData}}', '&quot;', '"'),smapData=replaceAll('{{smapData}}', '&quot;', '"');
+        function replaceAll(str, a, b) {
+            while (str.indexOf(a) > -1) {
+                str = str.replace(a, b);
+            }
+            return str;
+        }
         initMap();
+        BlitzMap.setMapData(map, false, tmapData);
+        BlitzMap.setMapData(map,false,smapData);
         initTools();
         function initTools(){
-            $('#tools').find('.menu').click(function() {
-                pencil = 0;
+            var tooles = $('#tools');
+            tooles.find('li').eq(0).addClass('green');
+            tooles.find('.menu').click(function() {
                 if ($(this).html() == '涂鸦') {
                     map.setOptions({
                         draggable:false
                     });
-                    $('.gmnoprint:last').children('div:eq(0)').find('div').click();
+                    $('.gmnoprint').eq(2).children('div:eq(0)').find('div').click();
                     pencil = 1;
                 } else if ($(this).html() == '移动') {
                     map.setOptions({
                         draggable:true
                     });
-                    $('.gmnoprint:last').children('div:eq(0)').find('div').click();
+                    $('.gmnoprint').eq(2).children('div:eq(0)').find('div').click();
                 } else if ($(this).html() == '标注') {
-                    $('.gmnoprint:last').children('div:eq(1)').find('div').click();
+                    $('.gmnoprint').eq(2).children('div:eq(1)').find('div').click();
                 }else if ($(this).html() == '区域') {
                     map.setOptions({
                         draggable:false
                     });
-                    $('.gmnoprint:last').children('div:eq(0)').find('div').click();
+                    $('.gmnoprint').eq(2).children('div:eq(0)').find('div').click();
                     pencil = 2;
-                } else if ($(this).html() == '直线') {
-                    $('.gmnoprint:last').children('div:eq(3)').find('div').click();
-                } else if ($(this).html() == '矩形') {
-                    $('.gmnoprint:last').children('div:eq(4)').find('div').click();
                 } else {
                     return;
                 }
-                $('#tools').find('li').removeClass('green');
+                tooles.find('li').removeClass('green');
                 $(this).addClass('green');
             });
         }
@@ -147,9 +142,9 @@
                     drawingModes: [
                         google.maps.drawing.OverlayType.MARKER,
 //                        google.maps.drawing.OverlayType.CIRCLE,
-                        google.maps.drawing.OverlayType.POLYGON,
-                        google.maps.drawing.OverlayType.POLYLINE,
-                        google.maps.drawing.OverlayType.RECTANGLE
+                        google.maps.drawing.OverlayType.POLYGON
+//                        google.maps.drawing.OverlayType.POLYLINE,
+//                        google.maps.drawing.OverlayType.RECTANGLE
                     ]
                 },
                 markerOptions: {icon: '/js/lib/googlemap/markers2/marker_sprite.png'},
@@ -163,7 +158,7 @@
                 }
             });
             drawingManager.setMap(map);
-            setTimeout("$('.gmnoprint:last').hide();", 500);
+            setTimeout("$('.gmnoprint').eq(2).hide();", 500);
             $('#color').change(function() {
                 changeDraw()
             });
@@ -174,13 +169,6 @@
                 var $color = $('#color').val(),$strokeWeight = $('#strokeWeight').val();
                 drawingManager.setOptions({
                     polylineOptions: {
-                        strokeColor: $color,
-                        fillColor: $color,
-                        strokeWeight: $strokeWeight,
-                        clickable: false,
-                        editable: false
-                    },
-                    rectangleOptions: {
                         strokeColor: $color,
                         fillColor: $color,
                         strokeWeight: $strokeWeight,

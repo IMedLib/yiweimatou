@@ -78,12 +78,10 @@
             <li class="menu">标注</li>
             <li class="menu">涂鸦</li>
             <li class="menu">区域</li>
-            <li class="menu">直线</li>
-            <li class="menu">矩形</li>
             <li>
                 <select id="color">
                     <option value="rgba(0,0,0,.5)">黑</option>
-                    <option value="rgba(255, 0, 0, 0.5)">红</option>
+                    <option value="rgba(255, 0, 0, 0.5)" selected>红</option>
                     <option value="rgba(0, 255, 0, 0.5)">绿</option>
                     <option value="rgba(0, 0, 255, 0.5)">蓝</option>
                 </select>
@@ -91,7 +89,7 @@
             <li>
                 <select id="strokeWeight">
                     <option value="2">细</option>
-                    <option value="8">中</option>
+                    <option value="8" selected>中</option>
                     <option value="15">粗</option>
                     <option value="25">极粗</option>
                 </select>
@@ -100,7 +98,11 @@
         </ul>
     </div>
     <div id="map"></div>
+    {% if id%}
+    <a href="/yunbook/showfull?id={{id}}&yid={{yunbook.yid}}" target="_blank" class="btn-u margin-top-10">全屏显示</a>
+    {% else %}
     <a href="/yunbook/showfull?yid={{yunbook.yid}}" target="_blank" class="btn-u margin-top-10">全屏显示</a>
+    {% endif %}
     <button id="save" class="pull-right btn-u margin-top-10">保存更改</button>
     <div id="formTab" class="tab-pane fade in">
     </div>
@@ -120,7 +122,7 @@
     $(document).ready(function () {
         var lat = parseFloat('{{lat}}'), lng = parseFloat('{{lng}}'), map
                 , key = '{{key}}', token = "{{token}}", $summernote = $('.summernote')
-                , $cancel = $('#cancel'), $submit = $('#submit'), marker, container = document.getElementById('multi'),
+                , $cancel = $('#cancel'), $submit = $('#submit'), container = document.getElementById('multi'),
                 mapData = replaceAll('{{mapData}}', '&quot;', '"'),
                 pencil = 0,
                 PlyOption = {
@@ -136,8 +138,7 @@
             }
             return str;
         }
-
-        $('#map').attr('style', 'height:' + 0.7 * document.body.scrollHeight + "px");
+        $('#map').attr('style', 'height:' + 0.65 * window.screen.availHeight + "px");
         initMap();
         BlitzMap.setMapData(map, false, mapData);
         initSortable();
@@ -166,10 +167,6 @@
                     });
                     $('.gmnoprint').eq(2).children('div:eq(0)').find('div').click();
                     pencil = 2;
-                } else if ($(this).html() == '直线') {
-                    $('.gmnoprint').eq(2).children('div:eq(3)').find('div').click();
-                } else if ($(this).html() == '矩形') {
-                    $('.gmnoprint').eq(2).children('div:eq(4)').find('div').click();
                 } else {
                     return;
                 }
@@ -250,9 +247,9 @@
                     drawingModes: [
                         google.maps.drawing.OverlayType.MARKER,
 //                        google.maps.drawing.OverlayType.CIRCLE,
-                        google.maps.drawing.OverlayType.POLYGON,
-                        google.maps.drawing.OverlayType.POLYLINE,
-                        google.maps.drawing.OverlayType.RECTANGLE
+                        google.maps.drawing.OverlayType.POLYGON
+//                        google.maps.drawing.OverlayType.POLYLINE,
+//                        google.maps.drawing.OverlayType.RECTANGLE
                     ]
                 },
                 markerOptions: {icon: '/js/lib/googlemap/markers2/marker_sprite.png'},
@@ -282,14 +279,15 @@
                         strokeWeight: $strokeWeight,
                         clickable: false,
                         editable: false
-                    },
-                    rectangleOptions: {
-                        strokeColor: $color,
-                        fillColor: $color,
-                        strokeWeight: $strokeWeight,
-                        clickable: false,
-                        editable: false
                     }
+//                    ,
+//                    rectangleOptions: {
+//                        strokeColor: $color,
+//                        fillColor: $color,
+//                        strokeWeight: $strokeWeight,
+//                        clickable: false,
+//                        editable: false
+//                    }
                 });
             }
             google.maps.event.addDomListener(map.getDiv(), 'mousedown', function (e) {
@@ -345,9 +343,36 @@
                 event.overlay.uid = key;
                 event.overlay.type = event.type;
                 if (event.type === "marker") {
-                    marker = event.overlay;
                     $summernote.code('');
                     $summernote.parent().show();
+                    $submit.unbind('click');
+                    $submit.on('click', function () {
+                        $summernote.parent().hide();
+                        var contentString = $summernote.code();
+                        if (contentString != '') {
+                            var infoWindow = new google.maps.InfoWindow({
+                                content: contentString
+                            });
+                            event.overlay.addListener('click', function () {
+                                infoWindow.open(map, event.overlay);
+                            });
+                        }
+                        Ply.dialog("prompt",PlyOption).done(function (obj) {
+                            event.overlay.title = obj.data.text;
+                            event.overlay.content = contentString;
+                            event.overlay.id = BlitzMap.getUniqueId();
+                            BlitzMap.push(event.overlay);
+                            $('#group4').append('<li id="' + event.overlay.id + '">' + event.overlay.title + '<i class="fa fa-times"></i></li>');
+                        }).fail(function(){
+                            event.overlay.setMap(null);
+                        });
+                    });
+                    $cancel.unbind('click');
+                    $cancel.on('click', function () {
+                        $summernote.parent().hide();
+                        event.overlay.setMap(null);
+                    });
+
                     return;
                 }
                 Ply.dialog("prompt",PlyOption).done(function (obj) {
@@ -431,32 +456,6 @@
                 focus: true,
                 height: 300,
                 lang: 'zh-CN'
-            });
-            $submit.on('click', function () {
-                $summernote.parent().hide();
-                var contentString = $summernote.code();
-                if (contentString != '') {
-                    var infoWindow = new google.maps.InfoWindow({
-                        content: contentString
-                    });
-                    marker.addListener('click', function () {
-                        infoWindow.open(map, marker);
-                    });
-                }
-                Ply.dialog("prompt",PlyOption).done(function (obj) {
-                    marker.title = obj.data.text;
-                    marker.content = contentString;
-                    marker.id = BlitzMap.getUniqueId();
-                    BlitzMap.push(marker);
-                    $('#group4').append('<li id="' + marker.id + '">' + marker.title + '<i class="fa fa-times"></i></li>');
-                }).fail(function(){
-                    marker.setMap(null);
-                    alert('新建批注失败！');
-                });
-            });
-            $cancel.on('click', function () {
-                $summernote.parent().hide();
-                marker.setMap(null);
             });
         }
     });

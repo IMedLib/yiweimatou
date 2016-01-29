@@ -250,7 +250,7 @@
         }).done(function(data){
             if(data.code === 0){
                 swal('申请提交成功！','等待老师审核通过','info');
-                $('#add').modal('close');
+                $('#add').modal('hide');
             }else{
                 swal('申请提交失败!',data.msg,'error');
             }

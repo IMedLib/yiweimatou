@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="/css/lib/bootstrap-datetimepicker.min.css">
 <link rel="stylesheet" href="/css/lib/sky-forms.css">
 <link rel="stylesheet" href="/css/lib/custom-sky-forms.css">
-<link rel="stylesheet" href="/css/lib/jqpagination.css">
+<link rel="stylesheet" href="/css/lib/simplePagination.css">
 <link rel="stylesheet" href="/css/lib/table_search.css">
 {% endblock %}
 {% block breadcrumbs %}
@@ -256,7 +256,7 @@
                         <div class="input-group">
                             <input id="search" type="text" class="form-control" placeholder="搜索学生姓名">
                     <span class="input-group-btn">
-                        <button class="btn-u" type="button"><i class="fa fa-search"></i></button>
+                        <button id="searchButton" class="btn-u" type="button"><i class="fa fa-search"></i></button>
                     </span>
                         </div>
                     </div>
@@ -379,8 +379,8 @@
         </td>
         <td>
             <ul class="list-inline table-buttons">
-                <li><button onclick="apply([user.id],4)" type="button" class="btn-u btn-u-sm btn-u"><i class="fa fa-check"></i>通过</button></li>
-                <li><button onclick="apply([user.id],3)" type="button" class="btn-u-red btn-u-sm btn-u"><i class="fa fa-times"></i>拒绝</button></li>
+                <li><button onclick="apply([user.id],'[user.studentid]','[user.cname]',4)" type="button" class="btn-u btn-u-sm btn-u"><i class="fa fa-check"></i>通过</button></li>
+                <li><button onclick="apply([user.id],'[user.studentid]','[user.cname]',3)" type="button" class="btn-u-red btn-u-sm btn-u"><i class="fa fa-times"></i>拒绝</button></li>
             </ul>
         </td>
         [else if user.state==3]
@@ -403,7 +403,7 @@
     [/each]
 </script>
 <script>
-    var api = '{{config.url.api}}',key='{{key}}',token='{{token}}';
+    var api = '{{config.url.api}}',key='{{key}}',token='{{token}}',lid='{{lesson.lid}}';
     function delStudent(id){
         if(typeof id === 'undefined'){
             return;
@@ -454,13 +454,15 @@
         });
     }
     '{% endif %}'
-    function apply(id,state){
+    function apply(id,studentid,cname,state){
         if(id==undefined||state==undefined) return;
         $.ajax({
             url:api+'lessonUser/Put/Verify/',
             data:{
                 id:id,
                 state:state,
+                cname:cname,
+                studentid:studentid,
                 key:key,
                 token:token
             },
@@ -516,7 +518,7 @@
                 getStuList(1,$stuList);
             }
         });
-        $('#search').on('click',function(){
+        $('#searchButton').on('click',function(){
            getStuList(1,$('#search'));
         });
         function getStuList(page,object){
@@ -553,7 +555,8 @@
             $.ajax({
                 url:api+'lessonUser/info/',
                 data:{
-                    cname:$search.val()
+                    cname:$search.val(),
+                    lid:lid
                 },
                 async:false
             }).done(function(data){
@@ -641,8 +644,8 @@
                 data: {
                     lid: '{{lesson.lid}}',
                     uid: uid,
-                    key: '{{key}}',
-                    token: '{{token}}'
+                    key: key,
+                    token: token
                 }
             }).done(function (data) {
                 if (data.code === 0) {
