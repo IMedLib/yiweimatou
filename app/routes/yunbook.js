@@ -13,5 +13,6 @@ router.get('/edit',yunbookCtrl.edit);
 router.get('/showfull',yunbookCtrl.showFull);
 router.get('/stuedit',yunbookCtrl.stuEdit);
 router.get('/clazzshow',yunbookCtrl.clazzShow);
+router.get('/online',yunbookCtrl.online);
 
 module.exports=router;

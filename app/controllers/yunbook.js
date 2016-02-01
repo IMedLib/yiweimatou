@@ -628,6 +628,12 @@ module.exports = {
             cid: cid,
             yid: yid
         })
+    },
+    online:function*(){
+        yield this.render('yunbook/online',{
+            title:'在线云板书',
+            logo:'云板书'
+        });
     }
 
 };

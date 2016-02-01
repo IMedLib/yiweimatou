@@ -123,7 +123,7 @@
         var lat = parseFloat('{{lat}}'), lng = parseFloat('{{lng}}'), map
                 , key = '{{key}}', token = "{{token}}", $summernote = $('.summernote')
                 , $cancel = $('#cancel'), $submit = $('#submit'), container = document.getElementById('multi'),
-                mapData = replaceAll('{{mapData}}', '&quot;', '"'),
+                mapData = replaceAll(decodeURIComponent('{{mapData}}'), '&quot;', '"'),
                 pencil = 0,
                 PlyOption = {
                     title: "给批注取个名字",
@@ -349,7 +349,7 @@
                     $submit.unbind('click');
                     $submit.on('click', function () {
                         $summernote.parent().hide();
-                        var contentString = $summernote.summernote('code');
+                        var contentString = encodeURIComponent($summernote.summernote('code'));
                         if (contentString != '') {
                             var infoWindow = new google.maps.InfoWindow({
                                 content: contentString

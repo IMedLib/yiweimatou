@@ -92,7 +92,7 @@
 <script>
     $(document).ready(function () {
         var lat = parseFloat('{{lat}}'), lng = parseFloat('{{lng}}'), map,pencil,api='{{api}}',
-                tmapData = replaceAll('{{tmapData}}','&quot;', '"'),key='{{key}}',token='{{token}}'
+                tmapData = replaceAll(decodeURIComponent('{{tmapData}}'),'&quot;', '"'),key='{{key}}',token='{{token}}'
                 ,lid='{{lid}}',cid='{{cid}}',count=parseInt('{{count}}');
         $('#map').attr('style', 'height:' + 0.67 * window.screen.availHeight + "px");
         '{% if admin %}'

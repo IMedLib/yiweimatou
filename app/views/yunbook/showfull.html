@@ -70,7 +70,8 @@
 <script>
     $(document).ready(function () {
         var lat = parseFloat('{{lat}}'), lng = parseFloat('{{lng}}')
-                ,map,pencil= 0,tmapData=replaceAll('{{tmapData}}', '&quot;', '"'),smapData=replaceAll('{{smapData}}', '&quot;', '"');
+                ,map,pencil= 0,tmapData=replaceAll(decodeURIComponent('{{tmapData}}'), '&quot;', '"')
+                ,smapData=replaceAll(decodeURIComponent('{{smapData}}'), '&quot;', '"');
         function replaceAll(str, a, b) {
             while (str.indexOf(a) > -1) {
                 str = str.replace(a, b);
