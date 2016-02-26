@@ -5,8 +5,9 @@
  */
 
 var app = require('../app.js'),
+    _debug = require('debug'),
     http = require('http');
-
+var debug = _debug('app:bin')
 var port = normalizePort(process.env.PORT || '3000');
 var server = http.createServer(app.callback())
     .listen(port)
@@ -64,5 +65,5 @@ function onListening() {
     var bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
-    console.log('Listening on ' + bind);
+    debug('Listening on ' + bind);
 }

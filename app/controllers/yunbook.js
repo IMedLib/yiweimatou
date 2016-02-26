@@ -1,11 +1,46 @@
-/**
- * Created by zhangruofan on 2015/12/31.
- */
 var request = require('request-promise'),
     config = require('../../configs/index'),
+    _ = require('util'),
+    _debug = require('debug'),
     key, token;
 
+var debug = _debug('app:controller:yunbook');
 module.exports = {
+    leaflet:function *(){
+        var id = this.params.id;
+        id = parseInt(id,10);
+        if(!id){
+            this.set('refresh','3,/lesson');
+            this.body = '缺少参数，即将跳转...';
+            return;
+        }
+        var yunbook;
+        yield request({
+            uri:config.url.inside.api+'userYunbook/get',
+            qs:{
+                yid:id
+            },gzip:true,json:true
+        }).then(function(data){
+            if(data.code === 0){
+                yunbook = data.get;
+            }else{
+                debug(data.msg);
+            }
+        }).catch(function(err){
+            debug(err.message);
+        });
+        if(yunbook.yid === undefined){
+            this.body = '云板书不存在！';
+            return;
+        }
+        yield this.render('yunbook/leaflet',{
+            width:yunbook.width,
+            height:yunbook.height,
+            url:yunbook.uri,
+            maxZoom:yunbook.zoomnum,
+            title:yunbook.title
+        });
+    },
     index: function *() {
         key = this.cookies.get('key');
         yield this.render('yunbook/index', {

@@ -1,0 +1,144 @@
+<html>
+
+<head>
+  <title>{{title}}</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <link rel="stylesheet" href="/js/lib/leaflet/leaflet.css" />
+  <link rel="stylesheet" href="/js/lib/leaflet/leaflet.draw.css">
+  <link rel="stylesheet" href="/css/lib/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/lib/summernote/summernote.css">
+  <link rel="stylesheet" href="/css/lib/Font-Awesome/css/font-awesome.min.css">
+  <style>
+    html,
+    body,
+    #map {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+  <div id="modal" class="modal fade">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">填写标注弹出内容</h4>
+        </div>
+        <div class="modal-body">
+          <div id="summernote"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="submit" class="btn btn-primary">保存</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
+  <script>
+    L_PREFER_CANVAS = true;
+  </script>
+  <script src="/js/lib/leaflet/leaflet-src1.0.js"></script>
+  <script src="/js/lib/leaflet/leaflet.draw-src.js"></script>
+  <script src="/js/lib/jquery.min.js"></script>
+  <script src="/js/lib/bootstrap.min.js"></script>
+  <script src="/js/lib/summernote.js"></script>
+  <script src="/js/lib/summernote-zh-CN.js"></script>
+  <script>
+    var w = {{width}}
+    var url = "{{url}}"
+    var h = {{height}}
+    var mapMinZoom = 0;
+    var mapMaxZoom = {{maxZoom}}
+    var _map = L.map('map', {
+      maxZoom: mapMaxZoom,
+      minZoom: mapMinZoom,
+      zoomControl: true,
+      attributionControl: false,
+      crs:L.CRS.Simple
+    });
+    var $summernote = $('#summernote'),
+        $modal = $('#modal'),$submit=$('#submit');
+    var _mapBounds = new L.LatLngBounds(_map.unproject([0, h], mapMaxZoom), _map.unproject([w, 0], mapMaxZoom));
+    _map.setMaxBounds(_mapBounds);
+    _map.fitBounds(_mapBounds);
+    L.tileLayer(url + '{z}/{x}/{y}.png', {
+      minZoom: mapMinZoom,
+      maxZoom: mapMaxZoom,
+      bounds: _mapBounds,
+      noWrap: true,
+    }).addTo(_map);
+    //汉化
+    L.drawLocal.draw.toolbar.buttons.marker = '标注!';
+    L.drawLocal.draw.handlers.marker.tooltip.start = '点击地图进行定位';
+    L.drawLocal.draw.toolbar.actions.text = '取消';
+    L.drawLocal.draw.toolbar.actions.title = '取消标注';
+    var _drawnItems = new L.FeatureGroup().addTo(_map);
+    new L.Control.Draw({
+      edit:false,
+      draw:{
+        polyline:false,
+        polygon:false,
+        rectangle:false,
+        circle:false
+      }
+    }).addTo(_map);
+    $summernote.summernote({
+      focus: true,
+      height: 300,
+      lang: 'zh-CN'
+    });
+    function removeLayer(id) {
+      _drawnItems.removeLayer(id);
+    }
+    _map.on('draw:created',function (e) {
+      var _layer = e.layer,
+          _type = e.layerType;
+      _drawnItems.addLayer(_layer);
+      if(_type === 'marker'){
+          $summernote.summernote('code','');
+          $modal.modal('show');
+          $submit.unbind('click');
+          $submit.on('click',function () {
+            $modal.modal('hide');
+            var popup = L.popup({
+              maxWidth:1200
+            }).setContent($summernote.summernote('code')+'<div><i class="fa fa-trash" onClick="removeLayer('+_layer._leaflet_id+')"</div></i>');
+            _layer.bindPopup(popup).openPopup();
+          });
+          //如果用户取消输入还是能删除
+          _layer.bindPopup('<div><i class="fa fa-trash" onClick="removeLayer('+_layer._leaflet_id+')"</div></i>');
+      }
+    });
+    document.oncontextmenu = function(e) {
+      return false;
+    }
+    _map.on('mousedown', function drawPoly(e) {
+      e.originalEvent.preventDefault();
+      // _map.dragging.disable();
+      //如果不是右击则退出
+      if (2 != e.originalEvent.button) {
+        return false;
+      }
+      var polyLine = new L.Polyline([]);
+      _drawnItems.addLayer(polyLine);
+      _map.on('mousemove', function(e) {
+        polyLine.addLatLng(e.latlng);
+      })
+      _map.on('mouseup', function() {
+        _map.off('mousemove');
+        _map.off('mouseup');
+        polyLine.bindPopup('<div><i class="fa fa-trash" onClick="removeLayer('+polyLine._leaflet_id+')"</div></i>');
+      })
+    })
+  </script>
+</body>
+
+</html>

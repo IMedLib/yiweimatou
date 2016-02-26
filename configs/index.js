@@ -2,7 +2,7 @@
  * Created by zhangruofan on 2016/1/15.
  */
 var path = require('path')
-    , env = process.env.NODE_ENV || 'develop';
+    , env = process.env.NODE_ENV || 'development';
 
 env = env.toLowerCase();
 var file = path.join(__dirname,env);
