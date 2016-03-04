@@ -1,10 +1,9 @@
-/**
- * Created by zhangruofan on 2016/1/4.
- */
+'use strict';
 var request = require('request-promise'),
-    config = require('../../configs/index'),
+    config = require('../../config'),
+    _debug = require('debug'),
     key, token;
-
+const debug = _debug('app:controller:group');
 module.exports = {
     index: function *() {
         var groups;
@@ -25,18 +24,27 @@ module.exports = {
         }).catch(function (err) {
             console.error('/Organ/List/',err.message);
         });
+        var count = 0;
+        yield request({
+            uri:config.url.inside.api+'organ/info'
+        }).then(function (data) {
+            if(data.code === 0){
+                count=data.info.Count;
+            }
+        });
+        if(count > 0){
+            count = Math.ceil(count/9);
+        }
         yield this.render('group/index', {
             title: '机构列表',
             logo: '机构号',
             groups: groups,
-            domain:config.url.outside.domain
+            domain:config.url.outside.domain,
+            count:count
         });
     },
     show: function*() {
-        var oid = this.query.oid,group,admin=false,lessons;
-        if (typeof oid === 'undefined'){
-            this.redirect('/group');
-        }
+        var oid = this.params.id,group,admin=false,lessons;
         yield request({
             uri: config.url.inside.api + "Organ/get",
             gzip: true,
@@ -48,10 +56,10 @@ module.exports = {
             if (data.code === 0) {
                 group = data.get;
             }else{
-                console.error("Organ/get",data);
+                debug("Organ/get",data);
             }
         }).catch(function (err) {
-            console.error("Organ/get",err.message);
+            debug("Organ/get",err.message);
         });
         if (typeof group === 'undefined' || group === '{}'){
             this.redirect('/group');
@@ -67,10 +75,10 @@ module.exports = {
             if(data.code === 0){
                 lessons = data.list;
             }else{
-                console.error('/lesson/list',data);
+                debug('/lesson/list',data);
             }
         }).catch(function(err){
-            console.error('/lesson/list',err.message);
+            debug('/lesson/list',err.message);
         });
         key = this.cookies.get('key');
         if(typeof key !== 'undefined' && key === group.uid.toString()){
@@ -104,13 +112,31 @@ module.exports = {
                 groups = data.list;
             }
         }).catch(function (err) {
-            console.error(err.message);
+            debug(err.message);
         });
+        var count = 0;
+        yield request({
+            uri:config.url.inside.api+'organ/info',
+            qs:{
+                uid:key
+            },gzip:true,json:true
+        }).then(function (data) {
+            if(data.code === 0){
+                count = data.info.Count;
+            }
+        }).catch(function (err) {
+            debug(err.message);
+        });
+        if(count>0){
+            count = Math.ceil(count/9);
+        }
         yield this.render('group/me', {
             title: '我管理的机构',
             groups: groups,
             logo: "机构号",
-            key:key
+            key:key,
+            count:count,
+            api:config.url.outside.api
         });
     },
     edit: function*() {
@@ -120,29 +146,30 @@ module.exports = {
         });
     },
     add:function*(){
-        var count = 0 ,users;
+        let count = 0 ;let users;
         key = this.cookies.get('key');
         token = this.cookies.get('token');
         if (typeof key === 'undefined' || typeof token === 'undefined') {
-            this.redirect('/login?redirect=' + encodeURIComponent(this.url));
+            this.set('refresh',`3,/login?redirect=${encodeURIComponent(this.url)}`);
+            this.body = '请先登录，即将跳转...';
         }
-        if(key > 10){
+        if(key >= 10){
             this.redirect('/index');
         }
         yield request({
-           uri:config.url.inside.api+"userInfo/info",
+           uri:config.url.inside.api+"user/info",
             gzip:true,json:true
         }).then(function(data){
             if(data.code === 0){
                 count=Math.ceil(data.info.Count/9);
             }else{
-                console.error("userInfo/info",data);
+                debug("user/info",data);
             }
         }).catch(function(err){
-            console.error("userInfo/info",err.message);
+            debug("user/info",err.message);
         });
         yield request({
-            uri:config.url.inside.api+"userInfo/list",
+            uri:config.url.inside.api+"user/list",
             qs:{
                 limit:9,
                 offset:1
@@ -151,10 +178,10 @@ module.exports = {
             if(data.code ===0 ){
                 users = data.list;
             }else{
-                console.error("userInfo/list",data);
+                console.error("user/list",data);
             }
         }).catch(function(err){
-           console.error("userInfo/list",err.message);
+           console.error("user/list",err.message);
         });
         yield this.render('group/add',{
             title:'新增机构',

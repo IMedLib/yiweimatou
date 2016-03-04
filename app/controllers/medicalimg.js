@@ -1,7 +1,7 @@
 /**
  * Created by zhangruofan on 2016/2/1.
  */
-var config = require('../../configs/index'), key, token;
+var config = require('../../config'), key, token;
 module.exports = {
     index: function *() {
 

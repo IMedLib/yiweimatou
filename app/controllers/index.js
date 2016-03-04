@@ -1,7 +1,4 @@
-/**
- * Created by zhangruofan on 2015/12/28.
- */
-var config=require('../../configs/index.js'),
+var config=require('../../config'),
     request = require('request-promise');
 module.exports={
     index:function *(){

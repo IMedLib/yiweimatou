@@ -1,17 +1,18 @@
-/**
- * Created by zhangruofan on 2015/12/28.
- */
 'use strict';
-var config = require('../../configs/index'),
-    request = require('request-promise');
+var config = require('../../config'),
+    request = require('request-promise'),
+    _debug = require('debug');
+
+const debug = _debug('app:controller:user');
 module.exports={
     home:function *(){
         let key = this.cookies.get('key'),user=[];
         if(typeof key === 'undefined'){
-            this.redirect('/login?redirect='+encodeURIComponent(this.url));
+          this.set('refresh',`3,/login?redirect=${encodeURIComponent(this.url)}`);
+          this.body = '请先登录，即将跳转...';
         }
         yield request({
-            uri:config.url.inside.api+'userInfo/get',
+            uri:config.url.inside.api+'user/get',
             qs:{
                 uid:key
             },gzip:true,json:true,timeout:10000
@@ -20,7 +21,7 @@ module.exports={
                 user =  data.get;
             }
         }).catch(function(err){
-            console.log('userInfo/get',err.message);
+            debug('user/get',err.message);
         });
         yield this.render('user/home',{
             title:"我的主页",
@@ -33,21 +34,26 @@ module.exports={
             token = this.cookies.get('token'),
             user;
         if(typeof key === 'undefined' || typeof token === 'undefined'){
-            this.redirect('/login?redirect='+encodeURIComponent(this.url));
+          this.set('refresh',`3,/login?redirect=${encodeURIComponent(this.url)}`);
+          this.body = '请先登录，即将跳转...';
+          return;
         }
         yield request({
-            uri:config.url.inside.api+'userInfo/get',
+            uri:config.url.inside.api+'user/get',
             qs:{
-                uid:key
-            },gzip:true,json:true,timeout:10000
+                uid:key,
+                key:key,
+                token:token
+            },gzip:true,json:true
         }).then(function(data){
             if (data.code === 0){
                 user =  data.get;
+            }else{
+              debug(data);
             }
         }).catch(function(err){
-            console.log('userInfo/get',err.message);
+            debug('user/get',err.message);
         });
-
         yield this.render('user/setting',{
             title:'个人设置',
             logo:'我的主页',

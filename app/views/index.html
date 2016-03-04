@@ -9,13 +9,13 @@
     {% for lesson in lessons %}
     <div class="col-sm-4">
         <div class="file">
-            <a href="/lesson/show?lid={{lesson.lid}}">
+            <a href="/lesson/{{lesson.lid}}">
                 <span class="corner"></span>
                 <div class="img">
-                    <img src="{{lesson.coverpath}}512_256.png" class="img-responsive" alt="">
+                    <img src="{{lesson.cover_path}}512_256.png" class="img-responsive" alt="">
                 </div>
                 <div class="file-name text-center">
-                    {{lesson.title}}
+                    {{lesson.names}}
                 </div>
             </a>
         </div>
@@ -31,13 +31,13 @@
     {% for group in groups %}
     <div class="col-sm-4">
         <div class="file">
-            <a href="/group/show?oid={{group.oid}}">
+            <a href="/group/{{group.oid}}">
                 <span class="corner"></span>
                 <div class="img">
-                    <img src="{{group.coverpath}}512_256.png" class="img-responsive" alt="">
+                    <img src="{{group.cover_path}}512_256.png" class="img-responsive" alt="">
                 </div>
                 <div class="file-name text-center">
-                    {{group.title}}
+                    {{group.names}}
                 </div>
             </a>
         </div>

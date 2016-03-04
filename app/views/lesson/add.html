@@ -4,11 +4,11 @@
 <link rel="stylesheet" href="/css/lib/bootstrap-datetimepicker.min.css">
 <link rel="stylesheet" href="/css/lib/sky-forms.css">
 <link rel="stylesheet" href="/css/lib/custom-sky-forms.css">
-<link rel="stylesheet" href="/css/lib/jqpagination.css">
+<link rel="stylesheet" href="/css/lib/simplePagination.css">
 {% endblock %}
 {% block breadcrumbs %}
 <li><a href="/index">首页</a></li>
-<li><a href="/group/show?oid={{group.oid}}">{{group.title}}</a></li>
+<li><a href="/group/{{group.oid}}">{{group.names}}</a></li>
 <li class="active">{{title}}</li>
 {% endblock %}
 {% block body %}
@@ -71,13 +71,7 @@
                     <tbody id="teachers"></tbody>
                 </table>
             </div>
-            <div class="pagination" id="tp">
-                <a href="#" class="first" data-action="first">&laquo;</a>
-                <a href="#" class="previous" data-action="previous">&lsaquo;</a>
-                <input title="" type="text" readonly="readonly"/>
-                <a href="#" class="next" data-action="next">&rsaquo;</a>
-                <a href="#" class="last" data-action="last">&raquo;</a>
-            </div>
+            <nav id="page"></nav>
     </div>
 </div>
 {% endblock %}
@@ -86,13 +80,13 @@
 <script src="/js/lib/bootstrap-datetimepicker.min.js"></script>
 <script src="/js/lib/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/js/lib/template.js"></script>
-<script src="/js/lib/jquery.jqpagination.js"></script>
-<script type="text/javascript" src="/js/lib/jquery.blockUI.js"></script>
+<script src="/js/lib/jquery.simplePagination.js"></script>
+<script type="text/javascript" src="/js/lib/jquery.blockUI.min.js"></script>
 <script type="text/html" id="teacherTemplate">
     [each list as user]
     <tr>
         <td><input type="radio" name="toAdd" value="[user.uid]"></td>
-        <td> [user.username]</td>
+        <td> [user.mobile]</td>
     </tr>
     [/each]
 </script>
@@ -101,28 +95,35 @@
         var count = getTeacherCounts(),$teachers =$('#teachers'),limit=9;
         template.config('openTag','[');
         template.config('closeTag',']');
+        $('#page').pagination({
+            items:count,
+            listStyle:"pagination",
+            onPageClick:function(page,event){
+                getTeachers(limit,page);
+            }
+        });
         function getFileExt(name){
             return name.substring(name.lastIndexOf('.'),name.length).toUpperCase();
         }
         function getTeacherCounts(){
             var count = 0;
             $.ajax({
-                url: '{{config.url.api}}userinfo/info',
+                url: '{{config.url.api}}user/info',
                 async: false
             }).done(function (data) {
                 if (data.code === 0) {
                     count = data.info.Count;
                 } else {
-                    alert(data.msg === '' ? '获取用户数量出错!' : data.msg);
+                    toastr.error(data.msg === '' ? '获取用户数量出错!' : data.msg);
                 }
             }).fail(function () {
-                alert('获取用户数量超时！');
+                toastr.error('获取用户数量超时！');
             });
             return count;
         }
         function getTeachers(limit,offset){
             $.ajax({
-                url: '{{config.url.api}}userinfo/list',
+                url: '{{config.url.api}}user/list',
                 data: {
                     offset: offset,
                     limit: limit
@@ -131,10 +132,10 @@
                 if (data.code === 0) {
                     $('#teachers').html(template('teacherTemplate', data));
                 } else {
-                    alert(data.msg === '' ? '获取用户失败!' : data.msg);
+                    toastr.error(data.msg === '' ? '获取用户失败!' : data.msg);
                 }
             }).fail(function () {
-                alert('获取用户超时!');
+                toastr.error('获取用户超时!');
             });
         }
         $("#wizard").steps({
@@ -187,7 +188,7 @@
                 }
                 var formData = new FormData();
                 formData.append('uploadfile', file.get(0).files[0]);
-                $('#wizard').block();
+                $('#wizard').block({message:'<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
                 $.ajax({
                     url: '{{config.url.upload}}/file',
                     data: formData,
@@ -203,30 +204,28 @@
                             data: {
                                 key: '{{key}}',
                                 token: '{{token}}',
-                                title: title.val(),
-                                remark: remark,
+                                names: title.val(),
+                                descript: remark,
                                 uid: teacherID,
-                                coverpath: '{{config.url.domain}}/cover/' + data.cover_path,
-                                starttime:start.val(),
-                                endtime:end.val(),
-                                zoom:4,
-                                point:"POINT(0 0)",
+                                cover_path: '{{config.url.domain}}/cover/' + data.cover_path,
+                                start_ms:start.val(),
+                                end_ms:end.val(),
                                 oid:'{{group.oid}}'
                             }
                         }).done(function (data) {
                             if (data.code == 0) {
-                                window.location.href = "/lesson/show?lid="+data.identity;
+                                window.location.href = "/lesson/"+data.identity;
                             } else {
-                                alert(data.msg === '' ? "新建失败！" : data.msg);
+                                toastr.error(data.msg === '' ? "新建失败！" : data.msg);
                             }
                         }).fail(function () {
-                            alert('新建课程失败！');
+                            toastr.error('新建课程失败！');
                         });
                     } else {
-                        alert(data.msg === '' ? "上传失败，请重新上传！" : data.msg);
+                        toastr.error(data.msg === '' ? "上传失败，请重新上传！" : data.msg);
                     }
                 }).fail(function () {
-                    alert('文件上传超时！');
+                    toastr.error('文件上传超时！');
                 }).always(function(){
                     $('#wizard').unblock();
                 });
@@ -234,13 +233,6 @@
             }
         });
         getTeachers(limit,1);
-        $('#tp').jqPagination({
-            max_page: Math.ceil(count / limit),
-            page_string: '第{current_page}页,共{max_page}页',
-            paged: function (page) {
-                getTeachers(limit, page);
-            }
-        });
         $('.ui-datepicker').datetimepicker({
             language: 'zh-CN',
             format: 'yyyy-mm-dd hh:ii:ss',

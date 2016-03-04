@@ -2,11 +2,11 @@
  * Created by zhangruofan on 2016/1/5.
  */
 var request = require('request-promise'),
-    config = require('../../configs'),
+    config = require('../../config'),
     key, token;
 module.exports={
     edit:function *(){
-        var cid = this.query.cid,clazz,lesson,yunbook;
+        var cid = this.params.id,clazz,lesson,yunbook;
         if (typeof cid === 'undefined'){
             this.redirect('/clazz');
         }
@@ -18,7 +18,9 @@ module.exports={
         yield request({
            uri:config.url.inside.api+'Classroom/Get/',
             qs:{
-                cid:cid
+                cid:cid,
+                key:key,
+                token:token
             },gzip:true,json:true
         }).then(function(data){
             if(data.code === 0){
@@ -52,7 +54,7 @@ module.exports={
             token:token,
             clazz:clazz,
             lesson:lesson,
-            title:clazz.title,
+            title:clazz.names,
             logo:'云课堂',
             config:{
                 url:config.url.outside

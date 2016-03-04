@@ -2,6 +2,7 @@
 {% block css %}
 <link rel="stylesheet" href="/css/lib/sky-forms.css">
 <link rel="stylesheet" href="/css/lib/custom-sky-forms.css">
+<link rel="stylesheet" href="/css/lib/simplePagination.css">
 {% endblock%}
 {% block breadcrumbs%}
 <li><a href="/index">首页</a></li>
@@ -39,7 +40,7 @@
                     {% for user in users %}
                     <tr>
                         <td><input type="radio" name="admin" value="{{user.uid}}"></td>
-                        <td>{{user.username}}</td>
+                        <td>{{user.mobile}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -55,14 +56,14 @@
 </form>
 {% endblock%}
 {% block js %}
-<script type="text/javascript" src="/js/lib/jquery.blockUI.js"></script>
+<script type="text/javascript" src="/js/lib/jquery.blockUI.min.js"></script>
 <script type="text/javascript" src="/js/lib/template.js"></script>
 <script src="/js/lib/jquery.simplePagination.js"></script>
 <script id="userTemplate" type="text/html">
     [each list as user]
     <tr>
         <td><input type="radio" name="admin" value="[user.uid]"></td>
-        <td>[user.username]</td>
+        <td>[user.mobile]</td>
     </tr>
     [/each]
 </script>
@@ -79,7 +80,7 @@
             listStyle:"pagination",
             onPageClick:function(page,event){
                 $.ajax({
-                    url:"{{config.url.api}}userInfo/list",
+                    url:"{{config.url.api}}user/list",
                     data:{
                         limit:9,
                         offset:page
@@ -88,10 +89,10 @@
                     if(data.code === 0){
                         $users.html(template("userTemplate",data));
                     }else{
-                        alert(data.msg===''?'获取用户列表失败！':data.msg);
+                        toastr.error(data.msg===''?'获取用户列表失败！':data.msg);
                     }
                 }).fail(function(){
-                   alert('获取用户列表失败！');
+                   toastr.error('获取用户列表失败！');
                 });
             }
         });
@@ -102,13 +103,13 @@
                     file=$('#file').get(0).files[0],$uid=$(':radio:checked').val();
             e.preventDefault();
             if ($uid === 'undefined'){
-                alert('请选择一个管理员');
+                toastr.error('请选择一个管理员');
                 return false;
             }
             var formData=new FormData();
             formData.append('uploadfile',file);
             formData.append('title',title);
-            $('form').block();
+            $('form').block({message:'<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
             $.ajax({
                 url:'{{config.url.upload}}/file',
                 data:formData,
@@ -122,26 +123,27 @@
                         url: "{{config.url.api}}/Organ/Add/",
                         type:'post',
                         data: {
-                            title: title,
+                            names: title,
                             key: '{{key}}',
                             token: '{{token}}',
-                            coverpath:"{{config.url.domain}}cover/"+data.cover_path,
+                            cover_path:"{{config.url.domain}}cover/"+data.cover_path,
+                            logo_path:"{{config.url.domain}}cover/"+data.cover_path,
                             uid:$uid
                         }
                     }).done(function(data){
                         if(data.code==0){
-                            window.location.href="/group/show?oid="+data.identity;
+                            window.location.href="/group/"+data.identity;
                         }else {
-                            alert(data.msg === '' ? "新建失败！" : data.msg);
+                            toastr.error(data.msg === '' ? "新建失败！" : data.msg);
                         }
                     }).fail(function(){
-                        alert('新建机构失败！');
+                        toastr.error('新建机构失败！');
                     });
                 }else{
-                    alert(data.msg===''?"上传失败，请重新上传！":data.msg);
+                    toastr.error(data.msg===''?"上传失败，请重新上传！":data.msg);
                 }
             }).fail(function(){
-                alert('文件上传超时！');
+                toastr.error('文件上传超时！');
             }).always(function(){
                 $('form').unblock();
             });

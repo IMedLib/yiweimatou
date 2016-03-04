@@ -4,10 +4,10 @@
 var router = require('koa-router')(),
     lessonCtrl = require('../controllers/lesson');
 
-router.get('/edit',lessonCtrl.edit);
+router.get('/edit/:id',lessonCtrl.edit);
 router.get('/',lessonCtrl.index);
 router.get('/index',lessonCtrl.index);
-router.get('/show',lessonCtrl.show);
+router.get('/:id',lessonCtrl.show);
 router.get('/me',lessonCtrl.me);
 router.get('/add',lessonCtrl.add);
 router.get('/admin',lessonCtrl.admin);

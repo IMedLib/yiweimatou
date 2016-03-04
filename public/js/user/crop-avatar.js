@@ -279,14 +279,32 @@
         submitStart: function () {
             this.$loading.fadeIn();
         },
-
+        updateUser :function (face_path) {
+            $.ajax({
+              url:api+'user/put',
+              type:'post',
+              data:{
+                face_path:face_path,
+                key:key,
+                token:token
+              }
+            }).done(function (data) {
+                if(data.code === 0){
+                  toastr.success('头像更换成功!');
+                  var now = new Date();
+                  now.setDate(now.getDate() + parseInt(180));
+                  document.cookie = 'img_url='+face_path+'; expires='+now.toUTCString()+'; path=/';
+                }else{
+                  toastr.error(data.msg === ''?'更换头像失败！':data.msg);
+                }
+            }).fail(function () {
+                toastr.error('操作延时,请稍后再试!');
+            });
+        },
         submitDone: function (data) {
             if ($.isPlainObject(data) && data.code === 0) {
                 if (data.face_path) {
-                    console.log(this.url);
-                    this.url = data.face_path;
-                    console.log(this.support.datauri);
-                    console.log(this.uploaded);
+                    this.url = this.$avatarForm.attr('domain')+data.face_path+'256.png';
                     if (this.support.datauri || this.uploaded) {
                         this.uploaded = false;
                         this.cropDone();
@@ -298,6 +316,7 @@
                     //}
 
                     this.$avatarInput.val('');
+                    this.updateUser(this.url);
                 }
             } else {
                 this.alert(data.msg);

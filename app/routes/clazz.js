@@ -4,6 +4,6 @@
 var router = require('koa-router')(),
     clazzCtrl = require('../controllers/clazz');
 
-router.get('/edit',clazzCtrl.edit);
+router.get('/edit/:id',clazzCtrl.edit);
 
 module.exports=router;

@@ -6,31 +6,79 @@
 {% endblock %}
 
 {% block content %}
+<div class="row" id="lessons">
 {% for lesson in lessons %}
 <div class="col-sm-4">
     <div class="file">
-        <a href="/lesson/show?lid={{lesson.lid}}">
+        <a href="/lesson/{{lesson.lid}}">
             <span class="corner"></span>
             <div class="image">
-                <img src="{{lesson.coverpath}}512_256.png" class="img-responsive" alt="">
+                <img src="{{lesson.cover_path}}512_256.png" class="img-responsive" alt="">
             </div>
             <div class="file-name">
-                {{lesson.title}}
+                {{lesson.names}}
                 <br/>
-                <small>{{lesson.puttime}}</small>
+                <small>{{lesson.put_ms}}</small>
             </div>
         </a>
     </div>
 </div>
 {% endfor %}
+</div>
+<div class="row">
+<nav id="page" class="pull-right"></nav></div>
 {% endblock %}
 
 {% block js %}
+<script src="/js/lib/jquery.simplePagination.js"></script>
+<script src="/js/lib/template.js"></script>
+<script id="lessonTemplate" type="text/html">
+    [each list as lesson]
+    <div class="col-sm-4">
+        <div class="file">
+            <a href="/lesson/[lesson.lid]">
+                <span class="corner"></span>
+                <div class="image">
+                    <img src="[lesson.cover_path]512_256.png" class="img-responsive" alt="">
+                </div>
+                <div class="file-name">
+                    [lesson.names]
+                    <br/>
+                    <small>[lesson.put_ms]</small>
+                </div>
+            </a>
+        </div>
+    </div>
+    [/each]
+</script>
 <script>
     $(document).ready(function () {
         var $lessonCollapse = $('#collapse-lesson');
         $lessonCollapse.addClass('in');
-        $lessonCollapse.find('li').eq(1).addClass('active');
+        $lessonCollapse.find('li').eq(1).addClass('active'),
+        api='{{config.url.api}}';
+        '{% if count>0 %}'
+        $('#page').pagination({
+            items: '{{count}}',
+            listStyle: "pagination",
+            onPageClick: function (page) {
+                $.ajax({
+                    url: api+'lesson/list',
+                    data: {
+                        limit: 9,
+                        offset: page,
+                        uid: '{{key}}'
+                    }
+                }).done(function (data) {
+                    if (data.code === 0) {
+                        $('#lessons').html(template('lessonTemplate', data));
+                    }
+                }).catch(function () {
+                    toastr.error('获取课程失败!');
+                });
+            }
+        });
+        '{%endif%}'
     });
 </script>
 {% endblock %}

@@ -37,7 +37,7 @@
 </form>
 {% endblock%}
 {% block js %}
-<script type="text/javascript" src="/js/lib/jquery.blockUI.js"></script>
+<script type="text/javascript" src="/js/lib/jquery.blockUI.min.js"></script>
 <script>
     $(document).ready(function () {
         var $yunbookCollapse = $('#collapse-yunbook');
@@ -53,7 +53,7 @@
             var formData=new FormData();
             formData.append('uploadfile',file);
             formData.append('title',title);
-            $('form').block();
+            $('form').block({message:'<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
             $.ajax({
                 url:'{{config.url.upload}}/yunbook',
                 data:formData,
@@ -64,35 +64,36 @@
             }).done(function(data){
                 if(data.code===0){
                     $.ajax({
-                        url: "{{config.url.api}}/Useryunbook/Add/",
+                        url: "{{config.url.api}}/userFile/Add/",
                         type:'post',
                         data: {
-                            title: title,
+                            uid:'{{key}}',
+                            type:3,
+                            names: title,
                             key: '{{key}}',
                             width:data.file_width,
                             height:data.file_height,
                             token: '{{token}}',
-                            zoomnum: data.zoom_num,
-                            zoom:4,
+                            zoom: data.zoom_num,
                             size:data.file_size,
-                            point: "POINT(43.61221676817571 33.7060546875)",
-                            coverpath:"{{config.url.domain}}cover/"+data.cover_path,
-                            uri:'{{config.url.domain}}yunbook/'+ data.file_path
+                            cover_path:"{{config.url.domain}}cover/"+data.cover_path,
+                            path:'{{config.url.domain}}yunbook/'+ data.file_path,
+                            ext:file.name.split('.').pop()
                         }
                     }).done(function(data){
                         if(data.code==0){
-                            alert('新建成功！');
+                            toastr.success('新建成功！');
                         }else {
-                            alert(data.msg === '' ? "新建失败！" : data.msg);
+                            toastr.error(data.msg === '' ? "新建失败！" : data.msg);
                         }
                     }).fail(function(){
-                        alert('新建云板书失败！');
+                        toastr.error('新建云板书失败！');
                     });
                 }else{
-                    alert(data.msg===''?"上传失败，请重新上传！":data.msg);
+                    toastr.error(data.msg===''?"上传失败，请重新上传！":data.msg);
                 }
             }).fail(function(){
-                alert('文件上传超时！');
+                toastr.error('文件上传超时！');
             }).always(function(){
                 $('form').unblock();
             });

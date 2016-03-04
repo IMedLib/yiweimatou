@@ -1384,7 +1384,6 @@ L.Edit.Poly = L.Handler.extend({
 });
 
 L.Polyline.addInitHook(function () {
-
 	// Check to see if handler has already been initialized. This is to support versions of Leaflet that still have L.Handler.PolyEdit
 	if (this.editing) {
 		return;
@@ -2768,7 +2767,9 @@ L.EditToolbar.Edit = L.Handler.extend({
 	_enableLayerEdit: function (e) {
 		var layer = e.layer || e.target || e,
 			pathOptions;
-
+		if(layer instanceof L.Polyline){
+			return;
+		}
 		// Back up this layer (if haven't before)
 		this._backupLayer(layer);
 
@@ -2791,7 +2792,9 @@ L.EditToolbar.Edit = L.Handler.extend({
 
 	_disableLayerEdit: function (e) {
 		var layer = e.layer || e.target || e;
-
+		if(layer instanceof L.Polyline){
+			return;
+		}
 		layer.edited = false;
 		layer.editing.disable();
 
