@@ -1,5 +1,7 @@
 {% extends '../layout/user_sidebar.html' %}
-
+{% block css %}
+<link rel="stylesheet" href="/css/lib/simplePagination.css">
+{% endblock %}
 {% block breadcrumbs%}
 <li><a href="/index">首页</a></li>
 <li><a href="/yunbook">云板书</a></li>
@@ -7,30 +9,84 @@
 {% endblock %}}
 
 {% block content %}
-<div class="row">
+<div class="row" id='yunbookList'>
         {% for yunbook in yunbooks %}
-            <div class="col-sm-4 file">
-                <a href="/yunbook/show?yid={{yunbook.yid}}">
+        <div class="col-sm-4">
+            <div class="file">
+                <a target='_blank' href="/yunbook/{{yunbook.fid}}">
                     <span class="corner"></span>
                     <div class="image">
-                        <img src="{{yunbook.coverpath}}512_256.png" class="img-responsive" alt="">
+                        <img src="{{yunbook.cover_path}}512_256.png" class="img-responsive" alt="">
                     </div>
                     <div class="file-name">
-                        {{yunbook.title}}
+                        {{yunbook.names}}
                         <br/>
-                        <small>{{yunbook.puttime}}</small>
+                        <small>{{yunbook.put_ms}}</small>
                     </div>
                 </a>
             </div>
+        </div>
         {% endfor %}
+</div>
+<div class="row">
+    <nav id="yunbookPage" class="pull-right"></nav>
 </div>
 {% endblock %}
 {% block js %}
+<script src="/js/lib/template.js"></script>
+<script src="/js/lib/jquery.simplePagination.js"></script>
+<script type='text/html' id="yunbokListTemplaet">
+    [each list as yunbook]
+    <div class="col-sm-4">
+        <div class="file">
+            <a target='_blank' href="/yunbook/[yunbook.fid]">
+                <span class="corner"></span>
+                <div class="image">
+                    <img src="[yunbook.cover_path]512_256.png" class="img-responsive" alt="">
+                </div>
+                <div class="file-name">
+                    [yunbook.names]
+                    <br/>
+                    <small>[yunbook.put_ms]</small>
+                </div>
+            </a>
+        </div>
+    </div>
+    [/each]
+</script>
 <script>
     $(document).ready(function () {
-        var $yunbookCollapse = $('#collapse-yunbook');
+        template.config('openTag','[');
+        template.config('closeTag',']');
+        var $yunbookCollapse = $('#collapse-yunbook'),$list = $('#yunbookList');
         $yunbookCollapse.addClass('in');
         $yunbookCollapse.find('li').eq(0).addClass('active');
+        $('#yunbookPage').pagination({
+            items:{{count}},
+            listStyle:'pagination',
+            onPageClick:function (page) {
+                getYunbooks(page);
+            }
+        });
+        function getYunbooks(page){
+            $.ajax({
+                url:"{{url}}userFile/list",
+                data:{
+                    uid:'{{key}}',
+                    type:3,
+                    limit:9,
+                    offset:page
+                }
+            }).done(function (data) {
+                if(data.code === 0){
+                    $list.html(template('yunbookListTemplate',data));
+                }else{
+                    toastr.error(data.msg);
+                }
+            }).fail(function () {
+                toastr.error('获取云板书超时,请稍后再试!');
+            })
+        }
     });
 </script>
 {% endblock %}

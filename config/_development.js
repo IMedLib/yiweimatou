@@ -1,14 +1,14 @@
 module.exports={
     url:{
         inside: {
-            api: "http://121.41.92.56:8081/",
+            api: "http://121.41.92.56:2016/",
             upload: "http://121.41.92.56:8001/",
             domain: "http://121.41.92.56/"
         },
         outside: {
-            api: "http://121.41.92.56:8081/",
-            upload: "http://121.41.92.56:8001/",
-            domain: "http://121.41.92.56/"
+          api: "http://121.41.92.56:2016/",
+          upload: "http://121.41.92.56:8001/",
+          domain: "http://121.41.92.56/"
         }
     },
     cookie:{

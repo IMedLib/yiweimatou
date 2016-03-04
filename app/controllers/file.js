@@ -1,7 +1,7 @@
 /**
  * Created by zhangruofan on 2016/1/6.
  */
-var config = require('../../configs/index'),
+var config = require('../../config'),
     request = require('request-promise'),
     key,token;
 module.exports = {

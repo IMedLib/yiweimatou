@@ -1,7 +1,7 @@
 /*Page Search Block
 ------------------------------------*/
 .search-block {
-    padding: 40px 0 50px;
+    /*padding: 40px 0 0px;*/
     border-bottom: 1px solid #eee;
     background: url(../../img/patterns/breadcrumbs.png) repeat;
 }

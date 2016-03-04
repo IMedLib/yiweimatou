@@ -3,7 +3,7 @@
 <div class="row">
     <!--Left Sidebar-->
     <div class="col-md-3 md-margin-bottom-40">
-        <img class="img-responsive profile-img margin-bottom-20" src="/img/clients4/img12.jpg" alt="">
+        <img id="_face" class="img-responsive profile-img margin-bottom-20" src="/img/clients4/img12.jpg" alt="">
 
         <ul class="list-group sidebar-nav-v1 margin-bottom-40" id="sidebar-nav-1">
             <li class="list-group-item">
@@ -13,7 +13,7 @@
                 <a href="#collapse-group" class="accordion-toggle" data-toggle="collapse"><i class="fa fa-group"></i>&nbsp;机构</a>
                 <ul id="collapse-group" class="collapse">
                     <li><a href="/group/me">&nbsp;我的机构</a></li>
-                    {% if key=<10 %}
+                    {% if key<10 %}
                     <li><a href="/group/add">&nbsp;新建机构</a></li>
                     {% endif %}
                 </ul>
@@ -40,14 +40,14 @@
                     </li>
                 </ul>
             </li>
-            <li class="list-group-item list-toggle">
+            <!-- <li class="list-group-item list-toggle">
                 <a href="#collapse-file" class="accordion-toggle" data-toggle="collapse">
                     <i class="fa fa-file"></i>&nbsp;文件 </a>
                 <ul id="collapse-file" class="collapse">
                     <li><a href="/file/me"><i class="fa fa-file"></i>&nbsp;我的文件 </a></li>
                     <li><a href="/file/add"><i class="fa fa-plus"></i>&nbsp;上传文件 </a></li>
                 </ul>
-            </li>
+            </li> -->
             <li class="list-group-item">
                 <a href="/user/setting"><i class="fa fa-cog"></i>&nbsp;个人设置 </a>
             </li>
@@ -60,4 +60,38 @@
         {% block content %} {% endblock %}
     </div>
 </div>
+<script>
+    (function (document,window) {
+        var c_start=document.cookie.indexOf('img_url' + "="),xmlhttp;
+        if (c_start!=-1){
+          document.getElementById('_face').setAttribute('src',unescape(getCookie('img_url')));
+        }else{
+           xmlhttp = new XMLHttpRequest();
+           xmlhttp.onreadystatechange = stateChange;
+           var key=getCookie('key'),token=getCookie('token');
+           xmlhttp.open("GET","http://121.41.92.56:2016/user/get?key="+key+"&token="+token,true);
+           xmlhttp.send();
+        }
+        function getCookie(name) {
+             var value = "; " + document.cookie;
+             var parts = value.split("; " + name + "=");
+             if (parts.length == 2) return parts.pop().split(";").shift();
+        }
+        function stateChange() {
+          if (xmlhttp.readyState==4){
+              if(xmlhttp.status === 200){
+                var data = JSON.parse(xmlhttp.responseText);
+                if(data.code === 0){
+                    var face_path = data.get.face_path;
+                    if(face_path === '') return;
+                    document.getElementById('_face').setAttribute('src',face_path);
+                    var now = new Date();
+                    now.setDate(now.getDate() + parseInt(180));
+                    document.cookie = 'img_url='+face_path+'; expires='+now.toUTCString()+'; path=/';
+                }
+              }
+          }
+        }
+    })(document,window)
+</script>
 {% endblock %}

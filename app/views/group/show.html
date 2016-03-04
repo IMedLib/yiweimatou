@@ -13,15 +13,15 @@
         <h3>详情</h3>
         <dl class="dl-horizontal margin-top-20">
             <dt>机构名:</dt>
-            <dd>{{group.title}}</dd>
+            <dd>{{group.names}}</dd>
             <dt>管理员:</dt>
             <dd>{{group.uid}}</dd>
             <dt>更新时间:</dt>
-            <dd>{{group.puttime}}</dd>
+            <dd>{{group.put_ms}}</dd>
         </dl>
     </div>
     <div class="col-md-5">
-        <img src="{{group.coverpath}}512_256.png" class="img-responsive"
+        <img src="{{group.cover_path}}512_256.png" class="img-responsive"
              alt="机构封面">
     </div>
 </div>
@@ -36,15 +36,15 @@
     <div class="col-sm-4">
 
         <div class="file">
-            <a href="/lesson/show?lid={{lesson.lid}}">
+            <a href="/lesson/{{lesson.lid}}">
                 <span class="corner"></span>
                 <div class="image">
-                    <img src="{{lesson.coverpath}}512_256.png" class="img-responsive" alt="">
+                    <img src="{{lesson.cover_path}}512_256.png" class="img-responsive" alt="">
                 </div>
                 <div class="file-name">
-                    {{lesson.title}}
+                    {{lesson.names}}
                     <br/>
-                    <small>{{lesson.puttime}}</small>
+                    <small>{{lesson.put_ms}}</small>
                 </div>
             </a>
         </div>
@@ -58,8 +58,4 @@
     <h3>明星老师</h3>
 </div>
 <hr>
-<div class="row">
-    <a href="#" class="btn-u pull-right">显示全部</a>
-    <h3>热门评论</h3>
-</div>
 {% endblock %}

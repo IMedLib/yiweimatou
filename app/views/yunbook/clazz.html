@@ -68,7 +68,7 @@
           mapMinZoom = 0,
           mapMaxZoom = {{yunbook.zoom}},
           fid = {{yunbook.fid}},
-          _data =decodeURIComponent('{{yunbook.label}}');
+          _data =decodeURIComponent('{{label}}');
         var _map = L.map('map', {
           maxZoom: mapMaxZoom,
           minZoom: mapMinZoom,
@@ -85,9 +85,9 @@
               icon: 'fa fa-floppy-o fa-2x',
               onClick: function (control) {
                 $.ajax({
-                  url: '{{api}}/userFile/put',
+                  url: '{{url}}',
                   data: {
-                    fid: fid,
+                    cfid:'{{cfid}}',
                     label: encodeURIComponent(JSON.stringify(_geoJson)),
                     key:key,
                     token:token
@@ -137,11 +137,10 @@
         L.drawLocal.edit.toolbar.buttons.remove = '删除标注';
         L.drawLocal.edit.toolbar.buttons.editDisabled = '没有标注需要修改';
         L.drawLocal.edit.toolbar.buttons.removeDisabled = '没有标注需要删除';
-        var _drawnItems,
-            _geoJson = {
-              type: 'FeatureCollection',
-              features: []
-            };
+        var _drawnItems,_geoJson = {
+          type: 'FeatureCollection',
+          features: []
+        };
         if (_data === '') {
           _drawnItems = new L.FeatureGroup().addTo(_map);
         } else {
@@ -182,13 +181,10 @@
           _drawnItems.removeLayer(id);
           removeGeoJson(id);
         }
-        function updateGeoJson(geoJson) {
-          _geoJson.features.forEach(function (item, index) {
-            if (item.properties._id === geoJson.properties._id) {
-              _geoJson.features[index] = geoJson;
-              return;
-            }
-          });
+        function updateGeoJson(now,old) {
+          var index=_geoJson.features.indexOf(old);
+          if(index === -1) return;
+          _geoJson.features[index] = now;
         }
         function findGeoJson(id) {
           var _temp;
@@ -212,8 +208,9 @@
           e.layers.eachLayer(function (_layer) {
             var tmp = findGeoJson(_layer._leaflet_id);
             if (tmp != undefined) {
-              tmp.geometry.coordinates = _layer.getLatLng();
-              updateGeoJson(tmp);
+                var old = tmp;
+                tmp.geometry.coordinates = _layer.getLatLng();
+                updateGeoJson(tmp,old);
             }
           })
         });
@@ -243,8 +240,9 @@
               if (code !== '') {
                 popup.setContent(code);
                 _layer.bindPopup(popup).openPopup();
+                var old = _geoJsonTmp;
                 _geoJsonTmp.properties._popup = code;
-                updateGeoJson(_geoJsonTmp);
+                updateGeoJson(_geoJsonTmp,old);
               }
             });
 

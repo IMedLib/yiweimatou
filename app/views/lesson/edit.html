@@ -1,289 +1,288 @@
 {% extends '../layout/header.html'%}
 {% block css%}
-<link rel="stylesheet" href="/css/lib/bootstrap-datetimepicker.min.css">
-<link rel="stylesheet" href="/css/lib/sky-forms.css">
-<link rel="stylesheet" href="/css/lib/custom-sky-forms.css">
-<link rel="stylesheet" href="/css/lib/simplePagination.css">
-<link rel="stylesheet" href="/css/lib/table_search.css">
+  <link rel="stylesheet" href="/css/lib/bootstrap-datetimepicker.min.css">
+  <link rel="stylesheet" href="/css/lib/sky-forms.css">
+  <link rel="stylesheet" href="/css/lib/custom-sky-forms.css">
+  <link rel="stylesheet" href="/css/lib/simplePagination.css">
+  <link rel="stylesheet" href="/css/lib/table_search.css">
 {% endblock %}
 {% block breadcrumbs %}
-<li><a href="/index">首页</a></li>
-<li><a href="/lesson/show?lid={{lesson.lid}}">{{lesson.title}}</a></li>
-<li class="active">编辑{{lesson.title}}</li>
+<li>
+  <a href="/index">首页</a>
+</li>
+<li>
+  <a href="/lesson/{{lesson.lid}}">{{lesson.names}}</a>
+</li>
+<li class="active">编辑{{lesson.names}}</li>
 {% endblock %}
 {% block body %}
 <div class="row">
-    <div class="col-sm-3">
-        <ul class="list-group sidebar-nav-v1" id="siderbar">
-            {%if admin > 1%}
-            <li class="list-group-item list-toggle active">
-                <a href="#collapse-lesson" class="accordion-toggle" data-toggle="collapse">
-                    <i class="fa fa-graduation-cap"></i>&nbsp;课程管理</a>
-                <ul class="collapse in" id="collapse-lesson">
-                    <li class="active">
-                        <a href="#editInfo" data-toggle="tab" data-parent="#siderbar"> 修改信息 </a>
-                    </li>
-                    <li><a href="#cover" data-toggle="tab">更改封面</a></li>
-                </ul>
-
-            </li>
-
-            <li class="list-group-item list-toggle">
-                <a href="#collapse-clazz" data-toggle="collapse" class="accordion-toggle">
-                    <i class="fa fa-building"></i>&nbsp;&nbsp;课堂管理
-                </a>
-                <ul class="collapse" id="collapse-clazz">
-                    <li>
-                        <a href="#addClass" data-toggle="tab">
-                            <i class="fa fa-plus"></i>&nbsp;添加课堂 </a>
-                    </li>
-                    <li><a href="#classList" data-toggle="tab">
-                        <i class="fa fa-building">&nbsp;课堂列表</i>
-                    </a></li>
-                </ul>
-
-            </li>
-            <li class="list-group-item list-toggle">
-                <a class="accordion-toggle" data-target="#collapse-teacher" data-toggle="collapse">
-                    <i class="fa fa-users"></i>&nbsp;讲师管理 </a>
-                <ul class="collapse" id="collapse-teacher">
-                    <li>
-                        <a href="#addTeacher" data-toggle="tab"><i class="fa fa-plus"></i> 添加老师</a></li>
-                    <li><a href="#delTeacher" data-toggle="tab"><i class="fa fa-minus"></i> 删除老师</a></li>
-                </ul>
-            </li>
-            {%endif%}
-            <li class="list-group-item list-toggle">
-                <a class="accordion-toggle" data-target="#collapse-student" data-toggle="collapse">
-                    <i class="fa fa-child"></i>&nbsp;&nbsp;学生管理</a>
-                <ul class="collapse" id="collapse-student">
-                    <li>
-                        <a href="#editStu" data-toggle="tab">&nbsp;学生管理 </a>
-                    </li>
-                </ul>
-            </li>
+  <div class="col-sm-3">
+    <ul class="list-group sidebar-nav-v1" id="siderbar">
+      {%if admin > 1%}
+      <li class="list-group-item list-toggle active">
+        <a href="#collapse-lesson" class="accordion-toggle" data-toggle="collapse">
+          <i class="fa fa-graduation-cap"></i>&nbsp;课程管理</a>
+        <ul class="collapse in" id="collapse-lesson">
+          <li class="active">
+            <a href="#editInfo" data-toggle="tab" data-parent="#siderbar">
+              修改信息
+            </a>
+          </li>
+          <li>
+            <a href="#cover" data-toggle="tab">更改封面</a>
+          </li>
         </ul>
-    </div>
-    <div class="col-sm-9">
-        <div class="tab-content">
-            {% if admin>1 %}
-            <div id="editInfo" class="tab-pane fade in active">
-                <form id="editInfoForm" class="sky-form">
-                    <fieldset>
-                        <section>
-                            <label class="label" for="title">名称</label>
-                            <label class="input">
-                                <input type="text" required="required" value="{{lesson.title}}" id="lessonTitle">
-                            </label>
-                        </section>
-                        <div class="row">
-                            <section class="col col-6">
-                                <label class="input">
-                                    <i class="icon-append fa fa-calendar"></i>
-                                    <input class="ui-datepicker" required type="text" id="lessonStart"
-                                           value="{{lesson.starttime}}">
-                                </label>
-                            </section>
-                            <section class="col col-6">
-                                <label class="input">
-                                    <i class="icon-append fa fa-calendar"></i>
-                                    <input class="ui-datepicker" required
-                                           type="text" id="lessonEnd" value="{{lesson.endtime}}">
-                                </label>
-                            </section>
-                        </div>
-                        <section>
-                            <label class="label" for="remark">简介</label>
-                            <label class="textarea">
-                                <textarea rows="3" id="lessonRemark">{{lesson.remark}}</textarea>
-                            </label>
-                        </section>
-                    </fieldset>
-                    <footer>
-                        <button type="submit" class="btn-u pull-right">修改</button>
-                    </footer>
-                </form>
-            </div>
-            <div id="cover" class="tab-pane fade in">
-                <div class="row">
-                    <img src="{{lesson.coverpath}}1024_512.png" class="img-responsive center-block" id="image"
-                         alt="封面图片">
-                </div>
 
-                <div class="row margin-top-20">
-                    <div class="btn-group pull-right">
-                        <label title="Upload image file" for="inputImage" class="btn-u btn-lg btn-link">
-                            <input type="file" accept="image/*" name="file" id="inputImage" class="hide">
-                            上传新封面
-                        </label>
-                        <label id="submit" class="btn-u btn-lg btn-link">确认提交</label>
-                    </div>
-                </div>
-            </div>
-            <div id="addClass" class="tab-pane fade in">
-                <div class="row">
-                    <form id="addClassForm" class="sky-form">
-                        <header>新建课堂</header>
-                        <fieldset>
-                            <section>
-                                <label for="title" class="label">课堂标题</label>
-                                <label class="input">
-                                    <input type="text" id="title" required>
-                                </label>
-                            </section>
-                            <section>
-                                <label class="label">课程封面</label>
-                                <label for="file" class="input input-file">
-                                    <div class="button">
-                                        <input type="file" id="file" required
-                                               onchange="this.parentNode.nextElementSibling.value = this.value">选择文件
-                                    </div>
-                                    <input id="path" type="text" readonly>
-                                </label>
-                            </section>
-                            <section>
-                                <label for="remark" class="label">课堂备注</label>
-                                <label class="textarea">
-                                    <textarea id="remark" rownum="3"></textarea>
-                                </label>
-                            </section>
-                            <div class="row">
-                                <section class="col col-6">
-                                    <label class="input">
-                                        <i class="icon-append fa fa-calendar"></i>
-                                        <input class="ui-datepicker" type="text" required id="start" placeholder="开始时间">
-                                    </label>
-                                </section>
-                                <section class="col col-6">
-                                    <label class="input">
-                                        <i class="icon-append fa fa-calendar"></i>
-                                        <input class="ui-datepicker" required
-                                               type="text" id="end" placeholder="结束时间">
-                                    </label>
-                                </section>
-                            </div>
-                        </fieldset>
-                        <footer>
-                            <span class="font-red" id="err"></span>
-                            <button type="submit" class="btn-u pull-right">提交</button>
-                        </footer>
-                    </form>
-                </div>
-            </div>
-            <div id="classList" class="tab-pane fade in">
-                <div class="row"><div id="classes"></div></div>
-                <nav id="classPage"></nav>
-            </div>
-            <div id="addTeacher" class="tab-pane fade in">
-                <!--<div class="input-group">-->
-                <!--<input type="text" class="input form-control" >-->
-                <!--<span class="input-group-btn">-->
-                <!--<button type="button" class="btn-u"><i class="fa fa-search"></i>-->
-                <!--查询-->
-                <!--</button>-->
-                <!--</span>-->
-                <!--</div>-->
-                <div class="full-height-scroll">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <tbody id="users">
+      </li>
 
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="pagination" id="usersPage">
-                        <a href="#" class="first" data-action="first">&laquo;</a>
-                        <a href="#" class="previous" data-action="previous">&lsaquo;</a>
-                        <input title="" type="text" readonly="readonly"/>
-                        <a href="#" class="next" data-action="next">&rsaquo;</a>
-                        <a href="#" class="last" data-action="last">&raquo;</a>
-                    </div>
-                    <div><span class="color-red" id="error" hidden></span>
-                        <span class="color-green" id="msg" hidden></span></div>
-                    <button type="button" id="addTeacherSubmit" class="btn-u pull-right">
-                        添加
-                    </button>
-                </div>
-            </div>
-            <div id="delTeacher" class="tab-pane fade in">
-                <div class="row">
-                    <div id="ts">
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-            <div id="addStu" class="tab-pane fade in">
-                <div class="full-height-scroll">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <tbody id="stus">
+      <li class="list-group-item list-toggle">
+        <a href="#collapse-clazz" data-toggle="collapse" class="accordion-toggle">
+          <i class="fa fa-building"></i>&nbsp;&nbsp;课堂管理
+        </a>
+        <ul class="collapse" id="collapse-clazz">
+          <li>
+            <a href="#addClass" data-toggle="tab">
+              <i class="fa fa-plus"></i>&nbsp;添加课堂
+            </a>
+          </li>
+          <li>
+            <a href="#classList" data-toggle="tab">
+              <i class="fa fa-building">&nbsp;课堂列表</i>
+            </a>
+          </li>
+        </ul>
 
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="pagination" id="stusPage">
-                        <a href="#" class="first" data-action="first">&laquo;</a>
-                        <a href="#" class="previous" data-action="previous">&lsaquo;</a>
-                        <input title="" type="text" readonly="readonly"/>
-                        <a href="#" class="next" data-action="next">&rsaquo;</a>
-                        <a href="#" class="last" data-action="last">&raquo;</a>
-                    </div>
-                    <div><span class="color-red" id="error2" hidden></span>
-                        <span class="color-green" id="msg2" hidden></span>
-                    </div>
-                    <button type="button" id="addStuSubmit" class="btn-u pull-right">
-                        添加
-                    </button>
-                </div>
-            </div>
-            <div id="delStu" class="tab-pane fade in">
-                <div class="row">
-                    <div id="students"></div>
-
-                </div>
-                <div class="pagination text-center" hidden id="studentsPage">
-                    <a href="#" class="first" data-action="first">&laquo;</a>
-                    <a href="#" class="previous" data-action="previous">&lsaquo;</a>
-                    <input title="" type="text" readonly="readonly"/>
-                    <a href="#" class="next" data-action="next">&rsaquo;</a>
-                    <a href="#" class="last" data-action="last">&raquo;</a>
-                </div>
-            </div>
-            <div id="editStu" class="tab-pane fade in">
-                <div class="row search-block">
-                    <div class="col-md-6 col-md-offset-3">
-                        <h2>搜索课程学生</h2>
-                        <div class="input-group">
-                            <input id="search" type="text" class="form-control" placeholder="搜索学生姓名">
-                    <span class="input-group-btn">
-                        <button id="searchButton" class="btn-u" type="button"><i class="fa fa-search"></i></button>
-                    </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="table-search-v2 panel panel-u">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><i class="fa fa-users"></i> 搜索结果 </h3>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <td>头像</td>
-                                    <td>姓名</td>
-                                    <td>学号</td>
-                                    <td>状态</td>
-                                    <td>操作</td>
-                                </tr>
-                            </thead>
-                            <tbody id="stuList"></tbody>
-                        </table>
-                    </div>
-                </div>
-                <nav id="stuPage"></nav>
-            </div>
+      </li>
+      <li class="list-group-item list-toggle">
+        <a class="accordion-toggle" data-target="#collapse-teacher" data-toggle="collapse">
+          <i class="fa fa-users"></i>&nbsp;讲师管理
+        </a>
+        <ul class="collapse" id="collapse-teacher">
+          <li>
+            <a href="#addTeacher" data-toggle="tab">
+              <i class="fa fa-plus"></i>
+              添加老师</a>
+          </li>
+          <li>
+            <a href="#delTeacher" data-toggle="tab">
+              <i class="fa fa-minus"></i>
+              删除老师</a>
+          </li>
+        </ul>
+      </li>
+      {%endif%}
+      <li class="list-group-item list-toggle">
+        <a class="accordion-toggle" data-target="#collapse-student" data-toggle="collapse">
+          <i class="fa fa-child"></i>&nbsp;&nbsp;学生管理</a>
+        <ul class="collapse" id="collapse-student">
+          <li>
+            <a href="#editStu" data-toggle="tab">&nbsp;学生管理
+            </a>
+          </li>
+          <li><a href="#addStus" data-toggle="tab">&nbsp;导入学生</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="col-sm-9">
+    <div class="tab-content">
+      {% if admin > 1 %}
+        <div id="editInfo" class="tab-pane fade in active">
+          <form id="editInfoForm" class="sky-form">
+            <fieldset>
+              <section>
+                <label class="label" for="title">名称</label>
+                <label class="input">
+                  <input type="text" required="required" value="{{lesson.names}}" id="lessonTitle">
+                </label>
+              </section>
+              <div class="row">
+                <section class="col col-6">
+                  <label class="input">
+                    <i class="icon-append fa fa-calendar"></i>
+                    <input class="ui-datepicker" required type="text" id="lessonStart" value="{{lesson.start_ms}}">
+                  </label>
+                </section>
+                <section class="col col-6">
+                  <label class="input">
+                    <i class="icon-append fa fa-calendar"></i>
+                    <input class="ui-datepicker" required type="text" id="lessonEnd" value="{{lesson.end_ms}}">
+                  </label>
+                </section>
+              </div>
+              <section>
+                <label class="label" for="remark">简介</label>
+                <label class="textarea">
+                  <textarea rows="3" id="lessonRemark">{{lesson.descript}}</textarea>
+                </label>
+              </section>
+            </fieldset>
+            <footer>
+              <button type="submit" class="btn-u pull-right">修改</button>
+            </footer>
+          </form>
         </div>
+        <div id="cover" class="tab-pane fade in">
+          <div class="row">
+            <img src="{{lesson.cover_path}}1024_512.png" class="img-responsive center-block" id="image" alt="封面图片">
+          </div>
+
+          <div class="row margin-top-20">
+            <div class="btn-group pull-right">
+              <label title="Upload image file" for="inputImage" class="btn-u btn-lg btn-link">
+                <input type="file" accept="image/*" name="file" id="inputImage" onchange="previewImage()" class="hide">
+                上传新封面
+              </label>
+              <label id="submit" class="btn-u btn-lg btn-link">确认提交</label>
+            </div>
+          </div>
+        </div>
+        <div id="addClass" class="tab-pane fade in">
+          <div class="row">
+            <form id="addClassForm" class="sky-form">
+              <header>新建课堂</header>
+              <fieldset>
+                <section>
+                  <label for="title" class="label">课堂标题</label>
+                  <label class="input">
+                    <input type="text" id="title" required>
+                  </label>
+                </section>
+                <section>
+                  <label class="label">课程封面</label>
+                  <label for="file" class="input input-file">
+                    <div class="button">
+                      <input type="file" id="file" required onchange="this.parentNode.nextElementSibling.value = this.value">选择文件
+                    </div>
+                    <input id="path" type="text" readonly>
+                  </label>
+                </section>
+                <section>
+                  <label for="remark" class="label">课堂备注</label>
+                  <label class="textarea">
+                    <textarea id="remark" rownum="3"></textarea>
+                  </label>
+                </section>
+                <div class="row">
+                  <section class="col col-6">
+                    <label class="input">
+                      <i class="icon-append fa fa-calendar"></i>
+                      <input class="ui-datepicker" type="text" required id="start" placeholder="开始时间">
+                    </label>
+                  </section>
+                  <section class="col col-6">
+                    <label class="input">
+                      <i class="icon-append fa fa-calendar"></i>
+                      <input class="ui-datepicker" required type="text" id="end" placeholder="结束时间">
+                    </label>
+                  </section>
+                </div>
+              </fieldset>
+              <footer>
+                <span class="font-red" id="err"></span>
+                <button type="submit" class="btn-u pull-right">提交</button>
+              </footer>
+            </form>
+          </div>
+        </div>
+        <div id="classList" class="tab-pane fade in">
+          <div class="row">
+            <div id="classes"></div>
+          </div>
+          <nav id="classPage"></nav>
+        </div>
+        <div id="addTeacher" class="tab-pane fade in">
+          <!--<div class="input-group">-->
+          <!--<input type="text" class="input form-control" >-->
+          <!--<span class="input-group-btn">-->
+          <!--<button type="button" class="btn-u"><i class="fa fa-search"></i>-->
+          <!--查询-->
+          <!--</button>-->
+          <!--</span>-->
+          <!--</div>-->
+          <div class="full-height-scroll">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <tbody id="users"></tbody>
+              </table>
+            </div>
+            <nav id='teacherPage'></nav>
+            <button type="button" id="addTeacherSubmit" class="btn-u pull-right">
+              添加
+            </button>
+          </div>
+        </div>
+        <div id="delTeacher" class="tab-pane fade in">
+          <div class="row">
+            <div id="ts"></div>
+          </div>
+          <nav id="delTeacherPage"></nav>
+        </div>
+      {% endif %}
+      <div id="addStus" class="tab-pane fade in">
+        <div class="row">
+          <label title="xls" for="inputExcel" class="btn-u btn-lg btn-link">
+            <input type="file" id="inputExcel" onchange="handleExcel()" class="hide">
+            上传学生名单Excel(格式:学号,姓名,手机号)
+          </label>
+          <label id="excelSubmit" class="btn-u btn-lg btn-link">确认提交</label>
+        </div>
+        <div class="row margin-top-20">
+          <table class="table table-bordered table-responsive">
+            <tr>
+              <th>学号</th><th>姓名</th><th>手机号码</th>
+            </tr>
+            <tbody id='previewExcel'></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="editStu" class="tab-pane fade in">
+        <div class="row search-block">
+          <div class="col-md-6 col-md-offset-3">
+            <h2>搜索课程学生</h2>
+            <div class="input-group">
+              <input id="search" type="text" class="form-control" placeholder="搜索学生姓名">
+              <span class="input-group-btn">
+                <button id="searchButton" class="btn-u" type="button">
+                  <i class="fa fa-search"></i>
+                </button>
+              </span>
+            </div>
+            <div class="inline-group">
+                <label class="radio"><input type="radio" value='' name="type" checked>全部</label>
+                <label class="radio"><input type="radio" value='2' name="type">校内生</label>
+                <label class="radio"><input type="radio" value='1' name="type">校外生</label>
+            </div>
+          </div>
+        </div>
+        <div class="table-search-v2 panel panel-u">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              <i class="fa fa-users"></i>
+              搜索结果
+            </h3>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <!-- <td>头像</td> -->
+                  <td>用户ID</td>
+                  <td>姓名</td>
+                  <td>学号</td>
+                  <td>学生状态</td>
+                  <td>操作</td>
+                </tr>
+              </thead>
+              <tbody id="stuList"></tbody>
+            </table>
+          </div>
+        </div>
+        <nav id="stuPage"></nav>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}
 {% block js %}
@@ -291,662 +290,712 @@
 <script src="/js/lib/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/js/lib/template.js"></script>
 <script src="/js/lib/jquery.jqpagination.js"></script>
-<script type="text/javascript" src="/js/lib/jquery.blockUI.js"></script>
+<script type="text/javascript" src="/js/lib/jquery.blockUI.min.js"></script>
 <script src="/js/lib/jquery.simplePagination.js"></script>
+<script type="text/javascript" src="/js/lib/xlsx.core.min.js"></script>
 <script id="classTemplate" type="text/html">
-    [each list as clazz]
-    <div class="col-sm-4">
-        <div class="file">
-                <div class="img">
-                    <img src="[clazz.coverpath]512_256.png" alt="" class="img-responsive">
-                </div>
-                <div class="file-name">
-                    <a href="/clazz/show?cid=[clazz.cid]">[clazz.title]</a>
-                    <a class="pull-right" href="/clazz/edit?cid=[clazz.cid]">编辑</a>
-                    <br/>
-                    <small>最近修改时间:[clazz.puttime]</small>
-                </div>
-        </div>
+  [each list as clazz]
+  <div class="col-sm-4">
+    <div class="file">
+      <div class="img">
+        <img src="[clazz.cover_path]512_256.png" alt="" class="img-responsive">
+      </div>
+      <div class="file-name">
+        <a href="/clazz/[clazz.cid]">[clazz.names]</a>
+        <a class="pull-right" href="/clazz/edit/[clazz.cid]">编辑</a>
+        <br/>
+        <small>最近修改时间:[clazz.put_ms]</small>
+      </div>
     </div>
-    [/each]
+  </div>
+  [/each]
 </script>
 <script id="stuTemplate" type="text/html">
-    [each list as user]
-    <div class="col-sm-4" id="stu[user.id]">
-        <a href="javascript:delStudent([user.id])" class="pull-right color-red">
-            <i class="fa fa-close"></i>
-        </a>
-        <div class="file">
-            <a href="#">
-                <div class="icon">
-                    <i class="fa fa-male"></i>
-                </div>
-                <div class="file-name">
-                    [user.uid]
-                    <br/>
-                    <small>添加时间:[user.addtime]</small>
-                </div>
-            </a>
+  [each list as user]
+  <div class="col-sm-4" id="stu[user.id]">
+    <a href="javascript:delStudent([user.id])" class="pull-right color-red">
+      <i class="fa fa-close"></i>
+    </a>
+    <div class="file">
+      <a href="#">
+        <div class="icon">
+          <i class="fa fa-male"></i>
         </div>
+        <div class="file-name">
+          [user.uid]
+          <br/>
+          <small>添加时间:[user.add_ms]</small>
+        </div>
+      </a>
     </div>
-    [/each]
+  </div>
+  [/each]
 </script>
 <script id="tsTemplate" type="text/html">
-    [each list as user]
-    <div class="col-sm-4" id="[user.id]">
-        <a href="javascript:delTeacher([user.id])" class="pull-right color-red">
-            <i class="fa fa-close"></i>
-        </a>
-        <div class="file">
-            <a href="#">
-                <div class="icon">
-                    <i class="fa fa-user-secret"></i>
-                </div>
-                <div class="file-name">
-                    [user.uid]
-                    <br/>
-                    <small>添加时间:[user.addtime]</small>
-                </div>
-            </a>
+  [each list as user]
+  <div class="col-sm-4" id="[user.id]">
+    <div class="file">
+      <a href="javascript:delTeacher([user.id])" class="pull-right color-red">
+        <i class="fa fa-close"></i>
+      </a>
+      <a href="#">
+        <div class="icon">
+          <i class="fa fa-user-secret"></i>
         </div>
+        <div class="file-name">
+          [user.names]
+          <br/>
+          <small>添加时间:[user.add_ms]</small>
+        </div>
+      </a>
     </div>
-    [/each]
+  </div>
+  [/each]
 </script>
 <script id="usersTemplate" type="text/html">
-    [ each list as user ]
-    <tr>
-        <td><input type="checkbox" value="[user.uid]"></td>
-        <td class="contact-type"><i class="fa fa-mobile-phone"> </i></td>
-        <td> [user.username]</td>
-    </tr>
-    [/each]
+  [ each list as user ]
+  <tr>
+    <td><input type="checkbox" value="[user.uid]"></td>
+    <td class="contact-type">
+      <i class="fa fa-mobile-phone"></i>
+    </td>
+    <td>[user.mobile]</td>
+  </tr>
+  [/each]
 </script>
 <script id="stuListTemplate" type="text/html">
-    [each list as user]
-    <tr>
-        <td>
-            [if user.facepath!='']
-            <img class="rounded-x" src="/img/patterns/user.jpg" alt="头像">
-            [else]
-            <img class="rounded-x" src="[user.facepath]" alt="头像">
-            [/if]
-        </td>
-        <td>[user.cname]</td>
-        <td>[user.studentid]</td>
-        [if user.state==2]
-        <td>
-            <span class="label label-info">审核中</span>
-        </td>
-        <td>
-            <ul class="list-inline table-buttons">
-                <li><button onclick="apply([user.id],'[user.studentid]','[user.cname]',4)" type="button" class="btn-u btn-u-sm btn-u"><i class="fa fa-check"></i>通过</button></li>
-                <li><button onclick="apply([user.id],'[user.studentid]','[user.cname]',3)" type="button" class="btn-u-red btn-u-sm btn-u"><i class="fa fa-times"></i>拒绝</button></li>
-            </ul>
-        </td>
-        [else if user.state==3]
-        <td>
-            <span class="label label-error">审核未通过</span>
-        </td>
-        <td>
-            <ul class="list-inline table-buttons">
-                <li><button type="button" class="btn-u btn-u-sm btn-u"><i class="fa fa-check"></i>通过</button></li>
-            </ul>
-        </td>
-        [else if user.state==4]
-        <td>
-            <span class="label label-success">审核通过</span>
-        </td>
-        <td>
-        </td>
-        [/if]
-    </tr>
-    [/each]
+  [each list as user]
+  <tr>
+    <!-- <td>
+      [if user.face_path!='']
+      <img class="rounded-x" src="/img/patterns/user.jpg" alt="头像">
+      [else]
+      <img class="rounded-x" src="[user.face_path]" alt="头像">
+      [/if]
+    </td> -->
+    <td>[user.uid]</td>
+    <td>[user.names]</td>
+    <td>[user.sid]</td>
+    <td>
+      [if user.type == 1]
+      校外生
+      [else]
+      校内生
+      [/if]
+    </td>
+    <td></td>
+  </tr>
+  [/each]
+</script>
+<script type="text/html" id="excelTemplate">
+  [each list as data]
+    <tr><td>[data.学号]</td>
+    <td>[data.姓名]</td>
+    <td>[data.手机号码]</td></tr>
+  [/each]
 </script>
 <script>
-    var api = '{{config.url.api}}',key='{{key}}',token='{{token}}',lid='{{lesson.lid}}';
-    function delStudent(id){
-        if(typeof id === 'undefined'){
-            return;
-        }
-        $.ajax({
-            url:'{{config.url.api}}lessonUser/Del/',
-            type:'post',
-            data:{
-                id:id,
-                key:'{{key}}',
-                token:'{{token}}'
-            }
-        }).done(function(data){
-            if(data.code === 0) {
-                var node = document.getElementById("stu"+id);
-                node.parentNode.removeChild(node);
-                alert('删除成功！');
-            }else {
-                alert(data.msg===''?'删除失败！':data.msg);
-            }
-        }).fail(function(){
-            alert('删除超时！');
-        });
+  var api = '{{config.url.api}}',
+    key = '{{key}}',
+    token = '{{token}}',
+    lid = '{{lesson.lid}}',excelData;
+  function handleExcel() {
+    var file = document.getElementById('inputExcel').files[0];
+    var fileReader = new FileReader();
+    fileReader.onload = function (e) {
+      var workbook = XLSX.read(e.target.result,{type:'binary'});
+      var first_sheet_name = workbook.SheetNames[0];
+      var workSheet = workbook.Sheets[first_sheet_name];
+      excelData = XLSX.utils.sheet_to_json(workSheet);
+      $('#previewExcel').html(template('excelTemplate',{list:excelData}));
     }
-    '{% if admin>1 %}'
-    function delTeacher(id){
-        if(typeof id === 'undefined'){
-            return;
-        }
-        $.ajax({
-           url:'{{config.url.api}}lessonAdmin/Del/',
-            type:'post',
-            data:{
-                id:id,
-                key:'{{key}}',
-                token:'{{token}}'
-            }
-        }).done(function(data){
-            if(data.code === 0) {
-                var node = document.getElementById(id);
-                node.parentNode.removeChild(node);
-                alert('删除成功！');
-            }else {
-                alert(data.msg===''?'删除失败！':data.msg);
-            }
-        }).fail(function(){
-            alert('删除超时！');
-        });
+    fileReader.readAsBinaryString(file);
+  }
+  function previewImage() {
+    var img = document.getElementById('image'),
+      file = document.getElementById('inputImage');
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+      img.src = evt.target.result;
     }
-    '{% endif %}'
-    function apply(id,studentid,cname,state){
-        if(id==undefined||state==undefined) return;
-        $.ajax({
-            url:api+'lessonUser/Put/Verify/',
-            data:{
-                id:id,
-                state:state,
-                cname:cname,
-                studentid:studentid,
-                key:key,
-                token:token
-            },
-            type:'post'
-        }).done(function(data){
-            if(data.code === 0){
-                swal('操作成功','','success');
-            }else{
-                swal('出错了!',data.msg,'error');
-            }
-        }).fail(function(){
-            swal('出错了!','','error');
-        })
+    reader.readAsDataURL(file.files[0]);
+  }
+  function delStudent(id) {
+    if (typeof id === 'undefined') {
+      return;
     }
-    $(document).ready(function () {
-        template.config('openTag', '[');
-        template.config('closeTag', ']');
-        jQuery('.accordion-toggle').on('click', function () {
-            jQuery(this).parent().toggleClass('active');
-        });
-        $(document).on('click', 'ul.collapse.in>li>a', function () {
-            var active = $('ul.collapse>li.active').not($(this).parent());
-            if (typeof active === 'undefined') return;
-            active.removeClass('active');
-        });
-        $('.ui-datepicker').datetimepicker({
-            language: 'zh-CN',
-            format: 'yyyy-mm-dd hh:ii:ss',
-            weekStart: 1,
-            todayBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            forceParse: 0,
-            showMeridian: 1
-        });
-        <!-- manage student-->
-        $('a[href="#editStu"]').on('show.bs.tab',function(){
-            var $stuList = $('#stuList'),$stuPage = $('#stuPage');
-            if($stuList.html()!=''){
-                return false;
-            }
-            var count = getStuCount();
-            if(count > 0){
-                var items = Math.ceil(count/9);
-                $stuPage.pagination({
-                    items:items,
-                    listStyle:"pagination",
-                    onPageClick:function(page){
-                        getStuList(page,$stuList);
-                    }
-                });
-                getStuList(1,$stuList);
-            }
-        });
-        $('#searchButton').on('click',function(){
-           getStuList(1,$('#search'));
-        });
-        function getStuList(page,object){
-            object.block();
-            $.ajax({
-                url:api+'lessonUser/list',
-                data:{
-                    cname:$('#search').val(),
-                    lid:'{{lesson.lid}}',
-                    limit:9,
-                    offset:page
-                }
-            }).done(function(data){
-                if(data.code === 0){
-                    data.list.forEach(function(element){
-                        $.getJSON(api+'userInfo/get?uid='+element.uid,function(user){
-                            if(user.code === 0) {
-                                element.facepath = user.get.facepath;
-                            }
-                        });
-                    });
-                    object.html(template('stuListTemplate',data));
-                }else{
-                    swal('出错了',data.msg,'error');
-                }
-            }).fail(function(){
-                swal('出错了','网络延迟,请稍后再试!','error');
-            }).always(function(){
-               object.unblock();
-            });
-        }
-        function getStuCount(){
-            var $search = $('#search'),count = 0;
-            $.ajax({
-                url:api+'lessonUser/info/',
-                data:{
-                    cname:$search.val(),
-                    lid:lid
-                },
-                async:false
-            }).done(function(data){
-                if(data.code === 0){
-                    count = data.info.Count;
-                }else{
-                    swal('出错了',data.msg,'error');
-                }
-            }).fail(function(){
-                swal('出错了','','error');
-            });
-            return count;
-        }
-        <!-- end manage student-->
-        <!--del student-->
-        function getStudentCount(){
-            var count = 0;
-            $.ajax({
-                url: api+'lessonUser/info',
-                data:{
-                    lid:"{{lesson.lid}}",
-                    state:4
-                },
-                async: false
-            }).done(function (data) {
-                if (data.code === 0) {
-                    count = data.info.Count;
-                } else {
-                    alert(data.msg === '' ? '获取学生数量出错!' : data.msg);
-                }
-            }).fail(function () {
-                alert('获取学生数量超时！');
-            });
-            return count;
-        }
-        function getStudents(limit,offset){
-            $.ajax({
-                url: api+'lessonUser/list',
-                data: {
-                    offset: offset,
-                    limit: limit
-                }
-            }).done(function (data) {
-                if (data.code === 0) {
-                    $('#students').html(template('stuTemplate', data));
-                } else {
-                    alert(data.msg === '' ? '获取学生失败!' : data.msg);
-                }
-            }).fail(function () {
-                alert('获取学生超时!');
-            });
-        }
-        $('a[href="#delStu"]').on('show.bs.tab',function(){
-           var count =getStudentCount();
-            if(count>0){
-                getStudents(9,1);
-                $('#studentsPage').jqPagination({
-                    max_page: Math.ceil(count / 9),
-                    page_string: '第{current_page}页,共{max_page}页',
-                    paged: function (page) {
-                        getStudents(9, page);
-                    }
-                });
-            }
-        });
-        <!--end del student-->
-        <!--add student-->
-        $('a[href="#addStu"]').on('show.bs.tab', function () {
-            var count = getCount(), $stus = $('#stus');
-            getUsers($stus, 1);
-            $('#stusPage').jqPagination({
-                max_page: Math.ceil(count / 9),
-                page_string: '第{current_page}页,共{max_page}页',
-                paged: function (page) {
-                    getUsers($stus, page);
-                }
-            });
-        });
-        function addStu(uid) {
-            if (typeof uid === 'undefined') return;
-            var $error = $('#error2'), $msg = $('#msg2');
-            $.ajax({
-                url: '{{config.url.api}}lessonUser/Add/',
-                type:'post',
-                data: {
-                    lid: '{{lesson.lid}}',
-                    uid: uid,
-                    key: key,
-                    token: token
-                }
-            }).done(function (data) {
-                if (data.code === 0) {
-                    $msg.html(uid + '添加成功！').show().fadeOut(5000);
-                } else {
-                    $error.html(data.msg === '' ? uid + '添加失败!' : data.msg).show().fadeOut(5000);
-                }
-            }).fail(function () {
-                $error.html('添加失败!').show().fadeOut(5000);
-            });
-        }
-
-        $('#addStuSubmit').on('click', function () {
-            $(':checkbox:checked').each(function () {
-                addStu(this.value);
-            })
-        });
-        <!--end add student -->
-        function getCount() {
-            var count = 0;
-            $.ajax({
-                url: '{{config.url.api}}userinfo/info',
-                async: false
-            }).done(function (data) {
-                if (data.code === 0) {
-                    count = data.info.Count;
-                } else {
-                    alert(data.msg === '' ? '获取用户数量出错!' : data.msg);
-                }
-            }).fail(function () {
-                alert('获取用户数量超时！');
-            });
-            return count;
-        }
-
-        function getUsers(object, offset) {
-            $.ajax({
-                url: '{{config.url.api}}userinfo/list',
-                data: {
-                    offset: offset,
-                    limit: 9
-                }
-            }).done(function (data) {
-                if (data.code === 0) {
-                    object.html(template('usersTemplate', data));
-                } else {
-                    alert(data.msg === '' ? '获取用户失败!' : data.msg);
-                }
-            }).fail(function () {
-                alert('获取用户超时!');
-            });
-        }
-
-        '{% if admin>1 %}'
-        var $inputImage = $("#inputImage"), $image = $('#image');
-        <!--edit class-->
-        function getClassCount(){
-            var c = 0;
-            $.ajax({
-                url:'{{config.url.api}}classRoom/info',
-                data:{
-                    lid:'{{lesson.lid}}'
-                },
-                async:false
-            }).done(function(data){
-                if(data.code === 0){
-                    c = data.info.Count;
-                }
-            }).fail(function(){
-               alert('获取课堂数失败!');
-            });
-            return c;
-        }
-        function getClasses(page,obj){
-            $.ajax({
-                url:'{{config.url.api}}classRoom/list',
-                data:{
-                    lid:'{{lesson.lid}}',
-                    limit:9,
-                    offset:page
-                }
-            }).done(function(data){
-                if(data.code === 0){
-                    obj.html(template('classTemplate',data));
-                }else{
-                    alert(data.msg===''?'获取课堂出错!':data.msg);
-                }
-            }).fail(function(){
-                alert('获取课堂出错!');
-            });
-        }
-        $('a[href="#classList"]').on('show.bs.tab',function(){
-            var $classes = $('#classes'),$classPage = $('#classPage');
-            if($classes.html() !='') return;
-            var count = getClassCount();
-            if(count > 0){
-                var items = Math.ceil(count/9);
-                $classPage.pagination({
-                   items:items,
-                    listStyle:"pagination",
-                    onPageClick:function(page){
-                        getClasses(page,$classes);
-                    }
-                });
-                getClasses(1,$classes);
-            }
-        });
-        <!-- end edit class-->
-        <!--del teacher-->
-        function getTeachers(){
-            $.ajax({
-                url:'{{config.url.api}}lessonAdmin/List/',
-                data:{
-                    lid:'{{lesson.lid}}',
-                    state:4
-                }
-            }).done(function(data){
-                if(data.code === 0){
-                    $('#ts').html(template('tsTemplate',data));
-                }else{
-                    alert(data.msg===''?'获取讲师出错!':data.msg);
-                }
-            }).fail(function(){
-                alert('获取讲师超时!');
-            });
-        }
-        $('a[href="#delTeacher"]').on('show.bs.tab',function(){
-                getTeachers();
-        });
-        <!--end del teacher-->
-        <!--add teacher-->
-        $('a[href="#addTeacher"]').on('show.bs.tab', function () {
-            var count = getCount(), $users = $('#users');
-            getUsers($users, 1);
-            $('#usersPage').jqPagination({
-                max_page: Math.ceil(count / 9),
-                page_string: '第{current_page}页,共{max_page}页',
-                paged: function (page) {
-                    getUsers($users, page);
-                }
-            });
-        });
-        $('#addTeacherSubmit').on('click', function () {
-            var $selected = $(':checkbox:checked');
-            $selected.each(function () {
-                addTeacher(this.value);
-            });
-        });
-        function addTeacher(uid) {
-            if (typeof uid === 'undefined') return;
-            var $error = $('#error'), $msg = $('#msg');
-            $.ajax({
-                url: '{{config.url.api}}lessonAdmin/Add/',
-                type:'post',
-                data: {
-                    lid: '{{lesson.lid}}',
-                    uid: uid,
-                    key: '{{key}}',
-                    token: '{{token}}'
-                }
-            }).done(function (data) {
-                if (data.code === 0) {
-                    $msg.html(uid + '添加成功！').show().fadeOut(5000);
-                } else {
-                    $error.html(data.msg === '' ? uid + '添加失败!' : data.msg).show().fadeOut(5000);
-                }
-            }).fail(function () {
-                $error.html('添加失败!').show().fadeOut(5000);
-            });
-        }
-
-        <!--end add teacher-->
-        //更换封面
-        $('#submit').on('click', function () {
-            var uploadfile = $inputImage.get(0).files[0];
-            if (typeof uploadfile === 'undefined') {
-                alert('请选择一张图片');
-                return false;
-            }
-            var formData = new FormData();
-            formData.append('uploadfile', uploadfile);
-            $('#cover').block();
-            $.ajax({
-                url: '{{config.url.upload}}/file',
-                data: formData,
-                processData: false,
-                contentType: false,
-                type: 'POST',
-                timeout: 600000
-            }).done(function (data) {
-                if (data.code === 0) {
-                    $.ajax({
-                        url: '{{config.url.api}}/lesson/put',
-                        type:'post',
-                        data: {
-                            lid: '{{lesson.lid}}',
-                            coverpath: '{{config.url.domain}}cover/' + data.cover_path,
-                            key: '{{key}}',
-                            token: '{{token}}'
-                        }
-                    }).done(function (data) {
-                        if (data.code === 0) {
-                            alert('更新封面成功！');
-                        } else {
-                            alert(data.msg === '' ? '更换封面失败！' : data.msg);
-                        }
-                    }).fail(function () {
-                        alert('更换封面失败！');
-                    });
-                } else {
-                    alert(data.msg === '' ? '上传失败，请稍后再试！' : data.msg);
-                }
-            }).fail(function () {
-                alert('上传超时，请稍后再试！');
-            }).always(function(){
-                $('#cover').unblock();
-            });
-        });
-        $('#addClassForm').submit(function (e) {
-            e.preventDefault();
-            var title = $('#title').val(),
-                    remark = $('#remark').val(),
-                    file = $('#file').get(0).files[0],
-                    start = $('#start').val(),
-                    end = $('#end').val(),
-                    formData = new FormData();
-
-            formData.append('uploadfile', file);
-            $('#addClassForm').block();
-            $.ajax({
-                url: '{{config.url.upload}}/file/',
-                data: formData,
-                processData: false,
-                contentType: false,
-                type: 'POST',
-                timeout: 600000
-            }).done(function (data) {
-                if (data.code === 0) {
-                    $.ajax({
-                        url: '{{config.url.api}}/Classroom/Add/',
-                        type:'post',
-                        data: {
-                            lid: '{{lesson.lid}}',
-                            title: title,
-                            remark: remark,
-                            starttime: start,
-                            endtime: end,
-                            coverpath: '{{config.url.domain}}/cover/' + data.cover_path,
-                            zoom: 4,
-                            point: 'POINT(0 0)',
-                            key: '{{key}}',
-                            token: '{{token}}'
-                        }
-                    }).done(function (data) {
-                        if (data.code == 0) {
-                            alert('新建成功！');
-                        } else {
-                            alert(data.msg === '' ? "新建失败！" : data.msg);
-                        }
-                    }).fail(function (obj) {
-                        alert('新建课堂失败！');
-                    });
-                } else {
-                    alert(data.msg === '' ? "上传失败，请重新上传！" : data.msg);
-                }
-            }).fail(function () {
-                alert('文件上传超时！');
-            }).always(function(){
-                $('#addClassForm').unblock();
-            });
-            return false;
-        });
-        $('#editInfoForm').submit(function (e) {
-            e.preventDefault();
-            $('#editInfoForm').block();
-            $.ajax({
-                url: '{{config.url.api}}lesson/put',
-                type:'post',
-                data: {
-                    lid: '{{lesson.lid}}',
-                    starttime: $('#lessonStart').val(),
-                    endtime: $('#lessonEnd').val(),
-                    title: $('#lessonTitle').val(),
-                    remark: $('#lessonRemark').val(),
-                    key: "{{key}}",
-                    token: "{{token}}"
-                }
-            }).done(function (data) {
-                if (data.code === 0) {
-                    alert('修改成功！');
-                } else {
-                    alert(data.msg === '' ? '修改失败！' : data.msg);
-                }
-            }).fail(function () {
-                alert('修改超时，请重新提交！');
-            }).always(function(){
-                $('#editInfoForm').unblock();
-            });
-            return false;
-        });
-        '{% endif %}'
+    $.ajax({
+      url: api+'lessonUser/Del/',
+      type: 'post',
+      data: {
+        id: id,
+        key: '{{key}}',
+        token: '{{token}}'
+      }
+    }).done(function (data) {
+      if (data.code === 0) {
+        var node = document.getElementById("stu" + id);
+        node.parentNode.removeChild(node);
+        alert('删除成功！');
+      } else {
+        alert(data.msg === ''
+          ? '删除失败！'
+          : data.msg);
+      }
+    }).fail(function () {
+      alert('删除超时！');
     });
+  }
+  '{% if admin>1 %}'
+  function delTeacher(id) {
+    if (typeof id === 'undefined') {
+      return;
+    }
+    $.ajax({
+      url: api+'lessonAdmin/Del/',
+      type: 'post',
+      data: {
+        id: id,
+        key: '{{key}}',
+        token: '{{token}}'
+      }
+    }).done(function (data) {
+      if (data.code === 0) {
+        // var node = document.getElementById(id);
+        // node.parentNode.removeChild(node);
+        $('#'+id).remove();
+        toastr.success('删除成功！');
+      } else {
+        toastr.error(data.msg === ''
+          ? '删除失败！'
+          : data.msg);
+      }
+    }).fail(function () {
+      toastr.error('删除超时！');
+    });
+  }
+  '{% endif %}'
+  $(document).ready(function () {
+    template.config('openTag', '[');
+    template.config('closeTag', ']');
+    jQuery('.accordion-toggle').on('click', function () {
+      jQuery(this).parent().toggleClass('active');
+    });
+    $(document).on('click', 'ul.collapse.in>li>a', function () {
+      var active = $('ul.collapse>li.active').not($(this).parent());
+      if (typeof active === 'undefined')
+        return;
+      active.removeClass('active');
+    });
+    $('#excelSubmit').on('click',function () {
+      if(typeof excelData === 'undefined' || excelData.length === 0) return;
+      // var successCount = 0;
+      excelData.forEach(function (item,index) {
+        $.ajax({
+          url:api+'lessonUser/import',
+          type:'post',
+          data:{
+            sid:item.学号,
+            names:item.姓名,
+            mobile:item.手机号码,
+            lid:lid,
+            key:key,
+            token:token
+          }
+        }).done(function (data) {
+            if(data.code != 0){
+              toastr.error(item.姓名+'导入失败!');
+            }
+        });
+      });
+      // toastr.info('导入学生'+successCount+'人,失败'+(excelData.length-successCount)+'人');
+      toastr.info('后台正在导入,稍后去学生管理查看...');
+    });
+    $('.ui-datepicker').datetimepicker({
+      language: 'zh-CN',
+      format: 'yyyy-mm-dd hh:ii:ss',
+      weekStart: 1,
+      todayBtn: 1,
+      autoclose: 1,
+      todayHighlight: 1,
+      startView: 2,
+      forceParse: 0,
+      showMeridian: 1
+    });
+    <!-- manage student-->
+    $('a[href="#editStu"]').on('show.bs.tab', function () {
+      var $stuList = $('#stuList'),
+        $stuPage = $('#stuPage');
+      if ($stuList.html().trim() != '') {
+        return false;
+      }
+      var count = getStuCount();
+      if (count > 0) {
+        var items = Math.ceil(count / 5);
+        $stuPage.pagination({
+          items: items,
+          listStyle: "pagination",
+          onPageClick: function (page) {
+            getStuList(page,$stuList);
+          }
+        });
+        getStuList(1,$stuList);
+      }
+    });
+    $('#searchButton').on('click', function () {
+      getStuList(1,$('#stuList'));
+    });
+    function getStuList(page,object) {
+      object.block({message:'<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
+      $.ajax({
+        url: api + 'lessonUser/list',
+        data: {
+          names: $('#search').val(),
+          type:$('input[name=type]:checked').val(),
+          lid: lid,
+          limit: 5,
+          offset: page
+        }
+      }).done(function (data) {
+        if (data.code === 0) {
+          // data.list.forEach(function (element) {
+          //   $.ajax({
+          //     url:api+'user/get',
+          //     data:{
+          //       key:key,
+          //       token:token,
+          //       uid:element.uid
+          //     }
+          //   }).done(function (data) {
+          //     if (data.code === 0) {
+          //       element.facepath = data.get.face_path;
+          //     }
+          //   });
+          // });
+          object.html(template('stuListTemplate', data));
+        } else {
+          toastr.error('出错了', data.msg, 'error');
+        }
+      }).fail(function () {
+        toastr.error('出错了', '网络延迟,请稍后再试!', 'error');
+      }).always(function () {
+        object.unblock();
+      });
+    }
+    function getStuCount() {
+      var $search = $('#search'),
+        count = 0;
+      $.ajax({
+        url: api + 'lessonUser/info/',
+        data: {
+          cname: $search.val(),
+          lid: lid
+        },
+        async: false
+      }).done(function (data) {
+        if (data.code === 0) {
+          count = data.info.Count;
+        } else {
+          swal('出错了', data.msg, 'error');
+        }
+      }).fail(function () {
+        swal('出错了', '', 'error');
+      });
+      return count;
+    }
+    <!-- end manage student-->
+    <!--del student-->
+    function getStudentCount() {
+      var count = 0;
+      $.ajax({
+        url: api + 'lessonUser/info',
+        data: {
+          lid: lid
+        },
+        async: false
+      }).done(function (data) {
+        if (data.code === 0) {
+          count = data.info.Count;
+        } else {
+          alert(data.msg === ''
+            ? '获取学生数量出错!'
+            : data.msg);
+        }
+      }).fail(function () {
+        alert('获取学生数量超时！');
+      });
+      return count;
+    }
+    function getStudents(limit, offset) {
+      $.ajax({
+        url: api + 'lessonUser/list',
+        data: {
+          offset: offset,
+          limit: limit
+        }
+      }).done(function (data) {
+        if (data.code === 0) {
+          $('#students').html(template('stuTemplate', data));
+        } else {
+          alert(data.msg === ''
+            ? '获取学生失败!'
+            : data.msg);
+        }
+      }).fail(function () {
+        alert('获取学生超时!');
+      });
+    }
+    $('a[href="#delStu"]').on('show.bs.tab', function () {
+      var count = getStudentCount();
+      if (count > 0) {
+        getStudents(9, 1);
+        $('#studentsPage').jqPagination({
+          max_page: Math.ceil(count / 9),
+          page_string: '第{current_page}页,共{max_page}页',
+          paged: function (page) {
+            getStudents(9, page);
+          }
+        });
+      }
+    });
+    <!--end del student-->
+    <!--add student-->
+    $('a[href="#addStus"]').on('show.bs.tab', function () {
+    });
+    function addStu(uid) {
+      if (typeof uid === 'undefined')
+        return;
+      var $error = $('#error2'),
+        $msg = $('#msg2');
+      $.ajax({
+        url: '{{config.url.api}}lessonUser/Add/',
+        type: 'post',
+        data: {
+          lid: '{{lesson.lid}}',
+          uid: uid,
+          key: key,
+          token: token
+        }
+      }).done(function (data) {
+        if (data.code === 0) {
+          $msg.html(uid + '添加成功！').show().fadeOut(5000);
+        } else {
+          $error.html(data.msg === ''
+            ? uid + '添加失败!'
+            : data.msg).show().fadeOut(5000);
+        }
+      }).fail(function () {
+        $error.html('添加失败!').show().fadeOut(5000);
+      });
+    }
+
+    $('#addStuSubmit').on('click', function () {
+      $(':checkbox:checked').each(function () {
+        addStu(this.value);
+      })
+    });
+    <!--end add student -->
+    '{% if admin>1 %}'
+    var $inputImage = $("#inputImage");
+    <!--edit clazz-->
+    function getClassCount() {
+      var c = 0;
+      $.ajax({
+        url: '{{config.url.api}}classRoom/info',
+        data: {
+          lid: '{{lesson.lid}}',
+          key: key,
+          token: token
+        },
+        async: false
+      }).done(function (data) {
+        if (data.code === 0) {
+          c = data.info.Count;
+        }
+      }).fail(function () {
+        toastr.error('获取课堂数失败!');
+      });
+      return c;
+    }
+    function getClasses(page, obj) {
+      $.ajax({
+        url: '{{config.url.api}}classRoom/list',
+        data: {
+          lid: '{{lesson.lid}}',
+          limit: 9,
+          offset: page,
+          key: key,
+          token: token
+        }
+      }).done(function (data) {
+        if (data.code === 0) {
+          obj.html(template('classTemplate', data));
+        } else {
+          toastr.error(data.msg === ''
+            ? '获取课堂出错!'
+            : data.msg);
+        }
+      }).fail(function () {
+        toastr.error('获取课堂出错!');
+      });
+    }
+    $('a[href="#classList"]').on('show.bs.tab', function () {
+      var $classes = $('#classes'),
+        $classPage = $('#classPage');
+      if ($classes.html() != '')
+        return;
+      var count = getClassCount();
+      if (count > 0) {
+        var items = Math.ceil(count / 9);
+        $classPage.pagination({
+          items: items,
+          listStyle: "pagination",
+          onPageClick: function (page) {
+            getClasses(page, $classes);
+          }
+        });
+        getClasses(1, $classes);
+      }
+    });
+    <!-- end edit class-->
+    <!--del teacher-->
+    function getTeachers(offset) {
+      $.ajax({
+        url: api+'lessonAdmin/List/',
+        data: {
+          lid:lid,
+          limit:9,
+          offset:offset
+        }
+      }).done(function (data) {
+        if (data.code === 0) {
+          $('#ts').html(template('tsTemplate', data));
+        } else {
+          toastr.error(data.msg === ''
+            ? '获取讲师出错!'
+            : data.msg);
+        }
+      }).fail(function () {
+        toastr.error('获取讲师超时!');
+      });
+    }
+    function getLessonAdminCount() {
+      var count = 0;
+      $.ajax({
+        url:api+'lessonAdmin/info',
+        data:{
+          lid:lid
+        },async:false
+      }).done(function (data) {
+        if(data.code === 0){
+          count = data.info.Count;
+        }
+      }).fail(function () {
+        toastr.error('获取课程讲师失败,请稍后再试');
+      });
+      return count;
+    }
+    $('a[href="#delTeacher"]').on('show.bs.tab', function () {
+      if($('#ts').html().trim() === ''){
+        var count =  getLessonAdminCount();
+        if (count > 0){
+          $('#delTeacherPage').pagination({
+            items:Math.ceil(count/9),
+            listStyle:'pagination',
+            onPageClick:function (page) {
+              getTeachers(page);
+            }
+          })
+          getTeachers(1);
+        }
+      }
+    });
+    <!--end del teacher-->
+    <!--add teacher-->
+    $('a[href="#addTeacher"]').on('show.bs.tab', function () {
+      var $users = $('#users');
+      if ($users.html().trim() === '') {
+        var count = getCount();
+        getUsers($users, 1);
+        $('#teacherPage').pagination({
+          items: Math.ceil(count / 9),
+          listStyle: "pagination",
+          onPageClick: function (page) {
+            getUsers($users, page);
+          }
+        });
+      }
+    });
+    $('#addTeacherSubmit').on('click', function () {
+      var $selected = $(':checkbox:checked');
+      $selected.each(function () {
+        addTeacher(this.value, $(this).parent().parent().children(':last').html());
+      });
+    });
+    function addTeacher(uid, mobile) {
+      if (typeof uid === 'undefined')
+        return;
+      $.ajax({
+        url: '{{config.url.api}}lessonAdmin/Add/',
+        type: 'post',
+        data: {
+          lid: '{{lesson.lid}}',
+          uid: uid,
+          names: mobile,
+          key: '{{key}}',
+          token: '{{token}}'
+        }
+      }).done(function (data) {
+        if (data.code === 0) {
+          toastr.success('用户' + uid + '添加成功！');
+        } else {
+          toastr.error(data.msg === ''
+            ? uid + '添加失败!'
+            : data.msg);
+        }
+      }).fail(function () {
+        toastr.error('添加失败!');
+      });
+    }
+
+    <!--end add teacher-->
+    //更换封面
+    $('#submit').on('click', function () {
+      var uploadfile = $inputImage.get(0).files[0];
+      if (typeof uploadfile === 'undefined') {
+        toastr.error('请选择一张图片');
+        return false;
+      }
+      var formData = new FormData();
+      formData.append('uploadfile', uploadfile);
+      $('#cover').block({message: '<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
+      $.ajax({
+        url: '{{config.url.upload}}/file',
+        data: formData,
+        processData: false,
+        contentType: false,
+        type: 'POST',
+        timeout: 600000
+      }).done(function (data) {
+        if (data.code === 0) {
+          $.ajax({
+            url: '{{config.url.api}}/lesson/put',
+            type: 'post',
+            data: {
+              lid: '{{lesson.lid}}',
+              cover_path: '{{config.url.domain}}cover/' + data.cover_path,
+              key: '{{key}}',
+              token: '{{token}}'
+            }
+          }).done(function (data) {
+            if (data.code === 0) {
+              toastr.success('更新封面成功！');
+            } else {
+              toastr.error(data.msg === ''
+                ? '更换封面失败！'
+                : data.msg);
+            }
+          }).fail(function () {
+            toastr.error('更换封面失败！');
+          });
+        } else {
+          toastr.error(data.msg === ''
+            ? '上传失败，请稍后再试！'
+            : data.msg);
+        }
+      }).fail(function () {
+        toastr.error('上传超时，请稍后再试！');
+      }).always(function () {
+        $('#cover').unblock();
+      });
+    });
+    $('#addClassForm').submit(function (e) {
+      e.preventDefault();
+      var title = $('#title').val(),
+        remark = $('#remark').val(),
+        file = $('#file').get(0).files[0],
+        start = $('#start').val(),
+        end = $('#end').val(),
+        formData = new FormData();
+
+      formData.append('uploadfile', file);
+      $('#addClassForm').block({message: '<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
+      $.ajax({
+        url: '{{config.url.upload}}/file/',
+        data: formData,
+        processData: false,
+        contentType: false,
+        type: 'POST',
+        timeout: 600000
+      }).done(function (data) {
+        if (data.code === 0) {
+          $.ajax({
+            url: '{{config.url.api}}/Classroom/Add/',
+            type: 'post',
+            data: {
+              lid: '{{lesson.lid}}',
+              names: title,
+              descript: remark,
+              start_ms: start,
+              end_ms: end,
+              cover_path: '{{config.url.domain}}/cover/' + data.cover_path,
+              key: '{{key}}',
+              token: '{{token}}'
+            }
+          }).done(function (data) {
+            if (data.code == 0) {
+              toastr.success('新建成功！');
+            } else {
+              toastr.error(data.msg === ''
+                ? "新建失败！"
+                : data.msg);
+            }
+          }).fail(function (obj) {
+            toastr.error('新建课堂失败！');
+          });
+        } else {
+          toastr.error(data.msg === ''
+            ? "上传失败，请重新上传！"
+            : data.msg);
+        }
+      }).fail(function () {
+        toastr.error('文件上传超时！');
+      }).always(function () {
+        $('#addClassForm').unblock();
+      });
+      return false;
+    });
+    $('#editInfoForm').submit(function (e) {
+      e.preventDefault();
+      $('#editInfoForm').block({message: '<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
+      $.ajax({
+        url: '{{config.url.api}}lesson/put',
+        type: 'post',
+        data: {
+          lid: '{{lesson.lid}}',
+          start_ms: $('#lessonStart').val(),
+          end_ms: $('#lessonEnd').val(),
+          names: $('#lessonTitle').val(),
+          descript: $('#lessonRemark').val(),
+          key: "{{key}}",
+          token: "{{token}}"
+        }
+      }).done(function (data) {
+        if (data.code === 0) {
+          toastr.success('修改成功！');
+        } else {
+          toastr.error(data.msg === ''
+            ? '修改失败！'
+            : data.msg);
+        }
+      }).fail(function () {
+        toastr.error('修改超时，请重新提交！');
+      }).always(function () {
+        $('#editInfoForm').unblock();
+      });
+      return false;
+    });
+    '{% endif %}'
+  });
 </script>
 {% endblock %}

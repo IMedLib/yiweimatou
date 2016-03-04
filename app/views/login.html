@@ -1,58 +1,193 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <title>登录</title>
-    <link rel="stylesheet" href="/css/lib/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/lib/page_log_reg_v1.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <title>登录</title>
+  <link rel="stylesheet" href="/css/lib/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/lib/page_log_reg_v1.css">
+  <link rel="stylesheet" href="/css/toastr.min.css">
 </head>
+
 <body class="gray-bg">
-<div class="container content">
+  <div class="container content">
     <div class="row">
-        <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
-            <form class="reg-page">
-                <div class="reg-header">
-                    <h2>登录</h2>
-                </div>
+      <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
+        <form class="reg-page">
+          <div class="reg-header">
+            <h2>登录</h2>
+          </div>
 
-                <div class="margin-bottom-20">
-                    <input type="text" placeholder="手机号码" id="mobile" required autofocus class="form-control">
-                    <span id="mobileErr" style="color: red"></span>
-                </div>
-                <div class="row margin-bottom-20">
-                    <div class="col-md-6">
-                    <input type="text" placeholder="验证码" id="code" class="form-control" required>
-                    </div>
-                    <div class="col-md-6">
-                    <button class="btn-u" id="codeGet" type="button">点击获取验证码</button></div>
-                    <span id="codeErr" style="color: red"></span>
-                </div>
+          <div class="margin-bottom-20">
+            <input type="text" placeholder="手机号码" id="mobile" required autofocus class="form-control">
+            <span id="mobileErr" style="color: red"></span>
+          </div>
+          <div class="row margin-bottom-20">
+            <div class="col-md-6">
+              <input type="text" placeholder="验证码" id="code" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <button class="btn-u" id="codeGet" type="button">点击获取验证码</button>
+            </div>
+            <span id="codeErr" style="color: red"></span>
+          </div>
 
-                <div class="row">
-                    <div class="col-md-6 checkbox">
-                        <label><input type="checkbox"> 保持登录 </label>
-                    </div>
-                    <div class="col-md-6">
-                        <button class="btn-u pull-right" type="submit">登录</button>
-                    </div>
-                </div>
-                <div class="row">
-                    <span id="loginErr" style="color: red"></span>
-                </div>
-                <hr>
-                <p>没有账号 ?<a class="color-green" href="/register">注册</a>一个</p>
-            </form>
-        </div>
+          <div class="row">
+            <div class="col-md-6 checkbox">
+              <label>
+                <input type="checkbox"> 保持登录 </label>
+            </div>
+            <div class="col-md-6">
+              <button class="btn-u pull-right" type="submit">登录</button>
+            </div>
+          </div>
+          <hr>
+        </form>
+      </div>
     </div>
-</div>
-<script src="/js/lib/jquery.min.js"></script>
-<script type="text/javascript">
-    var url='{{account}}',
-        expire = '{{expire}}' ;
-</script>
-<script src="/js/login/d0bff79c273adaff503e.wp.js"></script>
+  </div>
+  <script src="/js/lib/jquery.min.js"></script>
+  <script type="text/javascript" src="/js/toastr.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      var url = '{{account}}',
+          expire = '{{expire}}',
+          wait = 60;
+      toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": true,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": true,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+      }
+      function setCookie(sKey, sValue, vEnd, sPath, sDomain, bSecure) {
+          if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) {
+            return false;
+          }
+          var sExpires = "";
+          if (vEnd) {
+            switch (vEnd.constructor) {
+              case Number:
+                sExpires = vEnd === Infinity ? "; expires=Fri, 31 Dec 9999 23:59:59 GMT" : "; max-age=" + vEnd;
+                break;
+              case String:
+                sExpires = "; expires=" + vEnd;
+                break;
+              case Date:
+                sExpires = "; expires=" + vEnd.toUTCString();
+                break;
+            }
+          }
+          document.cookie = sKey + "=" + sValue + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
+          return true;
+      }
+
+      function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return r[2];
+        return null;
+      }
+      $('form').submit(function() {
+        var mobile = $('#mobile').val();
+        var code = $('#code').val();
+        if (!isMobile(mobile)) {
+          toastr.error('非法手机号码！');
+          return false;
+        }
+        if (code.length != 6) {
+          toastr.error('验证码错误！');
+          return false;
+        }
+        $.ajax({
+          url: url + 'User/Login/',
+          data: {
+            mobile: mobile,
+            vcode: code
+          },
+          type: 'post'
+        }).done(function(data) {
+          if (data.code !== 0) {
+            toastr.error(data.msg === "" ? "登录失败，请重新尝试！" : data.msg);
+            return false;
+          }
+          if (data.token !== '' && data.key !== '') {
+            var now = new Date();
+            now.setDate(now.getDate() + parseInt(expire));
+            setCookie('key', data.key, now);
+            setCookie('token', data.token, now);
+            var redirect = decodeURIComponent(getUrlParam('redirect'));
+            if (redirect == 'null' || redirect == '') {
+              redirect = '/';
+            }
+            window.location.href = redirect;
+          }
+        }).fail(function() {
+          toastr.error("请求超时！");
+        });
+        return false;
+      });
+      $('#codeGet').on('click', function() {
+        var mobile = $('#mobile').val();
+        if (!isMobile(mobile)) {
+          toastr.error('非法手机号码！');
+          return false;
+        }
+        setTime($(this));
+        getCode(mobile);
+      });
+
+      function isMobile(mobile) {
+        return !!(mobile.length === 11 && /^(((13)|(15)|(17)|(18))+\d{9})$/.test(mobile));
+
+      }
+
+      function getCode(mobile) {
+        $.ajax({
+          url: url + '/Captcha/Add',
+          data: {
+            mobile: mobile
+          },
+          type: 'POST'
+        }).done(function(data) {
+          if (data.code !== 0) {
+            toastr.error(data.msg === "" ? "获取验证码失败，请重新尝试！" : data.msg);
+            return false;
+          }
+          toastr.success(data.msg === '' ? '验证码已发送,请注意查收!' : data.msg);
+        }).fail(function() {
+          toastr.error("请求超时！");
+        });
+      }
+
+      function setTime(object) {
+        if (wait === 0) {
+          object.removeAttr('disabled');
+          object.text("点击获取验证码");
+          wait = 60;
+        } else {
+          object.attr('disabled', true);
+          object.text("重新发送(" + wait + ")");
+          wait--;
+          setTimeout(function() {
+            setTime(object);
+          }, 1000);
+        }
+      }
+    });
+  </script>
 </body>
+
 </html>

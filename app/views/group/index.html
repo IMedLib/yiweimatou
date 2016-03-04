@@ -8,15 +8,15 @@
     {% for group in groups %}
     <div class="col-sm-4">
         <div class="file">
-            <a href="/group/show?oid={{group.oid}}">
+            <a href="/group/{{group.oid}}">
                 <span class="corner"></span>
                 <div class="img">
-                    <img src="{{group.coverpath}}512_256.png" class="img-responsive" alt="">
+                    <img src="{{group.cover_path}}512_256.png" class="img-responsive" alt="">
                 </div>
                 <div class="file-name">
-                    {{group.title}}
+                    {{group.names}}
                     <br/>
-                    <small>{{group.puttime}}</small>
+                    <small>{{group.put_ms}}</small>
                 </div>
             </a>
         </div>

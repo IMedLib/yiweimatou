@@ -10,7 +10,7 @@
     <ul class="nav nav-justified nav-tabs">
         <li class="active"><a data-toggle="tab" href="#profile">编辑个人信息</a></li>
         <li><a data-toggle="tab" href="#crop-avatar">更改头像</a></li>
-        <li><a data-toggle="tab" href="#cover">更改个人封面</a></li>
+        <!-- <li><a data-toggle="tab" href="#cover">更改个人封面</a></li> -->
         <li><a data-toggle="tab" href="#settings">系统设置</a></li>
     </ul>
     <div class="tab-content">
@@ -18,24 +18,24 @@
             <form class="sky-form">
                 <header>编辑</header>
                 <fieldset>
-                    <section>
+                    <!-- <section>
                         <label class="label" for="cname">姓名</label>
                         <label class="input">
                             <input type="text" value="{{user.cname}}" id="cname">
                         </label>
-                    </section>
+                    </section> -->
                     <section>
                         <label class="label" for="nickname">昵称</label>
                         <label class="input">
-                            <input type="text" id="nickname" value="{{user.nickname}}">
+                            <input type="text" id="nickname" value="{{user.names}}">
                         </label>
                     </section>
-                    <section>
+                    <!-- <section>
                         <label class="label" for="studentId">学号</label>
                         <label class="input">
                             <input type="text" id="studentId" value="{{user.studentid}}">
                         </label>
-                    </section>
+                    </section> -->
                 </fieldset>
                 <footer>
                     <button type="submit" class="btn-u pull-right">提交</button>
@@ -45,17 +45,19 @@
         <div class="tab-pane fade in" id="crop-avatar">
             <!-- Current avatar -->
             <div class="avatar-view" title="更换头像">
-                {% if user.facepath ==''%}
+                {% if user.face_path ==''%}
                 <img src="/img/DefaultAvatar/DefaultAvatar200.jpg" alt="头像">
                 {% else %}
-                <img src="{{config.url.outside.upload}}face/{{user.facepath}}" alt="头像">
+                <img src="{{user.face_path}}" alt="头像">
                 {% endif %}
             </div>
             <!-- Cropping modal -->
             <div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
-                        <form class="avatar-form" action="{{config.url.upload}}/face" enctype="multipart/form-data" method="post">
+                        <form class="avatar-form" action="{{config.url.upload}}face/"
+                        domain="{{config.url.domain}}face/"
+                       enctype="multipart/form-data" method="post">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 <h4 class="modal-title" id="avatar-modal-label">更改头像</h4>
@@ -122,12 +124,14 @@
 
 {% endblock %}
 {% block js %}
-<script type="text/javascript" src="/js/lib/jquery.blockUI.js"></script>
+<script type="text/javascript">
+  var key = '{{key}}',token='{{token}}',api = '{{config.url.api}}';
+</script>
+<script type="text/javascript" src="/js/lib/jquery.blockUI.min.js"></script>
 <script type="text/javascript" src="/js/lib/cropper.min.js"></script>
 <script type="text/javascript" src="/js/user/crop-avatar.js"></script>
 <script>
     $(document).ready(function () {
-        var key = '{{key}}',token='{{token}}',api = '{{config.url.api}}';
         jQuery('.list-group-item').on('click', function () {
             jQuery(this).toggleClass('active');
         });
@@ -144,12 +148,12 @@
                     $cname = $('#cname'),$studentId=$('#studentId');
             $('form').eq(0).block();
             $.ajax({
-                url:api+'userInfo/put',
+                url:api+'user/put',
                 data:{
                     uid:key,
-                    nickname:$nickname.val(),
-                    cname:$cname.val(),
-                    studentId:$studentId.val(),
+                    names:$nickname.val(),
+                    // cname:$cname.val(),
+                    // studentId:$studentId.val(),
                     key:key,
                     token:token
                 },type:'post'
