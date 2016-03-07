@@ -8,7 +8,7 @@ module.exports = {
     index: function *() {
         var groups;
         yield request({
-            uri: config.url.inside.api + '/Organ/List/',
+            uri: config.url.inside.api + 'organ/list/',
             qs: {
                 offset: 1,
                 limit: 9
@@ -19,14 +19,15 @@ module.exports = {
             if (data.code === 0) {
                 groups = data.list;
             } else {
-                console.error('/Organ/List/',data);
+                debug('organ/list/',data);
             }
         }).catch(function (err) {
-            console.error('/Organ/List/',err.message);
+            debug('/organ/list/',err.message);
         });
         var count = 0;
         yield request({
-            uri:config.url.inside.api+'organ/info'
+            uri:config.url.inside.api+'organ/info',
+            gzip:true,json:true
         }).then(function (data) {
             if(data.code === 0){
                 count=data.info.Count;
@@ -39,8 +40,8 @@ module.exports = {
             title: '机构列表',
             logo: '机构号',
             groups: groups,
-            domain:config.url.outside.domain,
-            count:count
+            count:count,
+            api:config.url.outside.api
         });
     },
     show: function*() {
@@ -101,7 +102,7 @@ module.exports = {
         }
         var groups;
         yield request({
-            uri: config.url.inside.api + "/Organ/List/",
+            uri: config.url.inside.api + "/organ/list/",
             gzip: true,
             json: true,
             qs: {

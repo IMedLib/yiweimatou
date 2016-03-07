@@ -1,10 +1,13 @@
 {% extends '../layout/header.html'%}
+{% block css %}
+<link rel="stylesheet" href="/css/lib/simplePagination.css">
+{% endblock %}
 {% block breadcrumbs %}
 <li><a href="/index">首页</a></li>
 <li class="active">{{title}}</li>
 {% endblock %}
 {% block body %}
-<div class="row">
+<div class="row" id='lessons'>
     {% for lesson in lessons %}
     <div class="col-sm-4">
         <div class="file">
@@ -27,14 +30,52 @@
 {% endblock%}
 {% block js %}
 <script src="/js/lib/jquery.simplePagination.js"></script>
+<script src="/js/lib/template.js"></script>
+<script id="lessonTemplate" type="text/html">
+    [each list as lesson]
+    <div class="col-sm-4">
+        <div class="file">
+            <a href="/lesson/[lesson.lid]">
+                <span class="corner"></span>
+                <div class="img">
+                    <img src="[lesson.cover_path]512_256.png" class="img-responsive" alt="">
+                </div>
+                <div class="file-name">
+                    [lesson.names]
+                    <br/>
+                    <small>[lesson.put_ms]</small>
+                </div>
+            </a>
+        </div>
+    </div>
+    [/each]
+</script>
 <script>
     $(document).ready(function(){
-        '{%if count>0%}'
+        '{% if count>0 %}'
+        template.config('openTag','[');
+        template.config('closeTag',']');
         $('#page').pagination({
-            items:'{{count}}',
-            listStyle:"pagination"
+            items: '{{count}}',
+            listStyle: "pagination",
+            onPageClick: function (page) {
+                $.ajax({
+                    url: api+'lesson/list',
+                    data: {
+                        limit: 9,
+                        offset: page,
+                        uid: '{{key}}'
+                    }
+                }).done(function (data) {
+                    if (data.code === 0) {
+                        $('#lessons').html(template('lessonTemplate', data));
+                    }
+                }).catch(function () {
+                    toastr.error('获取课程失败!');
+                });
+            }
         });
-        '{% endif %}'
+        '{%endif%}'
     });
 </script>
 {% endblock %}

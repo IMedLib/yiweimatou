@@ -1,13 +1,16 @@
-{% extends '../layout/header.html'%}
+{% extends '../layout/header.html' %}
+{% block css %}
+<link rel="stylesheet" href="/css/lib/simplePagination.css">
+{% endblock %}
 {% block breadcrumbs %}
 <li><a href="/index">首页</a></li>
 <li class="active">{{title}}</li>
 {% endblock %}
+
 {% block body %}
-<div class="row">
+    <div class="row" id="groupList">
     {% for group in groups %}
-    <div class="col-sm-4">
-        <div class="file">
+        <div class="col-sm-4 file">
             <a href="/group/{{group.oid}}">
                 <span class="corner"></span>
                 <div class="img">
@@ -16,12 +19,65 @@
                 <div class="file-name">
                     {{group.names}}
                     <br/>
-                    <small>{{group.put_ms}}</small>
+                    <small>{{group.add_ms}}</small>
                 </div>
             </a>
         </div>
-    </div>
     {% endfor %}
-</div>
+    </div>
+    <nav class="pull-right" id="groupPage"></nav>
+{% endblock %}
 
-{% endblock%}
+{% block js %}
+<script src="/js/lib/jquery.simplePagination.js"></script>
+<script src="/js/lib/template.js"></script>
+<script id="groupTemplate" type="text/html">
+    [each list as group]
+        <div class="col-sm-4 file">
+            <a href="/group/[group.oid]">
+                <span class="corner"></span>
+                <div class="img">
+                    <img src="[group.cover_path]512_256.png" class="img-responsive" alt="">
+                </div>
+                <div class="file-name">
+                    [group.names]
+                    <br/>
+                    <small>[group.add_ms]</small>
+                </div>
+            </a>
+        </div>
+    [/each]
+</script>
+<script>
+    $(document).ready(function () {
+        var $groupCollapse = $('#collapse-group');
+        jQuery('.list-group-item').on('click', function () {
+            jQuery(this).toggleClass('active');
+        });
+        $groupCollapse.addClass('in');
+        $groupCollapse.find('li').eq(0).addClass('active');
+        template.config('openTag','[');
+        template.config('closeTag',']');
+        $('#groupPage').pagination({
+            items:{{count}},
+            listStyle:'pagination',
+            onPageClick:function (page) {
+                getGroupList(page);
+            }
+        });
+        function getGroupList(page) {
+            $.ajax({
+                url:'{{api}}organ/list',
+                data:{
+                    limit:9,
+                    offset:page
+                }
+            }).done(function (data) {
+                if(data.code === 0){
+                    $('#groupList').html(template('groupTemplate',data));
+                }
+            })
+        }
+    });
+</script>
+{% endblock %}

@@ -9,31 +9,49 @@ const debug = _debug('app:controller:lesson');
 module.exports = {
   index: function*() {
     var oid = this.query.oid,
-      lessons;
-    oid = oid === 'undefined' ? '' : oid;
+      lessons = [],count = 0;
+    oid = oid === undefined ? '' : oid;
     yield request({
-      uri: config.url.inside.api + '/lesson/list',
-      qs: {
-        limit: 9,
-        offset: 1,
-        oid: oid
-      },
-      gzip: true,
-      json: true
-    }).then(function(data) {
-      if (data.code === 0) {
-        lessons = data.list;
-      } else {
-        console.error('/lesson/list', data);
-      }
-    }).catch(function(err) {
-      console.error('/lesson/list', err.message);
+        uri:config.url.inside.api +'lesson/info',
+        qs:{
+            oid:oid
+        },gzip:true,json:true
+    }).then(function (data) {
+        if(data.code === 0){
+            count = data.info.Count;
+        }else{
+            debug(data.msg);
+        }
+    },function (err) {
+        debug(err.message);
     });
+    if(count > 0){
+        count = Math.ceil(count/9);
+        yield request({
+          uri: config.url.inside.api + 'lesson/list',
+          qs: {
+            limit: 9,
+            offset: 1,
+            oid: oid
+          },
+          gzip: true,
+          json: true
+        }).then(function(data) {
+          if (data.code === 0) {
+            lessons = data.list;
+          } else {
+            debug('/lesson/list', data);
+          }
+        }).catch(function(err) {
+          debug('/lesson/list', err.message);
+        });
+    }
     yield this.render('lesson/index', {
       title: '课程列表',
       logo: '云课程',
       lessons: lessons,
-      domain: config.url.outside.domain
+      domain: config.url.outside.domain,
+      count:count
     })
   },
   edit: function*() {
