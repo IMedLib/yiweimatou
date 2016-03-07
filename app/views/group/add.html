@@ -60,15 +60,15 @@
                 mobile = $('#mobile').val(),uid=0;
             e.preventDefault();
             $.ajax({
-                url:"{{config.url.api}}/user/get",
+                url:"{{config.url.api}}/user/list",
                 data:{
                     key:'{{key}}',
                     token:'{{token}}',
                     mobile:mobile
                 },async:false
             }).done(function (data) {
-                if(data.code === 0){
-                    uid = data.get.uid;
+                if(data.code === 0 && data.list.length > 0){
+                    uid = data.list[0].uid;
                 }
             }).fail(function () {
                 toastr.error('获取管理员失败，请稍后再试')
