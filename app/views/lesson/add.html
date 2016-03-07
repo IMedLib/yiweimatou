@@ -1,6 +1,6 @@
 {% extends '../layout/header.html' %}
 {% block css %}
-<link rel="stylesheet" href="/css/lib/jquery.steps.css">
+<!-- <link rel="stylesheet" href="/css/lib/jquery.steps.css"> -->
 <link rel="stylesheet" href="/css/lib/bootstrap-datetimepicker.min.css">
 <link rel="stylesheet" href="/css/lib/sky-forms.css">
 <link rel="stylesheet" href="/css/lib/custom-sky-forms.css">
@@ -12,12 +12,9 @@
 <li class="active">{{title}}</li>
 {% endblock %}
 {% block body %}
-<div class="text-center">
-    <span style="color: red" id="error" hidden></span>
-</div>
 <div id="wizard">
-    <h1>第一步</h1>
-    <div class="step-content text-center">
+    <!-- <h1>第一步</h1>
+    <div class="step-content text-center"> -->
         <form class="sky-form">
             <header>填写课程基本信息</header>
             <fieldset>
@@ -26,6 +23,12 @@
                     <label class="input">
                         <input type="text" required="required" id="title">
                     </label>
+                </section>
+                <section>
+                     <label for="mobile" class="label">输入主讲教师手机号</label>
+                     <label class="input">
+                         <input type="text" id="mobile" required="require"/>
+                     </label>
                 </section>
                 <section>
                     <label class="label">课程封面</label>
@@ -60,9 +63,9 @@
                 </div>
             </fieldset>
         </form>
-    </div>
+    <!-- </div> -->
 
-    <h1>第二步</h1>
+    <!-- <h1>第二步</h1>
     <div class="step-content">
             <span class="color-red" hidden id="err"></span>
             <span id="message" class="color-green" hidden></span>
@@ -72,118 +75,86 @@
                 </table>
             </div>
             <nav id="page"></nav>
-    </div>
+    </div> -->
+    <input type="button" class="pull-right btn-u margin-top-20" id="submit" value="确认新建">
 </div>
 {% endblock %}
 {% block js %}
-<script src="/js/lib/jquery.steps.min.js"></script>
+<!-- <script src="/js/lib/jquery.steps.min.js"></script> -->
 <script src="/js/lib/bootstrap-datetimepicker.min.js"></script>
 <script src="/js/lib/bootstrap-datetimepicker.zh-CN.js"></script>
-<script src="/js/lib/template.js"></script>
+<!-- <script src="/js/lib/template.js"></script> -->
 <script src="/js/lib/jquery.simplePagination.js"></script>
 <script type="text/javascript" src="/js/lib/jquery.blockUI.min.js"></script>
-<script type="text/html" id="teacherTemplate">
+<!-- <script type="text/html" id="teacherTemplate">
     [each list as user]
     <tr>
         <td><input type="radio" name="toAdd" value="[user.uid]"></td>
         <td> [user.mobile]</td>
     </tr>
     [/each]
-</script>
+</script> -->
 <script>
     $(document).ready(function () {
-        var count = getTeacherCounts(),$teachers =$('#teachers'),limit=9;
-        template.config('openTag','[');
-        template.config('closeTag',']');
-        $('#page').pagination({
-            items:count,
-            listStyle:"pagination",
-            onPageClick:function(page,event){
-                getTeachers(limit,page);
-            }
-        });
-        function getFileExt(name){
-            return name.substring(name.lastIndexOf('.'),name.length).toUpperCase();
-        }
-        function getTeacherCounts(){
-            var count = 0;
-            $.ajax({
-                url: '{{config.url.api}}user/info',
-                async: false
-            }).done(function (data) {
-                if (data.code === 0) {
-                    count = data.info.Count;
-                } else {
-                    toastr.error(data.msg === '' ? '获取用户数量出错!' : data.msg);
-                }
-            }).fail(function () {
-                toastr.error('获取用户数量超时！');
-            });
-            return count;
-        }
-        function getTeachers(limit,offset){
-            $.ajax({
-                url: '{{config.url.api}}user/list',
-                data: {
-                    offset: offset,
-                    limit: limit
-                }
-            }).done(function (data) {
-                if (data.code === 0) {
-                    $('#teachers').html(template('teacherTemplate', data));
-                } else {
-                    toastr.error(data.msg === '' ? '获取用户失败!' : data.msg);
-                }
-            }).fail(function () {
-                toastr.error('获取用户超时!');
-            });
-        }
-        $("#wizard").steps({
-            enableCancelButton: false,
-            labels: {
-                previous: '上一步',
-                next: '下一步',
-                finish: '完成'
-            },
-            onFinishing: function () {
-                var title = $('#title'),
-                        remark = $('#remark').val(),
-                        teacherID = $(':radio:checked').eq(0).val(),
-                        file = $('#file'),
-                        start=$('#start'),end=$('#end'),err=$('#error');
+        // var count = Math.ceil(getTeacherCounts()/9),$teachers =$('#teachers'),limit=9;
+        $('#submit').on('click',function (){
+            var title = $('#title'),
+                remark = $('#remark').val(),
+                mobile = $('#mobile').val(),
+                file = $('#file'),
+                start=$('#start'),end=$('#end');
                 if (title.val() === '') {
-                    err.html('请填写标题').show().fadeOut(5000);
+                    toastr.error('标题不能为空');
                     title.focus();
                     return false;
                 }
                 if (typeof file === 'undefined') {
-                    err.html('请选择封面').show().fadeOut(5000);
+                    toastr.error('请选择封面');
                     file.focus();
                     return false;
                 }
                 var ext = getFileExt(file.get(0).files[0].name);
                 if(ext!=='.JPG'&&ext!=='.PNG'&&ext!=='.JPEG'&&ext!=='.GIF'){
-                    err.html('请选择图片上传').show().fadeOut(5000);
+                    toastr.error('请选择图片上传');
                     file.focus();
                     return false;
                 }
                 if (file.get(0).files[0].size>4194304){
-                    err.html('请选择小于4M的封面').show().fadeOut(5000);
+                    toastr.error('请选择小于4M的封面');
                     file.focus();
                     return false;
                 }
                 if (start.val() === ''){
-                    err.html("请选择时间").show().fadeOut(5000);
+                    toastr.error("请选择时间");
                     start.focus();
                     return false;
                 }
                 if (end.val() === ''){
-                    err.html("请选择时间").show().fadeOut(5000);
+                    toastr.error("请选择时间");
                     end.focus();
                     return false;
                 }
-                if (teacherID === '') {
-                    err.html("请选择主讲教师").show().fadeOut(5000);
+                if (!isMobile(mobile)) {
+                    toastr.error("请输入主讲教师手机号码");
+                    return false;
+                }
+                var uid = 0;
+                $.ajax({
+                    url:'{{config.url.api}}/user/get',
+                    data:{
+                        mobile:mobile,
+                        key:'{{key}}',
+                        token:'{{token}}'
+                    },async:false
+                }).done(function (data) {
+                    if(data.code === 0){
+                        uid = data.get.uid;
+                    }
+                }).fail(function () {
+                    toastr.error('获取主讲教师出错，请稍后再试');
+                });
+                if(uid == 0){
+                    toastr.error('无法找到主讲教师，请核对手机号码');
                     return false;
                 }
                 var formData = new FormData();
@@ -199,14 +170,14 @@
                 }).done(function (data) {
                     if (data.code === 0) {
                         $.ajax({
-                            url: '{{config.url.api}}/Lesson/Add/',
+                            url: '{{config.url.api}}/lesson/add/',
                             type:'post',
                             data: {
                                 key: '{{key}}',
                                 token: '{{token}}',
                                 names: title.val(),
                                 descript: remark,
-                                uid: teacherID,
+                                uid: uid,
                                 cover_path: '{{config.url.domain}}/cover/' + data.cover_path,
                                 start_ms:start.val(),
                                 end_ms:end.val(),
@@ -230,9 +201,13 @@
                     $('#wizard').unblock();
                 });
                 return true;
-            }
         });
-        getTeachers(limit,1);
+        function isMobile(mobile) {
+            return !!(mobile.length === 11 && /^(((13)|(15)|(17)|(18))+\d{9})$/.test(mobile));
+        }
+        function getFileExt(name){
+            return name.substring(name.lastIndexOf('.'),name.length).toUpperCase();
+        }
         $('.ui-datepicker').datetimepicker({
             language: 'zh-CN',
             format: 'yyyy-mm-dd hh:ii:ss',

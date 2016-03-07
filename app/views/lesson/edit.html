@@ -193,25 +193,25 @@
           <nav id="classPage"></nav>
         </div>
         <div id="addTeacher" class="tab-pane fade in">
-          <!--<div class="input-group">-->
-          <!--<input type="text" class="input form-control" >-->
-          <!--<span class="input-group-btn">-->
-          <!--<button type="button" class="btn-u"><i class="fa fa-search"></i>-->
-          <!--查询-->
-          <!--</button>-->
-          <!--</span>-->
-          <!--</div>-->
-          <div class="full-height-scroll">
-            <div class="table-responsive">
-              <table class="table table-striped table-hover">
-                <tbody id="users"></tbody>
-              </table>
-            </div>
-            <nav id='teacherPage'></nav>
-            <button type="button" id="addTeacherSubmit" class="btn-u pull-right">
-              添加
-            </button>
-          </div>
+            <form class="sky-form">
+                <fieldset>
+                    <section>
+                        <label for="mobile">讲师手机号码</label>
+                        <label class="input">
+                            <input type="text" id="mobile" value="">
+                        </label>
+                    </section>
+                    <section>
+                        <label for="names">讲师称呼</label>
+                        <label class="input">
+                            <input type="text" id="names" value="">
+                        </label>
+                    </section>
+                </fieldset>
+                <footer>
+                    <button class="btn-u pull-right" id="addTeacherSubmit">添加</button>
+                </footer>
+            </form>
         </div>
         <div id="delTeacher" class="tab-pane fade in">
           <div class="row">
@@ -719,9 +719,9 @@
     }
     function getClasses(page, obj) {
       $.ajax({
-        url: '{{config.url.api}}classRoom/list',
+        url: api+'classroom/list',
         data: {
-          lid: '{{lesson.lid}}',
+          lid: lid,
           limit: 9,
           offset: page,
           key: key,
@@ -742,7 +742,7 @@
     $('a[href="#classList"]').on('show.bs.tab', function () {
       var $classes = $('#classes'),
         $classPage = $('#classPage');
-      if ($classes.html() != '')
+      if ($classes.html().trim() != '')
         return;
       var count = getClassCount();
       if (count > 0) {
@@ -761,11 +761,13 @@
     <!--del teacher-->
     function getTeachers(offset) {
       $.ajax({
-        url: api+'lessonAdmin/List/',
+        url: api+'lessonadmin/list/',
         data: {
           lid:lid,
           limit:9,
-          offset:offset
+          offset:offset,
+          key:key,
+          token:token
         }
       }).done(function (data) {
         if (data.code === 0) {
@@ -782,7 +784,7 @@
     function getLessonAdminCount() {
       var count = 0;
       $.ajax({
-        url:api+'lessonAdmin/info',
+        url:api+'lessonadmin/info',
         data:{
           lid:lid
         },async:false
@@ -812,45 +814,60 @@
     });
     <!--end del teacher-->
     <!--add teacher-->
-    $('a[href="#addTeacher"]').on('show.bs.tab', function () {
-      var $users = $('#users');
-      if ($users.html().trim() === '') {
-        var count = getCount();
-        getUsers($users, 1);
-        $('#teacherPage').pagination({
-          items: Math.ceil(count / 9),
-          listStyle: "pagination",
-          onPageClick: function (page) {
-            getUsers($users, page);
-          }
-        });
+    function isMobile(mobile) {
+        return !!(mobile.length === 11 && /^(((13)|(15)|(17)|(18))+\d{9})$/.test(mobile));
+    }
+    $('#addTeacherSubmit').on('click', function (e) {
+        e.preventDefault();
+      var $mobile = $('#mobile'),$names = $('#names');
+      if(!isMobile($mobile.val())){
+          toastr.error('请填写正确的手机号码');
+          $mobile.focus();
+          return false;
       }
+      if($names.val() === ''){
+          toastr.error('请填写讲师的称谓');
+          return false;
+      }
+      var uid = 0;
+      $.ajax({
+          url:api+'user/get',
+          data:{
+              key:key,
+              token:token,
+              mobile:$mobile.val()
+          },async:false
+      }).done(function (data) {
+          if(data.code === 0){
+              uid = data.get.uid;
+          }
+      }).fail(function () {
+          toastr.error('获取讲师信息失败');
+      })
+      if(uid == 0){
+          toastr.error('获取讲师信息失败，请核对手机号');
+      }
+      addTeacher(uid,$names.val());
     });
-    $('#addTeacherSubmit').on('click', function () {
-      var $selected = $(':checkbox:checked');
-      $selected.each(function () {
-        addTeacher(this.value, $(this).parent().parent().children(':last').html());
-      });
-    });
-    function addTeacher(uid, mobile) {
+    function addTeacher(uid, names) {
       if (typeof uid === 'undefined')
         return;
       $.ajax({
-        url: '{{config.url.api}}lessonAdmin/Add/',
+        url: api+'lessonadmin/add/',
         type: 'post',
         data: {
-          lid: '{{lesson.lid}}',
+          lid: lid,
           uid: uid,
-          names: mobile,
-          key: '{{key}}',
-          token: '{{token}}'
+          names: names,
+          key: key,
+          token: token
         }
       }).done(function (data) {
         if (data.code === 0) {
-          toastr.success('用户' + uid + '添加成功！');
+          toastr.success('用户' + names + '添加成功！');
         } else {
           toastr.error(data.msg === ''
-            ? uid + '添加失败!'
+            ? names + '添加失败!'
             : data.msg);
         }
       }).fail(function () {

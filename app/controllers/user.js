@@ -10,6 +10,7 @@ module.exports={
         if(typeof key === 'undefined'){
           this.set('refresh',`3,/login?redirect=${encodeURIComponent(this.url)}`);
           this.body = '请先登录，即将跳转...';
+          return;
         }
         yield request({
             uri:config.url.inside.api+'user/get',

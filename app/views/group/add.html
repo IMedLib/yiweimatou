@@ -20,6 +20,12 @@
             </label>
         </section>
         <section>
+            <label for="mobile">机构管理员手机号码</label>
+            <label class="input">
+                <input type="text" id="mobile">
+            </label>
+        </section>
+        <section>
             <label class="label">机构LOGO</label>
             <label for="file" class="input input-file">
                 <div id="b" class="button">
@@ -28,24 +34,6 @@
                 </div>
                 <input id="path" type="text" readonly>
             </label>
-        </section>
-        <section>
-            <table class="table table-bordered table-responsive">
-                <thead>
-                    <tr>
-                        <td>选择管理员</td>
-                        <td>用户名</td></tr>
-                </thead>
-                <tbody id="users">
-                    {% for user in users %}
-                    <tr>
-                        <td><input type="radio" name="admin" value="{{user.uid}}"></td>
-                        <td>{{user.mobile}}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <nav id="page"></nav>
         </section>
     </fieldset>
     <footer>
@@ -57,53 +45,36 @@
 {% endblock%}
 {% block js %}
 <script type="text/javascript" src="/js/lib/jquery.blockUI.min.js"></script>
-<script type="text/javascript" src="/js/lib/template.js"></script>
 <script src="/js/lib/jquery.simplePagination.js"></script>
-<script id="userTemplate" type="text/html">
-    [each list as user]
-    <tr>
-        <td><input type="radio" name="admin" value="[user.uid]"></td>
-        <td>[user.mobile]</td>
-    </tr>
-    [/each]
-</script>
 <script>
     $(document).ready(function () {
         var $groupCollapse = $('#collapse-group'),$users=$('#users');
         jQuery('.list-group-item').on('click', function () {
             jQuery(this).toggleClass('active');
         });
-        template.config('openTag','[');
-        template.config('closeTag',']');
-        $('#page').pagination({
-            items:parseInt('{{count}}',10),
-            listStyle:"pagination",
-            onPageClick:function(page,event){
-                $.ajax({
-                    url:"{{config.url.api}}user/list",
-                    data:{
-                        limit:9,
-                        offset:page
-                    }
-                }).done(function(data){
-                    if(data.code === 0){
-                        $users.html(template("userTemplate",data));
-                    }else{
-                        toastr.error(data.msg===''?'获取用户列表失败！':data.msg);
-                    }
-                }).fail(function(){
-                   toastr.error('获取用户列表失败！');
-                });
-            }
-        });
         $groupCollapse.addClass('in');
         $groupCollapse.find('li').eq(1).addClass('active');
         $('form').submit(function(e){
             var title=$('#title').val(),
-                    file=$('#file').get(0).files[0],$uid=$(':radio:checked').val();
+                file=$('#file').get(0).files[0],
+                mobile = $('#mobile').val(),uid=0;
             e.preventDefault();
-            if ($uid === 'undefined'){
-                toastr.error('请选择一个管理员');
+            $.ajax({
+                url:"{{config.url.api}}/user/get",
+                data:{
+                    key:'{{key}}',
+                    token:'{{token}}',
+                    mobile:mobile
+                },async:false
+            }).done(function (data) {
+                if(data.code === 0){
+                    uid = data.get.uid;
+                }
+            }).fail(function () {
+                toastr.error('获取管理员失败，请稍后再试')
+            })
+            if (uid === 0){
+                toastr.error('无法照的管理员，请核对手机号码');
                 return false;
             }
             var formData=new FormData();
@@ -128,7 +99,7 @@
                             token: '{{token}}',
                             cover_path:"{{config.url.domain}}cover/"+data.cover_path,
                             logo_path:"{{config.url.domain}}cover/"+data.cover_path,
-                            uid:$uid
+                            uid:uid
                         }
                     }).done(function(data){
                         if(data.code==0){

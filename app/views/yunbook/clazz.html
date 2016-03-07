@@ -76,6 +76,9 @@
           attributionControl: false,
           crs: L.CRS.Simple
         });
+        {%if admin %}
+        var control = L.control.layers().addTo(_map);
+        {% endif %}
         {%if editable%}
         L.easyButton({
           position: 'topright',

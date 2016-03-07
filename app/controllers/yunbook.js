@@ -11,7 +11,7 @@ module.exports = {
             editable = false,
             url, lid;
         key = this.cookies.get('key');
-        token = this.cookies.get('token'),admin = false;
+        token = this.cookies.get('token'), admin = false;
         if (!id) {
             this.set('refresh', '3,/yunbook');
             this.body = '缺少参数，即将跳转...';
@@ -19,7 +19,7 @@ module.exports = {
         }
         var yunbook, clazzYunbook;
         yield request({
-            uri: config.url.inside.api + 'classRoomFile/get',
+            uri: config.url.inside.api + 'classroomfile/get',
             qs: {
                 cfid: id,
                 key: key,
@@ -42,7 +42,7 @@ module.exports = {
             return;
         }
         yield request({
-            uri: config.url.inside.api + 'userFile/get',
+            uri: config.url.inside.api + 'userfile/get',
             qs: {
                 fid: clazzYunbook.lid
             },
@@ -62,7 +62,7 @@ module.exports = {
         }
         //先判断是否主讲老师
         yield request({
-            uri: config.url.inside.api + 'classRoom/get',
+            uri: config.url.inside.api + 'classroom/get',
             qs: {
                 cid: clazzYunbook.cid,
                 key: key,
@@ -88,8 +88,10 @@ module.exports = {
             }).then(function(data) {
                 if (data.code === 0) {
                     editable = data.get.uid == key;
+                    admin = true;
                     if (editable) {
-                        url = config.url.outside.api + 'classRoomFile/put';
+                        url = config.url.outside.api +
+                            'classroomfile/put';
                     }
                 }
             }, function(err) {
@@ -107,8 +109,9 @@ module.exports = {
                     data.list.forEach(function(item, index) {
                         if (item.uid == key) {
                             editable = true;
+                            admin = true;
                             url = config.url.outside.api +
-                                'classRoomFile/put';
+                                'classroomfile/put';
                             return;
                         }
                     })
@@ -125,25 +128,28 @@ module.exports = {
                 if (data.code === 0) {
                     editable = data.get.id !== undefined
                     if (editable) {
-                        url = `${config.url.inside.api}classroomyunbook/add`;
+                        url =
+                            `${config.url.inside.api}classroomyunbook/add`;
                     }
                 }
             }).catch(function(err) {
                 debug(err.message);
             });
         } else {
-            admin = true;
             var classRoomYunbookList;
             yield request({
-                uri:config.url.inside.api+'classroomyunbook/list',
-                qs:{
-                    cfid:id
-                },gzip:true,json:true
-            }).then(function (data) {
-                if(data.code === 0){
+                uri: config.url.inside.api +
+                    'classroomyunbook/list',
+                qs: {
+                    cfid: id
+                },
+                gzip: true,
+                json: true
+            }).then(function(data) {
+                if (data.code === 0) {
                     classRoomYunbookList = data.list;
                 }
-            },function (err) {
+            }, function(err) {
                 debug(err.message);
             });
         }
@@ -155,8 +161,8 @@ module.exports = {
             editable: editable,
             url: url,
             cfid: clazzYunbook.cfid,
-            admin:admin,
-            classRoomYunbookList:admin?classRoomYunbookList:[]
+            admin: admin,
+            classRoomYunbookList: admin ? classRoomYunbookList : []
         });
     },
     leaflet: function*() {
