@@ -140,15 +140,15 @@
                 }
                 var uid = 0;
                 $.ajax({
-                    url:'{{config.url.api}}/user/get',
+                    url:'{{config.url.api}}/user/list',
                     data:{
                         mobile:mobile,
                         key:'{{key}}',
                         token:'{{token}}'
                     },async:false
                 }).done(function (data) {
-                    if(data.code === 0){
-                        uid = data.get.uid;
+                    if(data.code === 0 && data.list.length > 0){
+                        uid = data.list[0].uid;
                     }
                 }).fail(function () {
                     toastr.error('获取主讲教师出错，请稍后再试');
