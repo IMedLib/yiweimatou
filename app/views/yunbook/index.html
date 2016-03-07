@@ -1,0 +1,40 @@
+{% extends '../layout/header.html'%}
+{% block breadcrumbs %}
+<li><a href="/index">首页</a></li>
+<li class="active">{{title}}</li>
+{% endblock %}
+{% block body %}
+<div class="row">
+    {% for lesson in lessons %}
+    <div class="col-sm-4">
+        <div class="file">
+            <a href="/yunbook/{{yunbook.fid}}">
+                <span class="corner"></span>
+                <div class="img">
+                    <img src="{{yunbook.cover_path}}512_256.png" class="img-responsive" alt="">
+                </div>
+                <div class="file-name">
+                    {{yunbook.names}}
+                    <br/>
+                    <small>{{yunbook.put_ms}}</small>
+                </div>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<nav id="page"></nav>
+{% endblock%}
+{% block js %}
+<script src="/js/lib/jquery.simplePagination.js"></script>
+<script>
+    $(document).ready(function(){
+        '{%if count>0%}'
+        $('#page').pagination({
+            items:'{{count}}',
+            listStyle:"pagination"
+        });
+        '{% endif %}'
+    });
+</script>
+{% endblock %}
