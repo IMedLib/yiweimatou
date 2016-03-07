@@ -7,7 +7,7 @@
 {% endblock %}
 {% block breadcrumbs %}
 <li><a href="/index">首页</a></li>
-<li><a href="/lesson/show?lid={{lesson.lid}}">{{lesson.names}}</a></li>
+<li><a href="/lesson/{{lesson.lid}}">{{lesson.names}}</a></li>
 <li class="active">{{clazz.names}}</li>
 {% endblock %}
 
@@ -222,11 +222,13 @@
         });
         function hasYunbook() {
             var flag = false;
-            $ajax({
-                url:api+'classRoomFile/info',
+            $.ajax({
+                url:api+'classroomfile/info',
                 data:{
                     cid:cid,
-                    type:3
+                    type:3,
+                    key:key,
+                    token:token
                 },async:false
             }).done(function (data) {
                 if(data.code === 0){
@@ -245,9 +247,9 @@
             });
         });
         $('#addYunbookSubmit').on('click', function () {
-            if(hasYunbook){
+            if(hasYunbook()){
                 toastr.warning('课堂只能添加一个云板书!');
-                $('#addYunbookSubmit').prop('disabled',true);
+                // $('#addYunbookSubmit').prop('disabled',true);
                 return false;
             }
             var checked = $(':radio:checked').eq(0);
@@ -370,7 +372,6 @@
             var $files = $('#files');
             if ($files.html() === '') {
                 var count = getFileCounts('{{clazz.cid}}'), $filep = $('#filep');
-                console.log(count);
                 if (count > 0) {
                     getFiles($files, limit, 1);
                     $filep.jqPagination({
@@ -387,13 +388,14 @@
         $('a[href="#yunbook"]').on('show.bs.tab', function () {
             if($('#yunbook').find('div').html().trim() === ''){
                 $.ajax({
-                    url: api+'classRoomFile/list',
+                    url: api+'classroomfile/list',
                     data: {
                         cid: cid,
                         key:key,
                         token:token
                     }
                 }).done(function (data) {
+                    if(data.code !=0 || data.list[0] === undefined) return;
                     var $yunbookEdit = $('#yunbookEdit');
                     var id=data.list[0].cfid;
                     if (id !== undefined) {

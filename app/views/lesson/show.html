@@ -293,17 +293,13 @@
                     var id = data.list[0].cfid;
                     if (id !== undefined) {
                         var $object = $('#yunbook-' + cid);
-<<<<<<< HEAD
-                        $object.html('<div class="col-sm-3 file"><a href="/yunbook/' + data.get.yid + '">'
-=======
                         $object.html('<div class="col-sm-3 file"><a target="_blank" href="/yunbook/clazz/' + id + '">'
->>>>>>> develop
-                                + '<div class="icon">'
-                                + '<i class="fa fa-book"></i>'
-                                + '</div>'
-                                + '<div class="file-name">'
-                                + data.list[0].names
-                                + '</div></a></div>');
+                        + '<div class="icon">'
+                        + '<i class="fa fa-book"></i>'
+                        + '</div>'
+                        + '<div class="file-name">'
+                        + data.list[0].names
+                        + '</div></a></div>');
                     }
                 } else {
                     toastr.error('获取课堂云板书出错!');

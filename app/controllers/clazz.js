@@ -4,60 +4,65 @@
 var request = require('request-promise'),
     config = require('../../config'),
     key, token;
-module.exports={
-    edit:function *(){
-        var cid = this.params.id,clazz,lesson,yunbook;
-        if (typeof cid === 'undefined'){
+module.exports = {
+    edit: function*() {
+        var cid = this.params.id,
+            clazz, lesson, yunbook;
+        if (typeof cid === 'undefined') {
             this.redirect('/clazz');
         }
         key = this.cookies.get('key');
         token = this.cookies.get('token');
-        if (typeof key === 'undefined' || typeof token === 'undefined'){
-            this.redirect('/login?redirect='+encodeURIComponent(this.url));
+        if (typeof key === 'undefined' || typeof token === 'undefined') {
+            this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-           uri:config.url.inside.api+'Classroom/Get/',
-            qs:{
-                cid:cid,
-                key:key,
-                token:token
-            },gzip:true,json:true
-        }).then(function(data){
-            if(data.code === 0){
+            uri: config.url.inside.api + 'Classroom/Get/',
+            qs: {
+                cid: cid,
+                key: key,
+                token: token
+            },
+            gzip: true,
+            json: true
+        }).then(function(data) {
+            if (data.code === 0) {
                 clazz = data.get;
-            }else{
-                console.error('Classroom/Get/',data);
+            } else {
+                console.error('Classroom/Get/', data);
             }
-        }).catch(function(err){
-            console.error('Classroom/Get/',err.message);
+        }).catch(function(err) {
+            console.error('Classroom/Get/', err.message);
         });
-        if( typeof clazz === 'undefined' || clazz === '{}'){
+        if (typeof clazz === 'undefined' || clazz === '{}') {
             this.redirect('/lesson');
-        }else{
+        } else {
             yield request({
-                uri:config.url.inside.api+'lesson/get',
-                qs:{
-                    lid:clazz.lid
-                },gzip:true,json:true
-            }).then(function(data){
-                if(data.code === 0){
+                uri: config.url.inside.api + 'lesson/get',
+                qs: {
+                    lid: clazz.lid
+                },
+                gzip: true,
+                json: true
+            }).then(function(data) {
+                if (data.code === 0) {
                     lesson = data.get;
-                }else{
-                    console.error('lesson/get',data);
+                } else {
+                    console.error('lesson/get', data);
                 }
-            }).catch(function(err){
-                console.error('lesson/get',err.message);
+            }).catch(function(err) {
+                console.error('lesson/get', err.message);
             });
         }
-        yield this.render('clazz/edit',{
-            key:key,
-            token:token,
-            clazz:clazz,
-            lesson:lesson,
-            title:clazz.names,
-            logo:'云课堂',
-            config:{
-                url:config.url.outside
+        yield this.render('clazz/edit', {
+            key: key,
+            token: token,
+            clazz: clazz,
+            lesson: lesson,
+            title: clazz.names,
+            logo: '云课堂',
+            config: {
+                url: config.url.outside
             }
         })
     }

@@ -68,6 +68,7 @@
           mapMinZoom = 0,
           mapMaxZoom = {{yunbook.zoom}},
           fid = {{yunbook.fid}},
+          stuLabels = '{{classRoomYunbookList}}',
           _data =decodeURIComponent('{{label}}');
         var _map = L.map('map', {
           maxZoom: mapMaxZoom,
@@ -77,7 +78,14 @@
           crs: L.CRS.Simple
         });
         {%if admin %}
-        var control = L.control.layers().addTo(_map);
+        if(stuLabels.length > 0){
+            var control = L.control.layers().addTo(_map);
+            stuLabels.forEach(function (item,index) {
+                if(item.label !== ''){
+                    decodeURIComponent(item.label);
+                }
+            })
+        }
         {% endif %}
         {%if editable%}
         L.easyButton({
