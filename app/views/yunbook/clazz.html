@@ -68,8 +68,9 @@
           mapMinZoom = 0,
           mapMaxZoom = {{yunbook.zoom}},
           fid = {{yunbook.fid}},
-          stuLabels = '{{classRoomYunbookList}}',
-          _data =decodeURIComponent('{{label}}');
+          stuLabels =JSON.parse(decodeURIComponent('{{classRoomYunbookList}}')),
+          _data =decodeURIComponent('{{label}}'),
+          api = '{{url}}',admin = {{admin}},cfid={{cfid}};
         var _map = L.map('map', {
           maxZoom: mapMaxZoom,
           minZoom: mapMinZoom,
@@ -77,14 +78,52 @@
           attributionControl: false,
           crs: L.CRS.Simple
         });
-        {%if admin %}
+        {% if admin %}
         if(stuLabels.length > 0){
             var control = L.control.layers().addTo(_map);
             stuLabels.forEach(function (item,index) {
                 if(item.label !== ''){
-                    decodeURIComponent(item.label);
+                    var _layerGroup = L.geoJson(JSON.parse(decodeURIComponent(item.label)),{
+                        onEachFeature:function (featureData,layer) {
+                            if(featureData.geometry.type === 'Point'){
+                                var popup = L.popup({maxWidth: 1200});
+                                popup.setContent(featureData.properties._popup);
+                                layer.bindPopup(popup);
+                            }
+                        }
+                    });
+                    var name='';
+                    $.ajax({
+                        url:'{{api}}user/list',
+                        data:{
+                            uid:item.uid,
+                            key:key,
+                            token:token
+                        },async:false
+                    }).done(function (data) {
+                        if(data.code === 0 && data.list.length > 0){
+                            name = data.list[0].mobile;
+                        }
+                    });
+                    control.addOverlay(_layerGroup,name);
                 }
             })
+        }
+        {% else %}
+        if(stuLabels.length > 0){
+            var control = L.control.layers().addTo(_map);
+            stuLabels.forEach(function (item,index) {
+                    var _layerGroup = L.geoJson(JSON.parse(decodeURIComponent(item)),{
+                        onEachFeature:function (featureData,layer) {
+                            if(featureData.geometry.type === 'Point'){
+                                var popup = L.popup({maxWidth: 1200});
+                                popup.setContent(featureData.properties._popup);
+                                layer.bindPopup(popup);
+                            }
+                        }
+                    });
+                    control.addOverlay(_layerGroup,"教师标注");
+            });
         }
         {% endif %}
         {%if editable%}
@@ -96,10 +135,14 @@
               icon: 'fa fa-floppy-o fa-2x',
               onClick: function (control) {
                 $.ajax({
-                  url: '{{url}}',
+                  url: api,
                   data: {
-                    cfid:'{{cfid}}',
-                    label: encodeURIComponent(JSON.stringify(_geoJson)),
+                    {% if admin %}
+                    cfid:cfid,
+                    {% else %}
+                    id:{{cybid}},
+                    {% endif %}
+                    label:encodeURIComponent(JSON.stringify(_geoJson)),
                     key:key,
                     token:token
                   },
@@ -155,20 +198,20 @@
         if (_data === '') {
           _drawnItems = new L.FeatureGroup().addTo(_map);
         } else {
-          _drawnItems = L.geoJson(JSON.parse(_data),{
-              onEachFeature:function (featureData,layer) {
-                  if(featureData.geometry.type === 'Point'){
-                      var popup = L.popup({maxWidth: 1200});
-                      popup.setContent(featureData.properties._popup);
-                      layer.bindPopup(popup);
-                  }
-              }
-          }).addTo(_map);
-          for(var id in _drawnItems._layers){
-              var _json = _drawnItems._layers[id].toGeoJSON();
-              _json.properties._id = _drawnItems._layers[id]._leaflet_id;
-              _geoJson.features.push(_json);
-          }
+           _drawnItems = L.geoJson(JSON.parse(_data),{
+               onEachFeature:function (featureData,layer) {
+                   if(featureData.geometry.type === 'Point'){
+                       var popup = L.popup({maxWidth: 1200});
+                       popup.setContent(featureData.properties._popup);
+                       layer.bindPopup(popup);
+                   }
+               }
+           }).addTo(_map);
+           for(var id in _drawnItems._layers){
+               var _json = _drawnItems._layers[id].toGeoJSON();
+               _json.properties._id = _drawnItems._layers[id]._leaflet_id;
+               _geoJson.features.push(_json);
+           }
         }
         new L.Control.Draw({
           edit: {
@@ -220,7 +263,8 @@
             var tmp = findGeoJson(_layer._leaflet_id);
             if (tmp != undefined) {
                 var old = tmp;
-                tmp.geometry.coordinates = _layer.getLatLng();
+                var latLng = _layer.getLatLng();
+                tmp.geometry.coordinates = [latLng.lng,latLng.lat];
                 updateGeoJson(tmp,old);
             }
           })

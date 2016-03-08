@@ -212,8 +212,9 @@
           e.layers.eachLayer(function (_layer) {
             var tmp = findGeoJson(_layer._leaflet_id);
             if (tmp != undefined) {
-              tmp.geometry.coordinates = _layer.getLatLng();
-              updateGeoJson(tmp);
+                var latLng = _layer.getLatLng();
+                tmp.geometry.coordinates = [latLng.lng,latLng.lat];
+                updateGeoJson(tmp);
             }
           })
         });

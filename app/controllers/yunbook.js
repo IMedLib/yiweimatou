@@ -9,9 +9,10 @@ module.exports = {
     clazz: function*() {
         var id = parseInt(this.params.id, 10),
             editable = false,
-            url, lid;
+            url, lid, admin = false,
+            cybid = 0;
         key = this.cookies.get('key');
-        token = this.cookies.get('token'), admin = false;
+        token = this.cookies.get('token');
         if (!id) {
             this.set('refresh', '3,/yunbook');
             this.body = '缺少参数，即将跳转...';
@@ -71,7 +72,7 @@ module.exports = {
             gzip: true,
             json: true
         }).then(function(data) {
-            if (data.code === 0) {
+            if (data.code === 0 && data.get.lid !== undefined) {
                 lid = data.get.lid;
             }
         }, function(err) {
@@ -86,10 +87,11 @@ module.exports = {
                 gzip: true,
                 json: true
             }).then(function(data) {
-                if (data.code === 0) {
+                if (data.code === 0 && data.get.uid !==
+                    undefined) {
                     editable = data.get.uid == key;
-                    admin = true;
                     if (editable) {
+                        admin = true;
                         url = config.url.outside.api +
                             'classroomfile/put';
                     }
@@ -107,6 +109,7 @@ module.exports = {
             }).then(function(data) {
                 if (data.code === 0) {
                     data.list.forEach(function(item, index) {
+                        debug(itemt.uid)
                         if (item.uid == key) {
                             editable = true;
                             admin = true;
@@ -118,6 +121,8 @@ module.exports = {
                 }
             });
         }
+        var classRoomYunbookList = [],
+            label = '';
         //判断是否是课程学生
         if (!editable && lid !== undefined) {
             yield request({
@@ -125,44 +130,98 @@ module.exports = {
                 gzip: true,
                 json: true
             }).then(function(data) {
-                if (data.code === 0) {
-                    editable = data.get.id !== undefined
-                    if (editable) {
-                        url =
-                            `${config.url.inside.api}classroomyunbook/add`;
-                    }
+                if (data.code === 0 && data.get.id !==
+                    undefined) {
+                    editable = true;
                 }
             }).catch(function(err) {
                 debug(err.message);
             });
         } else {
-            var classRoomYunbookList;
+            label = clazzYunbook.label;
             yield request({
                 uri: config.url.inside.api +
                     'classroomyunbook/list',
                 qs: {
-                    cfid: id
+                    cfid: id,
+                    key: key,
+                    token: token
                 },
                 gzip: true,
                 json: true
             }).then(function(data) {
-                if (data.code === 0) {
+                if (data.code === 0 && data.list.length > 0) {
                     classRoomYunbookList = data.list;
                 }
             }, function(err) {
                 debug(err.message);
             });
         }
+        //如果是报名学生则新增一条课堂云板书记录
+        if (!admin && editable) {
+            url = `${config.url.outside.api}classroomyunbook/put`;
+            yield request({
+                uri: config.url.inside.api +
+                    'classroomyunbook/get',
+                qs: {
+                    cfid: id,
+                    key: key,
+                    token: token,
+                    uid: key
+                },
+                gzip: true,
+                json: true
+            }).then(function(data) {
+                if (data.code === 0 && data.get.id !==
+                    undefined) {
+                    cybid = data.get.id;
+                    label = data.get.label;
+                    classRoomYunbookList.push(clazzYunbook.label);
+                } else {
+                    editable = false;
+                    debug(data.msg);
+                }
+            }).catch(function(err) {
+                debug(err.message);
+                editable = false;
+            });
+            if (cybid === 0) {
+                yield request({
+                    uri: config.url.inside.api +
+                        'classroomyunbook/add',
+                    qs: {
+                        cfid: id,
+                        key: key,
+                        token: token,
+                        label: ''
+                    },
+                    gzip: true,
+                    json: true
+                }).then(function(data) {
+                    if (data.code === 0) {
+                        cybid = data.identity;
+                    } else {
+                        editable = false;
+                    }
+                }).catch(function(err) {
+                    debug(err);
+                    editable = false;
+                })
+            }
+        }
         yield this.render('yunbook/clazz', {
             yunbook: yunbook,
             key: key,
             token: token,
-            label: clazzYunbook.label,
+            label: label,
             editable: editable,
             url: url,
-            cfid: clazzYunbook.cfid,
+            cfid: id,
+            cybid: cybid,
             admin: admin,
-            classRoomYunbookList: admin ? classRoomYunbookList : []
+            api: config.url.outside.api,
+            classRoomYunbookList: encodeURIComponent(JSON.stringify(
+                classRoomYunbookList))
         });
     },
     leaflet: function*() {
