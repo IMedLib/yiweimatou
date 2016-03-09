@@ -1,5 +1,7 @@
 {% extends '../layout/user_sidebar.html' %}
-
+{% block css%}
+<link rel="stylesheet" href="/css/lib/simplePagination.css">
+{% endblock %}
 {% block breadcrumbs %}
 <li><a href="/index">首页</a></li>
 <li class="active">{{title}}</li>

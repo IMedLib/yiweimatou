@@ -182,7 +182,7 @@ module.exports = {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri: config.url.inside.api + 'lessonAdmin/list',
+            uri: config.url.inside.api + 'lessonadmin/list',
             qs: {
                 uid: key
             },
@@ -197,13 +197,13 @@ module.exports = {
         }).catch(function(err) {
             debug('lessonAdmin/list', err.message);
         });
-        if (lids !== 'undefined' && lids.length > 0) {
-            lids.map(function(ele) {
-                request({
+        if (lids !== undefined && lids.length > 0) {
+            for (index in lids) {
+                yield request({
                     uri: config.url.inside.api +
                         '/lesson/get',
                     qs: {
-                        lid: ele.lid
+                        lid: lids[index].lid
                     },
                     gzip: true,
                     json: true
@@ -216,9 +216,8 @@ module.exports = {
                 }).catch(function(err) {
                     debug('/lesson/get', err.message);
                 });
-            });
+            }
         }
-
         yield this.render('lesson/admin', {
             title: '讲师课程',
             logo: "云课程",

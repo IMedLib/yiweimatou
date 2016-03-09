@@ -94,15 +94,19 @@
                     });
                     var name='';
                     $.ajax({
-                        url:api+'user/list',
+                        url:api+'lessonuser/get',
                         data:{
                             uid:item.uid,
                             key:key,
                             token:token
                         },async:false
                     }).done(function (data) {
-                        if(data.code === 0 && data.list.length > 0){
-                            name = data.list[0].mobile;
+                        if(data.code === 0 && data.get.id !== undefined){
+                            if(data.get.type == 1){
+                                name = '校外生'+data.get.uid;
+                            }else{
+                                name =data.get.names;
+                            }
                         }
                     });
                     control.addOverlay(_layerGroup,name);
@@ -137,10 +141,12 @@
                   {%if admin%}
                   $.ajax({
                       url:api+'/classroomfile/put',
-                      cfid:cfid,
-                      label:encodeURIComponent(JSON.stringify(_geoJson)),
-                      key:key,
-                      token:token,
+                      data:{
+                          cfid:cfid,
+                          label:encodeURIComponent(JSON.stringify(_geoJson)),
+                          key:key,
+                          token:token
+                      },
                       type:'post'
                   }).done(function (data) {
                       if(data.code === 0){
