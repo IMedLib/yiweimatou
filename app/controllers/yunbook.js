@@ -113,8 +113,6 @@ module.exports = {
                         if (item.uid == key) {
                             editable = true;
                             admin = true;
-                            url = config.url.outside.api +
-                                'classroomfile/put';
                             return;
                         }
                     })
@@ -157,9 +155,9 @@ module.exports = {
                 debug(err.message);
             });
         }
-        //如果是报名学生则新增一条课堂云板书记录
+
         if (!admin && editable) {
-            url = `${config.url.outside.api}classroomyunbook/put`;
+            classRoomYunbookList.push(clazzYunbook.label);
             yield request({
                 uri: config.url.inside.api +
                     'classroomyunbook/get',
@@ -176,38 +174,13 @@ module.exports = {
                     undefined) {
                     cybid = data.get.id;
                     label = data.get.label;
-                    classRoomYunbookList.push(clazzYunbook.label);
                 } else {
-                    editable = false;
                     debug(data.msg);
                 }
             }).catch(function(err) {
                 debug(err.message);
                 editable = false;
             });
-            if (cybid === 0) {
-                yield request({
-                    uri: config.url.inside.api +
-                        'classroomyunbook/add',
-                    qs: {
-                        cfid: id,
-                        key: key,
-                        token: token,
-                        label: ''
-                    },
-                    gzip: true,
-                    json: true
-                }).then(function(data) {
-                    if (data.code === 0) {
-                        cybid = data.identity;
-                    } else {
-                        editable = false;
-                    }
-                }).catch(function(err) {
-                    debug(err);
-                    editable = false;
-                })
-            }
         }
         yield this.render('yunbook/clazz', {
             yunbook: yunbook,
@@ -215,7 +188,6 @@ module.exports = {
             token: token,
             label: label,
             editable: editable,
-            url: url,
             cfid: id,
             cybid: cybid,
             admin: admin,

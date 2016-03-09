@@ -70,7 +70,7 @@
           fid = {{yunbook.fid}},
           stuLabels =JSON.parse(decodeURIComponent('{{classRoomYunbookList}}')),
           _data =decodeURIComponent('{{label}}'),
-          api = '{{url}}',admin = {{admin}},cfid={{cfid}};
+          api = '{{api}}',admin = {{admin}},cfid={{cfid}},cybid={{cybid}};
         var _map = L.map('map', {
           maxZoom: mapMaxZoom,
           minZoom: mapMinZoom,
@@ -94,7 +94,7 @@
                     });
                     var name='';
                     $.ajax({
-                        url:'{{api}}user/list',
+                        url:api+'user/list',
                         data:{
                             uid:item.uid,
                             key:key,
@@ -134,26 +134,95 @@
               stateName: 'save',
               icon: 'fa fa-floppy-o fa-2x',
               onClick: function (control) {
-                $.ajax({
-                  url: api,
-                  data: {
-                    {% if admin %}
-                    cfid:cfid,
-                    {% else %}
-                    id:{{cybid}},
-                    {% endif %}
-                    label:encodeURIComponent(JSON.stringify(_geoJson)),
-                    key:key,
-                    token:token
-                  },
-                  type: 'post'
-                }).done(function (data) {
-                      if (data.code === 0) {
-                        toastr.success('保存成功!');
-                      }else {
-                        toastr.error(data.msg);
+                  {%if admin%}
+                  $.ajax({
+                      url:api+'/classroomfile/put',
+                      cfid:cfid,
+                      label:encodeURIComponent(JSON.stringify(_geoJson)),
+                      key:key,
+                      token:token,
+                      type:'post'
+                  }).done(function (data) {
+                      if(data.code === 0){
+                          toastr.success('保存成功!');
+                      }else{
+                          toastr.error(data.msg);
                       }
-                })
+                  }).fail(function () {
+                      toastr.error('保存超时，请稍后再试!');
+                  })
+                  {% else %}
+                  if(_geoJson === ''){
+                      if(cybid > 0)
+                      {
+                          $.ajax({
+                              url:api+'classroomyunbook/del',
+                              data:{
+                                  key:key,
+                                  token:token,
+                                  id:cybid
+                              },type:'POST'
+                          }).done(function (data) {
+                              if(data.code === 0){
+                                  toastr.success('保存成功!');
+                              }else{
+                                  toastr.error(data.msg);
+                              }
+                          }).fail(function  () {
+                              toastr.error('保存超时，请稍后再试!');
+                          })
+                      }else{
+                          toastr.warning('没有什么需要保存！');
+                      }
+                      return;
+                  }
+                  var url = '';
+                  if(cybid > 0){
+                      url = api + 'classroomyunbook/put';
+                  }else{
+                      $.ajax({
+                          url:api+'classroomyunbook/get',
+                          data:{
+                              uid:key,
+                              cfid:cfid,
+                              key:key,
+                              token:token
+                          },async:false
+                      }).done(function (data) {
+                          if(data.code === 0){
+                              if(data.get.id !=undefined){
+                                  cybid = data.get.id;
+                                  url = api+'classroomyunbook/put';
+                              }else{
+                                  url = api + 'classroomyunbook/add';
+                              }
+                          }else{
+                              url = api + 'classroomyunbook/add';
+                          }
+                      });
+                  }
+                  if(url === ''){
+                      toastr.error('保存失败!');
+                      return;
+                  }
+                  $.ajax({
+                    url: url,
+                    data: {
+                      id:cybid,
+                      cfid:cfid,
+                      label:encodeURIComponent(JSON.stringify(_geoJson)),
+                      key:key,
+                      token:token
+                    },
+                    type: 'post'
+                  }).done(function (data) {
+                        if (data.code === 0) {
+                          toastr.success('保存成功!');
+                        }else {
+                          toastr.error(data.msg);
+                        }
+                  })
+                  {% endif %}
              }
             }
           ]
