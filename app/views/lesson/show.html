@@ -338,7 +338,7 @@
                 async: false
             }).done(function (data) {
                 if (data.code === 0) {
-                    count = data.info.Count;
+                    count = data.info.count;
                 } else {
                     toastr.error(data.msg === '' ? '获取讲师数量出错!' : data.msg);
                 }
@@ -358,7 +358,7 @@
                 async: false
             }).done(function (data) {
                 if (data.code === 0) {
-                    count = data.info.Count;
+                    count = data.info.count;
                 } else {
                     toastr.error(data.msg === '' ? '获取学生数量出错!' : data.msg);
                 }

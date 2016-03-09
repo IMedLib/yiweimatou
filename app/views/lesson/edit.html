@@ -608,7 +608,7 @@
         async: false
       }).done(function (data) {
         if (data.code === 0) {
-          count = data.info.Count;
+          count = data.info.count;
         } else {
           swal('出错了', data.msg, 'error');
         }
@@ -629,7 +629,7 @@
         async: false
       }).done(function (data) {
         if (data.code === 0) {
-          count = data.info.Count;
+          count = data.info.count;
         } else {
           alert(data.msg === ''
             ? '获取学生数量出错!'
@@ -724,7 +724,7 @@
         async: false
       }).done(function (data) {
         if (data.code === 0) {
-          c = data.info.Count;
+          c = data.info.count;
         }
       }).fail(function () {
         toastr.error('获取课堂数失败!');
@@ -804,7 +804,7 @@
         },async:false
       }).done(function (data) {
         if(data.code === 0){
-          count = data.info.Count;
+          count = data.info.count;
         }
       }).fail(function () {
         toastr.error('获取课程讲师失败,请稍后再试');
@@ -854,7 +854,7 @@
       }).done(function (data) {
           if(data.code === 0 ){
               if(data.list.length > 0){
-                  uid = data.list[0].uid;
+                  uid = data.list[0].uid
               }
           }
       }).fail(function () {

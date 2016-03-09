@@ -298,7 +298,7 @@ module.exports = {
             json: true
         }).then(function(data) {
             if (data.code === 0) {
-                count = data.info.Count;
+                count = data.info.count;
             }
         }).catch(function(err) {
             debug(err.message);

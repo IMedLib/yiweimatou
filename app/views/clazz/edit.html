@@ -232,7 +232,7 @@
                 },async:false
             }).done(function (data) {
                 if(data.code === 0){
-                    flag = data.info.Count > 0;
+                    flag = data.info.count > 0;
                 }
             });
             return flag;
@@ -322,7 +322,7 @@
                 async: false
             }).done(function (data) {
                 if (data.code === 0) {
-                    count = data.info.Count;
+                    count = data.info.count;
                 } else {
                     toastr.error(data.msg);
                 }
@@ -419,7 +419,7 @@
                 async: false
             }).done(function (data) {
                 if (data.code === 0) {
-                    count = data.info.Count;
+                    count = data.info.count;
                 } else {
                     toastr.error(data.msg === '' ? '获取文件数失败！' : data.msg);
                 }
@@ -457,7 +457,7 @@
                 async: false
             }).done(function (data) {
                 if (data.code === 0) {
-                    count = data.info.Count;
+                    count = data.info.count;
                 } else {
                     alert(data.msg === '' ? '获取文件数失败！' : data.msg);
                 }

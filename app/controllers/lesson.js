@@ -21,7 +21,7 @@ module.exports = {
             json: true
         }).then(function(data) {
             if (data.code === 0) {
-                count = data.info.Count;
+                count = data.info.count;
             } else {
                 debug(data.msg);
             }
@@ -141,7 +141,7 @@ module.exports = {
             json: true
         }).then(function(data) {
             if (data.code === 0) {
-                count = Math.ceil(data.info.Count / 9);
+                count = Math.ceil(data.info.count / 9);
             } else {
                 console.error('lesson/info', data);
             }
