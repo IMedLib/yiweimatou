@@ -383,7 +383,14 @@
       校内生
       [/if]
     </td>
-    <td></td>
+    <td>
+        <button onclick="edit(this)" class="btn btn-success btn-xs">
+            <i class="fa fa-pencil">编辑</i>
+        </button>
+        <button onclick="del([user.id],'[user.names]')" class="btn btn-danger btn-xs">
+            <i class="fa fa-trash-o">删除</i>
+        </button>
+    </td>
   </tr>
   [/each]
 </script>
@@ -399,6 +406,39 @@
     key = '{{key}}',
     token = '{{token}}',
     lid = '{{lesson.lid}}',excelData;
+  function del(id,name) {
+      swal({
+          title: "请确认",
+          text: "即将删除"+name+"!",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "red",
+          confirmButtonText: "确定，删除！",
+          cancelButtonText:'取消',
+          closeOnConfirm: false,
+          html: false
+        }, function(){
+            $.ajax({
+                url:api+'/lessonuser/del',
+                data:{
+                    id:id,
+                    key:key,
+                    token:token
+                },type:'POST'
+            }).done(function (data) {
+                if(data.code === 0){
+                    swal("",name+"已经从课程删除","success");
+                }else{
+                    swal("删除失败",data.msg,"error");
+                }
+            }).fail(function () {
+                swal("","删除失败!","error");
+            })
+        });
+  }
+  function edit(obj) {
+
+  }
   function handleExcel() {
     var file = document.getElementById('inputExcel').files[0];
     var fileReader = new FileReader();

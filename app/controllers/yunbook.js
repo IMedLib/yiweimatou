@@ -45,7 +45,7 @@ module.exports = {
         yield request({
             uri: config.url.inside.api + 'userfile/get',
             qs: {
-                fid: clazzYunbook.lid
+                fid: clazzYunbook.fid
             },
             gzip: true,
             json: true
