@@ -315,7 +315,7 @@
                 data: {
                     cid: cid,
                     limit: 50,
-                    offset: 1
+                    ofs: 1
                 }
             }).done(function (data) {
                 if (data.code === 0) {
@@ -372,7 +372,7 @@
             $.ajax({
                 url: api+'lessonAdmin/list',
                 data: {
-                    offset: offset,
+                    ofs: offset,
                     limit: limit,
                     lid: lid
                 }
@@ -399,7 +399,7 @@
             $.ajax({
                 url: api+'lessonUser/list',
                 data: {
-                    offset: offset,
+                    ofs: offset,
                     limit: limit,
                     lid: lid
                 }

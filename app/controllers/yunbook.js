@@ -275,7 +275,7 @@ module.exports = {
             uri: config.url.inside.api + '/userFile/List/',
             qs: {
                 limit: 9,
-                offset: 1,
+                ofs: 1,
                 uid: key,
                 type: 3
             },

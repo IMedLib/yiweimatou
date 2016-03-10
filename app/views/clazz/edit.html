@@ -337,7 +337,7 @@
                 url: api+"userFile/list",
                 data: {
                     limit: limit,
-                    offset: offset,
+                    ofs: offset,
                     type:3
                 }
             }).done(function (data) {
@@ -434,7 +434,7 @@
                 url: api+'userFile/list',
                 data: {
                     limit: limit,
-                    offset: offset
+                    ofs: offset
                 }
             }).done(function (data) {
                 if (data.code === 0) {
@@ -473,7 +473,7 @@
                 data: {
                     cid: '{{clazz.cid}}',
                     limit: limit,
-                    offset: offset
+                    ofs: offset
                 }
             }).done(function (data) {
                 if (data.code === 0) {

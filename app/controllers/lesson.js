@@ -34,7 +34,7 @@ module.exports = {
                 uri: config.url.inside.api + 'lesson/list',
                 qs: {
                     limit: 9,
-                    offset: 1,
+                    ofs: 1,
                     oid: oid
                 },
                 gzip: true,
@@ -153,7 +153,7 @@ module.exports = {
             qs: {
                 uid: key,
                 limit: 9,
-                offset: 1
+                ofs: 1
             },
             gzip: true,
             json: true
@@ -240,7 +240,7 @@ module.exports = {
         yield request({
             uri: config.url.inside.api + 'classroom/list/',
             qs: {
-                offset: 1,
+                ofs: 1,
                 limit: 50,
                 lid: lid,
                 key: key,

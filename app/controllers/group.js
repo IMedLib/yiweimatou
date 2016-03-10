@@ -10,7 +10,7 @@ module.exports = {
         yield request({
             uri: config.url.inside.api + 'organ/list/',
             qs: {
-                offset: 1,
+                ofs: 1,
                 limit: 9
             },
             gzip: true,
@@ -72,7 +72,7 @@ module.exports = {
             uri: config.url.inside.api + '/lesson/list',
             qs: {
                 limit: 3,
-                offset: 1,
+                ofs: 1,
                 oid: oid
             },
             gzip: true,

@@ -284,6 +284,39 @@
     </div>
   </div>
 </div>
+<div class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">修改学生信息</h4>
+        </div>
+        <div class="modal-body">
+          <form>
+              <div class="form-group">
+                  <input type="text" hidden="hidden" id="id" value="">
+                  <label for="sid">学号</label>
+                  <input type="text" class="form-control" id='sid' value="">
+              </div>
+              <div class='form-group'>
+                  <label for="name">姓名</label>
+                  <input type="text" class="form-control" id="name" value="">
+              </div>
+              <div>
+                  <label for="type">学生类型</label>
+                  <select class="form-control" id="type">
+                      <option value="1">校外生</option>
+                      <option value="2">校内生</option>
+                  </select>
+              </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="editLessonUser" class="btn-u">保存</button>
+        </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 {% block js %}
 <script src="/js/lib/bootstrap-datetimepicker.min.js"></script>
@@ -352,17 +385,6 @@
   </div>
   [/each]
 </script>
-<script id="usersTemplate" type="text/html">
-  [ each list as user ]
-  <tr>
-    <td><input type="checkbox" value="[user.uid]"></td>
-    <td class="contact-type">
-      <i class="fa fa-mobile-phone"></i>
-    </td>
-    <td>[user.mobile]</td>
-  </tr>
-  [/each]
-</script>
 <script id="stuListTemplate" type="text/html">
   [each list as user]
   <tr>
@@ -384,7 +406,7 @@
       [/if]
     </td>
     <td>
-        <button onclick="edit(this)" class="btn btn-success btn-xs">
+        <button onclick="edit([user.id],'[user.names]',[user.sid],[user.type])" class="btn btn-success btn-xs">
             <i class="fa fa-pencil">编辑</i>
         </button>
         <button onclick="del([user.id],'[user.names]')" class="btn btn-danger btn-xs">
@@ -436,8 +458,12 @@
             })
         });
   }
-  function edit(obj) {
-
+  function edit(id,names,sid,type) {
+      $('#id').val(id);
+      $('#name').val(names);
+      $('#sid').val(sid);
+      $('#type').val(type);
+      $('.modal').modal('show');
   }
   function handleExcel() {
     var file = document.getElementById('inputExcel').files[0];
@@ -466,12 +492,12 @@
       return;
     }
     $.ajax({
-      url: api+'lessonAdmin/Del/',
+      url: api+'lessonadmin/del/',
       type: 'post',
       data: {
         id: id,
-        key: '{{key}}',
-        token: '{{token}}'
+        key: key,
+        token:token
       }
     }).done(function (data) {
       if (data.code === 0) {
@@ -501,6 +527,33 @@
         return;
       active.removeClass('active');
     });
+    $('#editLessonUser').on('click',function () {
+        var $type=$('#type'),$names=$('#name'),$id=$('#id'),$sid=$('#sid');
+        if($type.val() === 1 && ($names === '' || $sid === '')){
+            toastr.error('请填写完整！');
+            return false;
+        }
+        $.ajax({
+            url:api+'lessonuser/put',
+            data:{
+                key:key,
+                token:token,
+                sid:$sid.val(),
+                type:$type.val(),
+                names:$names.val(),
+                id:$id.val()
+            },type:'post'
+        }).done(function (data) {
+            if(data.code === 0){
+                toastr.success('修改成功!');
+                $('.modal').modal('hide');
+            }else{
+                toastr.error(data.msg);
+            }
+        }).fail(function () {
+            toastr.error('请求超时，稍后再试!');
+        })
+    })
     $('#excelSubmit').on('click',function () {
       if(typeof excelData === 'undefined' || excelData.length === 0) return;
       // var successCount = 0;
@@ -568,7 +621,7 @@
           type:$('input[name=type]:checked').val(),
           lid: lid,
           limit: 5,
-          offset: page
+          ofs: page
         }
       }).done(function (data) {
         if (data.code === 0) {
@@ -600,7 +653,7 @@
       var $search = $('#search'),
         count = 0;
       $.ajax({
-        url: api + 'lessonUser/info/',
+        url: api + 'lessonuser/info/',
         data: {
           cname: $search.val(),
           lid: lid
@@ -617,107 +670,16 @@
       });
       return count;
     }
-    <!-- end manage student-->
-    <!--del student-->
-    function getStudentCount() {
-      var count = 0;
-      $.ajax({
-        url: api + 'lessonUser/info',
-        data: {
-          lid: lid
-        },
-        async: false
-      }).done(function (data) {
-        if (data.code === 0) {
-          count = data.info.count;
-        } else {
-          alert(data.msg === ''
-            ? '获取学生数量出错!'
-            : data.msg);
-        }
-      }).fail(function () {
-        alert('获取学生数量超时！');
-      });
-      return count;
-    }
-    function getStudents(limit, offset) {
-      $.ajax({
-        url: api + 'lessonUser/list',
-        data: {
-          offset: offset,
-          limit: limit
-        }
-      }).done(function (data) {
-        if (data.code === 0) {
-          $('#students').html(template('stuTemplate', data));
-        } else {
-          alert(data.msg === ''
-            ? '获取学生失败!'
-            : data.msg);
-        }
-      }).fail(function () {
-        alert('获取学生超时!');
-      });
-    }
-    $('a[href="#delStu"]').on('show.bs.tab', function () {
-      var count = getStudentCount();
-      if (count > 0) {
-        getStudents(9, 1);
-        $('#studentsPage').jqPagination({
-          max_page: Math.ceil(count / 9),
-          page_string: '第{current_page}页,共{max_page}页',
-          paged: function (page) {
-            getStudents(9, page);
-          }
-        });
-      }
-    });
-    <!--end del student-->
-    <!--add student-->
-    $('a[href="#addStus"]').on('show.bs.tab', function () {
-    });
-    function addStu(uid) {
-      if (typeof uid === 'undefined')
-        return;
-      var $error = $('#error2'),
-        $msg = $('#msg2');
-      $.ajax({
-        url: '{{config.url.api}}lessonUser/Add/',
-        type: 'post',
-        data: {
-          lid: '{{lesson.lid}}',
-          uid: uid,
-          key: key,
-          token: token
-        }
-      }).done(function (data) {
-        if (data.code === 0) {
-          $msg.html(uid + '添加成功！').show().fadeOut(5000);
-        } else {
-          $error.html(data.msg === ''
-            ? uid + '添加失败!'
-            : data.msg).show().fadeOut(5000);
-        }
-      }).fail(function () {
-        $error.html('添加失败!').show().fadeOut(5000);
-      });
-    }
 
-    $('#addStuSubmit').on('click', function () {
-      $(':checkbox:checked').each(function () {
-        addStu(this.value);
-      })
-    });
-    <!--end add student -->
     '{% if admin>1 %}'
     var $inputImage = $("#inputImage");
     <!--edit clazz-->
     function getClassCount() {
       var c = 0;
       $.ajax({
-        url: '{{config.url.api}}classRoom/info',
+        url: api+'classroom/info',
         data: {
-          lid: '{{lesson.lid}}',
+          lid: lid,
           key: key,
           token: token
         },
@@ -737,7 +699,7 @@
         data: {
           lid: lid,
           limit: 9,
-          offset: page,
+          ofs: page,
           key: key,
           token: token
         }
@@ -779,7 +741,7 @@
         data: {
           lid:lid,
           limit:9,
-          offset:offset,
+          ofs:offset,
           key:key,
           token:token
         }
