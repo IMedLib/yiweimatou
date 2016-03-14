@@ -157,7 +157,9 @@ module.exports = {
         }
 
         if (!admin && editable) {
-            classRoomYunbookList.push(clazzYunbook.label);
+            if(clazzYunbook.label!=''){
+                classRoomYunbookList.push(clazzYunbook.label);
+            }
             yield request({
                 uri: config.url.inside.api +
                     'classroomyunbook/get',
@@ -174,14 +176,13 @@ module.exports = {
                     undefined) {
                     cybid = data.get.id;
                     label = data.get.label;
-                } else {
-                    debug(data.msg);
                 }
             }).catch(function(err) {
                 debug(err.message);
                 editable = false;
             });
         }
+        debug(JSON.stringify(classRoomYunbookList));
         yield this.render('yunbook/clazz', {
             yunbook: yunbook,
             key: key,
