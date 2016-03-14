@@ -35,7 +35,7 @@
 {% block js %}
 <script src="/js/lib/template.js"></script>
 <script src="/js/lib/jquery.simplePagination.js"></script>
-<script type='text/html' id="yunbokListTemplaet">
+<script type='text/html' id="yunbookListTemplaet">
     [each list as yunbook]
     <div class="col-sm-4">
         <div class="file">
@@ -62,7 +62,7 @@
         $yunbookCollapse.addClass('in');
         $yunbookCollapse.find('li').eq(0).addClass('active');
         $('#yunbookPage').pagination({
-            items:{{count}},
+            items:2,
             listStyle:'pagination',
             onPageClick:function (page) {
                 getYunbooks(page);
@@ -79,7 +79,7 @@
                 }
             }).done(function (data) {
                 if(data.code === 0){
-                    $list.html(template('yunbookListTemplate',data));
+                    $list.html(template('yunbookListTemplaet',data));
                 }else{
                     toastr.error(data.msg);
                 }
