@@ -6,6 +6,14 @@ var request = require('request-promise'),
 
 var debug = _debug('app:controller:yunbook');
 module.exports = {
+    online:function* () {
+        yield this.render('yunbook/online',{
+            key:this.cookies.get('key'),
+            token:this.cookies.get('token'),
+            api:config.url.outside.api,
+            upload:config.url.outside.upload
+        });
+    },
     clazz: function*() {
         var id = parseInt(this.params.id, 10),
             editable = false,
@@ -182,7 +190,7 @@ module.exports = {
                 editable = false;
             });
         }
-        debug(JSON.stringify(classRoomYunbookList));
+        // debug(JSON.stringify(classRoomYunbookList));
         yield this.render('yunbook/clazz', {
             yunbook: yunbook,
             key: key,

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <link rel="stylesheet" href="/css/lib/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/lib/summernote/summernote.css">
+    </head>
+    <body>
+        <div id="summernote"></div>
+        <button class="btn btn-default pull-right" id="submit">保存</button>
+        <script src="/js/lib/jquery.min.js" charset="utf-8"></script>
+        <script src="/js/lib/bootstrap.min.js" charset="utf-8"></script>
+        <script src="/js/lib/summernote.min.js" charset="utf-8"></script>
+        <script src="/js/lib/summernote-zh-CN.js" charset="utf-8"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#summernote').summernote({
+                    lang: 'zh-CN',
+                    height:window.innerHeight-200
+                });
+                $('#submit').on('click',function () {
+                    //$('#summernote').summernote('code');
+                    var html = '<!DOCTYPE html><html><head><title>test</title></head><body style="width: 1024px"><div id="main"><h1>this is a h1</h1><p>this is a pthis is a pthis is a pthis is a pthis is a pthis is a pthis is a pthis is a p</p><img src="http://b.hiphotos.baidu.com/album/pic/item/caef76094b36acafe72d0e667cd98d1000e99c5f.jpg"></div></body></html>';
+                    if(html === ''){
+                        alert('请填写云板书内容');
+                        return false;
+                    }
+                    $.ajax({
+                        url:'{{api}}useronlineyunbook/add',
+                        type:'post',
+                        data:{
+                            key:'{{key}}',
+                            token:'{{token}}',
+                            html:html
+                        }
+                    }).done(function (data) {
+                        if(data.code === 0){
+                            $.ajax({
+                                url:'{{upload}}Capture?id='+data.identity
+                            }).done(function (data) {
+                                console.log(data);
+                            })
+                        }
+                    })
+                });
+            });
+        </script>
+    </body>
+</html>

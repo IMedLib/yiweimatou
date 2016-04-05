@@ -10,5 +10,5 @@ router.get('/:id',yunbookCtrl.leaflet);
 router.get('/clazz/:id',yunbookCtrl.clazz);
 router.get('/index',yunbookCtrl.index);
 router.get('/add',yunbookCtrl.add);
-
+router.get('/online',yunbookCtrl.online);
 module.exports=router;
