@@ -123,7 +123,6 @@ module.exports = {
             }).then(function(data) {
                 if (data.code === 0) {
                     data.list.forEach(function(item, index) {
-                        debug(itemt.uid)
                         if (item.uid == key) {
                             editable = true;
                             admin = true;
@@ -135,7 +134,7 @@ module.exports = {
         }
         var classRoomYunbookList = [],
             label = '';
-        //判断是否是课程学生
+        //判断是否是课程学生,如果是课程学生则可以添加标注
         if (!editable && lid !== undefined) {
             yield request({
                 uri: `${config.url.inside.api}lessonuser/get?uid=${key}`,
@@ -169,10 +168,10 @@ module.exports = {
                 debug(err.message);
             });
         }
-
         if (!admin && editable) {
             if(clazzYunbook.label!=''){
                 classRoomYunbookList.push(clazzYunbook.label);
+                debug(clazzYunbook.label);
             }
             yield request({
                 uri: config.url.inside.api +
