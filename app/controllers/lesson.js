@@ -280,7 +280,7 @@ module.exports = {
             return;
         }
         //如果不是主讲教师，继续查是不是讲师
-        if (lesson !== undefined && key !== lesson.uid.toString()) {
+        if (lesson.uid !== undefined && key !== lesson.uid.toString()) {
             yield request({
                 uri: config.url.inside.api +
                     '/Lessonadmin/List/',

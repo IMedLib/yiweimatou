@@ -26,7 +26,7 @@ module.exports = {
             this.body = '缺少参数，即将跳转...';
             return;
         }
-        var yunbook, clazzYunbook;
+        var yunbook, clazzYunbook, msg;
         yield request({
             uri: config.url.inside.api + 'classroomfile/get',
             qs: {
@@ -39,15 +39,21 @@ module.exports = {
         }).then(function(data) {
             if (data.code === 0) {
                 clazzYunbook = data.get;
+            }else{
+                msg = data.msg;
             }
         }).catch(function(err) {
+            msg = err.message;
             debug(err.message);
-        }).finally(function() {
-            return Promise.resolve(clazzYunbook);
         });
         if (clazzYunbook === undefined) {
-            this.set('refresh', '3,/yunbook');
-            this.body = '获取课堂云板书失败，请稍后再试，即将跳转...';
+            if(msg === '账号验证出错'){
+                this.set('refresh','3,/login');
+                this.body = '账号验证出错,请重新登录，即将跳转...';
+                return;
+            }
+            this.set('refresh', '3,/');
+            this.body = msg+',获取课堂云板书失败，请稍后再试，即将跳转...';
             return;
         }
         yield request({
