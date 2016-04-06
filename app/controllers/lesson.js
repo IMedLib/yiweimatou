@@ -4,8 +4,8 @@
 var request = require('request-promise'),
     config = require('../../config'),
     _debug = require('debug'),
-    co = require('co'), 
-    forEach = require('co-foreach'),
+    // co = require('co'), 
+    // forEach = require('co-foreach'),
     key, token;
 const debug = _debug('app:controller:lesson');
 module.exports = {
