@@ -203,7 +203,7 @@ module.exports = {
             cybid: cybid,
             admin: admin,
             api: config.url.outside.api,
-            classRoomYunbookList:classRoomYunbookList
+            classRoomYunbookList:JSON.stringify(classRoomYunbookList)
         });
     },
     leaflet: function*() {
