@@ -177,7 +177,7 @@
         if (_data === hexToString('')) {
           _drawnItems = new L.FeatureGroup().addTo(_map);
         } else {
-          _drawnItems = L.geoJson(JSON.parse(_data.substring(0,155)),{
+          _drawnItems = L.geoJson(JSON.parse(_data.substring(0,_data.length-1)),{
               onEachFeature:function (featureData,layer) {
                   if(featureData.geometry.type === 'Point'){
                       var popup = L.popup({maxWidth: 1200});
