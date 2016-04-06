@@ -65,7 +65,7 @@
                     key:'{{key}}',
                     token:'{{token}}',
                     mobile:mobile
-                },async:false
+                },async:false,dataType:'json'
             }).done(function (data) {
                 if(data.code === 0 && data.list.length > 0){
                     uid = data.list[0].uid;
@@ -86,7 +86,8 @@
                 data:formData,
                 type:'POST',
                 contentType: false,
-                processData: false,
+                processData: false
+                ,dataType:'json',
                 timeout:300000 //5min
             }).done(function(data){
                 if(data.code===0){
@@ -100,7 +101,7 @@
                             cover_path:"{{config.url.domain}}cover/"+data.cover_path,
                             logo_path:"{{config.url.domain}}cover/"+data.cover_path,
                             uid:uid
-                        }
+                        },dataType:'json'
                     }).done(function(data){
                         if(data.code==0){
                             window.location.href="/group/"+data.identity;

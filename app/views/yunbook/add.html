@@ -55,7 +55,7 @@
             formData.append('title',title);
             $('form').block({message:'<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
             $.ajax({
-                url:'{{config.url.upload}}/yunbook',
+                url:'{{config.url.upload}}/yunbook',dataType:'json',
                 data:formData,
                 type:'POST',
                 contentType: false,
@@ -79,7 +79,7 @@
                             cover_path:"{{config.url.domain}}cover/"+data.cover_path,
                             path:'{{config.url.domain}}yunbook/'+ data.file_path,
                             ext:file.name.split('.').pop()
-                        }
+                        },dataType:'json'
                     }).done(function(data){
                         if(data.code==0){
                             toastr.success('新建成功！');

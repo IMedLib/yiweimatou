@@ -3,7 +3,21 @@ var request = require('request-promise'),
     _ = require('util'),
     _debug = require('debug'),
     key, token;
+function stringToHex (tmp) {
+    var str = '',
+        i = 0,
+        tmp_len = tmp.length,
+        c;
 
+    for (; i < tmp_len; i += 1) {
+        c = tmp.charCodeAt(i);
+        str += d2h(c) + ' ';
+    }
+    return str;
+}
+function d2h(d) {
+    return d.toString(16);
+}
 var debug = _debug('app:controller:yunbook');
 module.exports = {
     online:function* () {
@@ -22,7 +36,7 @@ module.exports = {
         key = this.cookies.get('key');
         token = this.cookies.get('token');
         if (!id) {
-            this.set('refresh', '3,/yunbook');
+            this.set('refresh', '3,/');
             this.body = '缺少参数，即将跳转...';
             return;
         }
@@ -71,7 +85,7 @@ module.exports = {
             debug(err.message);
         });
         if (yunbook === undefined) {
-            this.set('refresh', '3,/yunbook');
+            this.set('refresh', '3,/');
             this.body = '获取云板书失败，请稍后再试，即将跳转...';
             return;
         }
@@ -171,7 +185,6 @@ module.exports = {
         if (!admin && editable) {
             if(clazzYunbook.label!=''){
                 classRoomYunbookList.push(clazzYunbook.label);
-                debug(clazzYunbook.label);
             }
             yield request({
                 uri: config.url.inside.api +
@@ -206,7 +219,7 @@ module.exports = {
             cybid: cybid,
             admin: admin,
             api: config.url.outside.api,
-            classRoomYunbookList: encodeURIComponent(JSON.stringify(
+            classRoomYunbookList: stringToHex(JSON.stringify(
                 classRoomYunbookList))
         });
     },

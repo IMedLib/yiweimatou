@@ -71,7 +71,7 @@
                 data:{
                     limit:9,
                     ofs:page
-                }
+                },dataType:'json'
             }).done(function (data) {
                 if(data.code === 0){
                     $('#groupList').html(template('groupTemplate',data));

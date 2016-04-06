@@ -63,6 +63,7 @@
                 contentType: false,
                 processData: false,
                 timeout:300000 //5min
+                ,dataType:'json'
             }).done(function(data){
                 if(data.code===0){
                     $.ajax({
@@ -79,7 +80,7 @@
                             point: "POINT(0 0)",
                             coverpath:"fa-file",
                             uri:'{{config.url.domain}}file/'+ data.file_path+data.file_name+data.file_ext
-                        }
+                        },dataType:'json'
                     }).done(function(data){
                         if(data.code==0){
                             alert('新建成功！');

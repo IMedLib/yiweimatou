@@ -65,7 +65,7 @@
                         limit: 9,
                         ofs: page,
                         uid: '{{key}}'
-                    }
+                    },dataType:'json'
                 }).done(function (data) {
                     if (data.code === 0) {
                         $('#lessons').html(template('lessonTemplate', data));

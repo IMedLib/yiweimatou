@@ -229,7 +229,7 @@
                     type:3,
                     key:key,
                     token:token
-                },async:false
+                },async:false,dataType:'json'
             }).done(function (data) {
                 if(data.code === 0){
                     flag = data.info.count > 0;
@@ -261,7 +261,7 @@
                 url:api+'userFile/get',
                 data:{
                     fid:checked.val()
-                }
+                },dataType:'json'
             }).done(function (data) {
                 if(data.code === 0){
                     $.ajax({
@@ -275,7 +275,7 @@
                             type:3,
                             key: key,
                             token: token
-                        }
+                        },dataType:'json'
                     }).done(function (data) {
                         if (data.code === 0) {
                             toastr.success('添加云板书成功！');
@@ -301,7 +301,7 @@
                     cid: '{{clazz.cid}}',
                     fid: file.fid,
                     names: file.title
-                }
+                },dataType:'json'
             }).done(function (data) {
                 if (data.code === 0) {
                     toastr.success(file.title + '添加到{{clazz.names}}');
@@ -319,7 +319,7 @@
             var count = 0;
             $.ajax({
                 url: api+"userFile/info?type=3",
-                async: false
+                async: false,dataType:'json'
             }).done(function (data) {
                 if (data.code === 0) {
                     count = data.info.count;
@@ -339,7 +339,7 @@
                     limit: limit,
                     ofs: offset,
                     type:3
-                }
+                },dataType:'json'
             }).done(function (data) {
                 if (data.code === 0) {
                     $('#yunbooks').html(template('yunbookTemplate', data));
@@ -393,7 +393,7 @@
                         cid: cid,
                         key:key,
                         token:token
-                    }
+                    },dataType:'json'
                 }).done(function (data) {
                     if(data.code !=0 || data.list[0] === undefined) return;
                     var $yunbookEdit = $('#yunbookEdit');
@@ -416,7 +416,7 @@
             var count = 0;
             $.ajax({
                 url: api+'userFile/info',
-                async: false
+                async: false,dataType:'json'
             }).done(function (data) {
                 if (data.code === 0) {
                     count = data.info.count;
@@ -435,7 +435,7 @@
                 data: {
                     limit: limit,
                     ofs: offset
-                }
+                },dataType:'json'
             }).done(function (data) {
                 if (data.code === 0) {
                     object.html(template('addFiles', data));
@@ -454,7 +454,7 @@
                 data: {
                     cid: cid
                 },
-                async: false
+                async: false,dataType:'json'
             }).done(function (data) {
                 if (data.code === 0) {
                     count = data.info.count;
@@ -474,7 +474,7 @@
                     cid: '{{clazz.cid}}',
                     limit: limit,
                     ofs: offset
-                }
+                },dataType:'json'
             }).done(function (data) {
                 if (data.code === 0) {
                     object.html(template('listFiles', data));
@@ -523,7 +523,7 @@
                 processData: false,
                 contentType: false,
                 type: 'POST',
-                timeout: 300000
+                timeout: 300000,dataType:'json'
             }).done(function (data) {
                 if (data.code === 0) {
                     $.ajax({
@@ -568,7 +568,7 @@
                     descript: $('#remark').val(),
                     key: key,
                     token: token
-                }
+                },dataType:'json'
             }).done(function (data) {
                 if (data.code === 0) {
                     toastr.success('修改成功！');
@@ -594,7 +594,7 @@
                 id: id,
                 key: key,
                 token: token
-            }
+            },dataType:'json'
         }).done(function (data) {
             if (data.code === 0) {
                 var node = document.getElementById(id);
@@ -618,7 +618,7 @@
                 cfid: id,
                 key: "{{key}}",
                 token: '{{token}}'
-            }
+            },dataType:'json'
         }).done(function (data) {
             if (data.code === 0) {
                 $('#yunbookEdit').empty();

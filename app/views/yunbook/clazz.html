@@ -2,7 +2,7 @@
 <html lang="zh-CN">
   <head>
     <title>{{title}}</title>
-    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
     <link rel="stylesheet" href="/js/lib/leaflet/leaflet.css"/>
     <link rel="stylesheet" href="/js/lib/leaflet/leaflet.draw.css">
@@ -68,8 +68,8 @@
           mapMinZoom = 0,
           mapMaxZoom = {{yunbook.zoom}},
           fid = {{yunbook.fid}},
-          stuLabels =JSON.parse(decodeURIComponent('{{classRoomYunbookList}}')),
-          _data =decodeURIComponent('{{label}}'),
+          stuLabels =JSON.parse(hexToString('{{classRoomYunbookList}}')),
+          _data =hexToString('{{label}}'),
           api = '{{api}}',admin = {{admin}},cfid={{cfid}},cybid={{cybid}};
         var _map = L.map('map', {
           maxZoom: mapMaxZoom,
@@ -78,12 +78,44 @@
           attributionControl: false,
           crs: L.CRS.Simple
         });
+        function d2h(d) {
+            return d.toString(16);
+        }
+        function h2d (h) {
+            return parseInt(h, 16);
+        }
+        function stringToHex (tmp) {
+            var str = '',
+                i = 0,
+                tmp_len = tmp.length,
+                c;
+
+            for (; i < tmp_len; i += 1) {
+                c = tmp.charCodeAt(i);
+                str += d2h(c) + ' ';
+            }
+            return str;
+        }
+        function hexToString (tmp) {
+            var arr = tmp.split(' '),
+                str = '',
+                i = 0,
+                arr_len = arr.length,
+                c;
+
+            for (; i < arr_len; i += 1) {
+                c = String.fromCharCode( h2d( arr[i] ) );
+                str += c;
+            }
+
+            return str;
+        }
         {% if admin %}
         if(stuLabels.length > 0){
             var control = L.control.layers().addTo(_map);
             stuLabels.forEach(function (item,index) {
                 if(item.label !== ''){
-                    var _layerGroup = L.geoJson(JSON.parse(decodeURIComponent(item.label)),{
+                    var _layerGroup = L.geoJson(JSON.parse(hexToString(item.label)),{
                         onEachFeature:function (featureData,layer) {
                             if(featureData.geometry.type === 'Point'){
                                 var popup = L.popup({maxWidth: 1200});
@@ -99,7 +131,7 @@
                             uid:item.uid,
                             key:key,
                             token:token
-                        },async:false
+                        },async:false,dataType:'json'
                     }).done(function (data) {
                         if(data.code === 0 && data.get.id !== undefined){
                             if(data.get.type == 1){
@@ -117,7 +149,7 @@
         if(stuLabels.length > 0){
             var control = L.control.layers().addTo(_map);
             stuLabels.forEach(function (item,index) {
-                    var _layerGroup = L.geoJson(JSON.parse(decodeURIComponent(item)),{
+                    var _layerGroup = L.geoJson(JSON.parse(hexToString(item)),{
                         onEachFeature:function (featureData,layer) {
                             if(featureData.geometry.type === 'Point'){
                                 var popup = L.popup({maxWidth: 1200});
@@ -143,7 +175,7 @@
                       url:api+'/classroomfile/put',
                       data:{
                           cfid:cfid,
-                          label:encodeURIComponent(JSON.stringify(_geoJson)),
+                          label:stringToHex(JSON.stringify(_geoJson)),
                           key:key,
                           token:token
                       },
@@ -167,7 +199,7 @@
                                   key:key,
                                   token:token,
                                   id:cybid
-                              },type:'POST'
+                              },type:'POST',dataType:'json'
                           }).done(function (data) {
                               if(data.code === 0){
                                   toastr.success('保存成功!');
@@ -193,7 +225,7 @@
                               cfid:cfid,
                               key:key,
                               token:token
-                          },async:false
+                          },async:false,dataType:'json'
                       }).done(function (data) {
                           if(data.code === 0){
                               if(data.get.id !=undefined){
@@ -220,7 +252,7 @@
                       key:key,
                       token:token
                     },
-                    type: 'post'
+                    type: 'post',dataType:'json'
                   }).done(function (data) {
                         if (data.code === 0) {
                           toastr.success('保存成功!');

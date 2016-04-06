@@ -4,6 +4,8 @@
 var request = require('request-promise'),
     config = require('../../config'),
     _debug = require('debug'),
+    co = require('co'), 
+    forEach = require('co-foreach'),
     key, token;
 const debug = _debug('app:controller:lesson');
 module.exports = {
@@ -23,10 +25,10 @@ module.exports = {
             if (data.code === 0) {
                 count = data.info.count;
             } else {
-                debug(data.msg);
+                console.error(data.msg);
             }
         }, function(err) {
-            debug(err.message);
+            console.error(err.message);
         });
         if (count > 0) {
             count = Math.ceil(count / 9);
@@ -43,10 +45,10 @@ module.exports = {
                 if (data.code === 0) {
                     lessons = data.list;
                 } else {
-                    debug('/lesson/list', data);
+                    console.error('/lesson/list', data);
                 }
             }).catch(function(err) {
-                debug('/lesson/list', err.message);
+                console.error('/lesson/list', err.message);
             });
         }
         yield this.render('lesson/index', {
@@ -127,13 +129,13 @@ module.exports = {
         });
     },
     me: function*() {
-        var lessons, count;
+        var lessons=[], count;
         key = this.cookies.get('key');
         if (typeof key === 'undefined') {
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         yield request({
-            uri: config.url.inside.api + 'lesson/info',
+            uri: config.url.inside.api + 'lessonuser/info',
             qs: {
                 uid: key
             },
@@ -148,30 +150,47 @@ module.exports = {
         }).catch(function(err) {
             console.error('lesson/info', err.message);
         });
-        yield request({
-            uri: config.url.inside.api + '/lesson/list',
-            qs: {
-                uid: key,
-                limit: 9,
-                ofs: 1
-            },
-            gzip: true,
-            json: true
-        }).then(function(data) {
-            if (data.code === 0) {
-                lessons = data.list;
-            } else {
-                console.error('/lesson/list', data);
-            }
-        }).catch(function(err) {
-            console.error('/lesson/list', err.message);
-        });
+        var lids=[];
+        if(count > 0){
+            yield request({
+                uri: config.url.inside.api + '/lessonuser/list',
+                qs: {
+                    uid: key,
+                    limit: 9,
+                    ofs: 1
+                },
+                gzip: true,
+                json: true
+            }).then(function(data) {
+                if (data.code === 0) {
+                    return lids = data.list
+                } else {
+                    console.error('/lessonuser/list', data.msg);
+                    Promise.reject(data.msg);
+                }
+            }).catch(function(err) {
+                console.error('/lessonuser/list', err.message);
+            });
+        }
+        for(index in lids){
+          yield  request({
+                uri:config.url.inside.api+'/lesson/get',
+                qs:{
+                    lid:lids[index].lid
+                },gzip:true,json:true
+                }).then(function(data){
+                    if(data.code === 0){
+                        lessons.push(data.get)
+                    }
+                })
+        }
         yield this.render('lesson/me', {
             lessons: lessons,
-            title: '主讲课程',
+            title: '我的课程',
             logo: '云课程',
             key: key,
-            count: count
+            count: count,
+            config:config
         });
     },
     admin: function*() {
@@ -192,10 +211,10 @@ module.exports = {
             if (data.code === 0) {
                 lids = data.list;
             } else {
-                debug('lessonAdmin/list', data);
+                console.error('lessonAdmin/list', data);
             }
         }).catch(function(err) {
-            debug('lessonAdmin/list', err.message);
+            console.error('lessonAdmin/list', err.message);
         });
         if (lids !== undefined && lids.length > 0) {
             for (index in lids) {

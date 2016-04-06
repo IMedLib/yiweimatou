@@ -28,6 +28,8 @@
   "homepage": "https://github.com/IMedLib/yiweimatou#readme",
   "dependencies": {
     "better-npm-run": "0.0.7",
+    "co": "^4.6.0",
+    "co-foreach": "^1.1.1",
     "debug": "^2.2.0",
     "koa": "^1.1.2",
     "koa-favicon": "^1.2.0",

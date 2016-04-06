@@ -1,5 +1,6 @@
-var config = require('../../config'),
+var config = require('../../config'),_debug = require('debug'),
     request = require('request-promise');
+var debug = _debug('app:control:index');
 module.exports = {
     index: function*() {
         var lessons, groups;

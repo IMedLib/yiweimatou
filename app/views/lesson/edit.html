@@ -446,7 +446,7 @@
                     id:id,
                     key:key,
                     token:token
-                },type:'POST'
+                },type:'POST',dataType:'json'
             }).done(function (data) {
                 if(data.code === 0){
                     swal("",name+"已经从课程删除","success");
@@ -498,7 +498,7 @@
         id: id,
         key: key,
         token:token
-      }
+      },dataType:'json'
     }).done(function (data) {
       if (data.code === 0) {
         // var node = document.getElementById(id);
@@ -542,7 +542,7 @@
                 type:$type.val(),
                 names:$names.val(),
                 id:$id.val()
-            },type:'post'
+            },type:'post',dataType:'json'
         }).done(function (data) {
             if(data.code === 0){
                 toastr.success('修改成功!');
@@ -568,7 +568,7 @@
             lid:lid,
             key:key,
             token:token
-          }
+          },dataType:'json'
         }).done(function (data) {
             if(data.code != 0){
               toastr.error(item.姓名+'导入失败!');
@@ -622,7 +622,7 @@
           lid: lid,
           limit: 5,
           ofs: page
-        }
+        },dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           // data.list.forEach(function (element) {
@@ -658,7 +658,7 @@
           cname: $search.val(),
           lid: lid
         },
-        async: false
+        async: false,dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           count = data.info.count;
@@ -683,7 +683,7 @@
           key: key,
           token: token
         },
-        async: false
+        async: false,dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           c = data.info.count;
@@ -702,7 +702,7 @@
           ofs: page,
           key: key,
           token: token
-        }
+        },dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           obj.html(template('classTemplate', data));
@@ -744,7 +744,7 @@
           ofs:offset,
           key:key,
           token:token
-        }
+        },dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           $('#ts').html(template('tsTemplate', data));
@@ -763,7 +763,7 @@
         url:api+'lessonadmin/info',
         data:{
           lid:lid
-        },async:false
+        },async:false,dataType:'json'
       }).done(function (data) {
         if(data.code === 0){
           count = data.info.count;
@@ -812,7 +812,7 @@
               key:key,
               token:token,
               mobile:$mobile.val()
-          },async:false
+          },async:false,dataType:'json'
       }).done(function (data) {
           if(data.code === 0 ){
               if(data.list.length > 0){
@@ -839,7 +839,7 @@
           names: names,
           key: key,
           token: token
-        }
+        },dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           toastr.success('用户' + names + '添加成功！');
@@ -870,7 +870,7 @@
         processData: false,
         contentType: false,
         type: 'POST',
-        timeout: 600000
+        timeout: 600000,dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           $.ajax({
@@ -881,7 +881,7 @@
               cover_path: '{{config.url.domain}}cover/' + data.cover_path,
               key: '{{key}}',
               token: '{{token}}'
-            }
+            },dataType:'json'
           }).done(function (data) {
             if (data.code === 0) {
               toastr.success('更新封面成功！');
@@ -921,7 +921,7 @@
         processData: false,
         contentType: false,
         type: 'POST',
-        timeout: 600000
+        timeout: 600000,dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           $.ajax({
@@ -936,7 +936,7 @@
               cover_path: '{{config.url.domain}}/cover/' + data.cover_path,
               key: '{{key}}',
               token: '{{token}}'
-            }
+            },dataType:'json'
           }).done(function (data) {
             if (data.code == 0) {
               toastr.success('新建成功！');
@@ -974,7 +974,7 @@
           descript: $('#lessonRemark').val(),
           key: "{{key}}",
           token: "{{token}}"
-        }
+        },dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           toastr.success('修改成功！');
