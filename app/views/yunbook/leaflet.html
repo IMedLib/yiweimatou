@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <title>{{title}}</title>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
-    <link rel="stylesheet" href="/js/lib/leaflet/leaflet.css"/>
-    <link rel="stylesheet" href="/js/lib/leaflet/leaflet.draw.css">
-    <link rel="stylesheet" href="/css/lib/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/lib/summernote/summernote.css">
-    <link rel="stylesheet" href="/css/lib/Font-Awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/js/lib/leaflet/easy-button.css">
-    <link rel="stylesheet" href="/css/toastr.min.css">
-    <style>
-      html,
+    <head>
+        <title>
+            {{title}}
+        </title>
+        <meta charset="utf-8"/>
+        <meta content="initial-scale=1.0, user-scalable=no" name="viewport"/>
+        <link href="/js/lib/leaflet/leaflet.css" rel="stylesheet"/>
+        <link href="/js/lib/leaflet/leaflet.draw.css" rel="stylesheet">
+            <link href="/css/lib/bootstrap.min.css" rel="stylesheet">
+                <link href="/css/lib/summernote/summernote.css" rel="stylesheet">
+                    <link href="/css/lib/Font-Awesome/css/font-awesome.min.css" rel="stylesheet">
+                        <link href="/js/lib/leaflet/easy-button.css" rel="stylesheet">
+                            <link href="/css/toastr.min.css" rel="stylesheet">
+                                <style>
+                                    html,
       body,
       #map {
         width: 100%;
@@ -20,46 +22,66 @@
         margin: 0;
         padding: 0;
       }
-
-    </style>
-  </head>
-
-  <body>
-    <div id="map"></div>
-    <div id="modal" class="modal fade">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title">填写标注弹出内容</h4>
-          </div>
-          <div class="modal-body">
-            <div id="summernote"></div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" id="submit" class="btn btn-primary">保存</button>
-          </div>
+                                </style>
+                            </link>
+                        </link>
+                    </link>
+                </link>
+            </link>
+        </link>
+    </head>
+    <body>
+        <div id="map">
         </div>
-        <!-- /.modal-content -->
-      </div>
-      <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
-    <script>
-      L_PREFER_CANVAS = true;
-    </script>
-    <script src="/js/lib/leaflet/leaflet-src1.0.js"></script>
-    <script src="/js/lib/leaflet/leaflet.draw-src.js"></script>
-    <script src="/js/lib/jquery.min.js"></script>
-    <script src="/js/lib/bootstrap.min.js"></script>
-    <script src="/js/lib/summernote.js"></script>
-    <script src="/js/lib/summernote-zh-CN.js"></script>
-    <script type="text/javascript" src='/js/lib/leaflet/easy-button.js'></script>
-    <script src="/js/toastr.min.js" charset="utf-8"></script>
-    <script>
-      (function (document, window) {
+        <div class="modal fade" id="modal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">
+                                ×
+                            </span>
+                        </button>
+                        <h4 class="modal-title">
+                            填写标注弹出内容
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="summernote">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="submit" type="button">
+                            保存
+                        </button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+        <script>
+            L_PREFER_CANVAS = true;
+        </script>
+        <script src="/js/lib/leaflet/leaflet-src1.0.js">
+        </script>
+        <script src="/js/lib/leaflet/leaflet.draw-src.js">
+        </script>
+        <script src="/js/lib/jquery.min.js">
+        </script>
+        <script src="/js/lib/bootstrap.min.js">
+        </script>
+        <script src="/js/lib/summernote.js">
+        </script>
+        <script src="/js/lib/summernote-zh-CN.js">
+        </script>
+        <script src="/js/lib/leaflet/easy-button.js" type="text/javascript">
+        </script>
+        <script charset="utf-8" src="/js/toastr.min.js">
+        </script>
+        <script>
+            (function (document, window) {
         var key = '{{key}}',
           token = '{{token}}',
           w = {{yunbook.width}},
@@ -68,7 +90,7 @@
           mapMinZoom = 0,
           mapMaxZoom = {{yunbook.zoom}},
           fid = {{yunbook.fid}},
-          _data =hexToString('{{yunbook.label}}');
+          _data =unescape('{{yunbook.label}}');
         var _map = L.map('map', {
           maxZoom: mapMaxZoom,
           minZoom: mapMinZoom,
@@ -76,38 +98,6 @@
           attributionControl: false,
           crs: L.CRS.Simple
         });
-        function d2h(d) {
-            return d.toString(16);
-        }
-        function h2d (h) {
-            return parseInt(h, 16);
-        }
-        function stringToHex (tmp) {
-            var str = '',
-                i = 0,
-                tmp_len = tmp.length,
-                c;
-
-            for (; i < tmp_len; i += 1) {
-                c = tmp.charCodeAt(i);
-                str += d2h(c) + ' ';
-            }
-            return str;
-        }
-        function hexToString (tmp) {
-            var arr = tmp.split(' '),
-                str = '',
-                i = 0,
-                arr_len = arr.length,
-                c;
-
-            for (; i < arr_len; i += 1) {
-                c = String.fromCharCode( h2d( arr[i] ) );
-                str += c;
-            }
-
-            return str;
-        }
         {%if editable%}
         L.easyButton({
           position: 'topright',
@@ -120,7 +110,7 @@
                   url: '{{api}}/userFile/put',
                   data: {
                     fid: fid,
-                    label: stringToHex(JSON.stringify(_geoJson)),
+                    label: escape(JSON.stringify(_geoJson)),
                     key:key,
                     token:token
                   },
@@ -174,10 +164,10 @@
               type: 'FeatureCollection',
               features: []
             };
-        if (_data === hexToString('')) {
+        if (_data === '') {
           _drawnItems = new L.FeatureGroup().addTo(_map);
         } else {
-          _drawnItems = L.geoJson(JSON.parse(_data.substring(0,_data.length-1)),{
+          _drawnItems = L.geoJson(JSON.parse(_data),{
               onEachFeature:function (featureData,layer) {
                   if(featureData.geometry.type === 'Point'){
                       var popup = L.popup({maxWidth: 1200});
@@ -311,7 +301,6 @@
           })
         });
       })(document, window);
-    </script>
-  </body>
-
+        </script>
+    </body>
 </html>

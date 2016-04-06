@@ -3,21 +3,6 @@ var request = require('request-promise'),
     _ = require('util'),
     _debug = require('debug'),
     key, token;
-function stringToHex (tmp) {
-    var str = '',
-        i = 0,
-        tmp_len = tmp.length,
-        c;
-
-    for (; i < tmp_len; i += 1) {
-        c = tmp.charCodeAt(i);
-        str += d2h(c) + ' ';
-    }
-    return str;
-}
-function d2h(d) {
-    return d.toString(16);
-}
 var debug = _debug('app:controller:yunbook');
 module.exports = {
     online:function* () {
@@ -208,7 +193,6 @@ module.exports = {
                 editable = false;
             });
         }
-        // debug(JSON.stringify(classRoomYunbookList));
         yield this.render('yunbook/clazz', {
             yunbook: yunbook,
             key: key,
@@ -219,8 +203,7 @@ module.exports = {
             cybid: cybid,
             admin: admin,
             api: config.url.outside.api,
-            classRoomYunbookList: stringToHex(JSON.stringify(
-                classRoomYunbookList))
+            classRoomYunbookList:classRoomYunbookList
         });
     },
     leaflet: function*() {
