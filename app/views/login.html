@@ -117,6 +117,7 @@
             mobile: mobile,
             vcode: code
           },
+          dataType:'json',
           type: 'post'
         }).done(function(data) {
           if (data.code !== 0) {
