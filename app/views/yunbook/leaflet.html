@@ -69,7 +69,6 @@
           mapMaxZoom = {{yunbook.zoom}},
           fid = {{yunbook.fid}},
           _data =hexToString('{{yunbook.label}}');
-          console.log(_data);
         var _map = L.map('map', {
           maxZoom: mapMaxZoom,
           minZoom: mapMinZoom,
@@ -178,7 +177,7 @@
         if (_data === hexToString('')) {
           _drawnItems = new L.FeatureGroup().addTo(_map);
         } else {
-          _drawnItems = L.geoJson(JSON.parse(_data),{
+          _drawnItems = L.geoJson(JSON.parse(_data.substring(0,155)),{
               onEachFeature:function (featureData,layer) {
                   if(featureData.geometry.type === 'Point'){
                       var popup = L.popup({maxWidth: 1200});
