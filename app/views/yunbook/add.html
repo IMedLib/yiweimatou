@@ -146,6 +146,7 @@
         $('form').submit(function(e){
             var title=$('#title').val(),
                     file=$('#file').get(0).files[0];
+            var aid = $('#select4').val();
             e.preventDefault();
             var formData=new FormData();
             formData.append('uploadfile',file);
@@ -175,7 +176,8 @@
                             size:data.file_size,
                             cover_path:"{{config.url.domain}}cover/"+data.cover_path,
                             path:'{{config.url.domain}}yunbook/'+ data.file_path,
-                            ext:file.name.split('.').pop()
+                            ext:file.name.split('.').pop(),
+                            aid:(aid === null || aid==='')?78287:aid
                         },dataType:'json'
                     }).done(function(data){
                         if(data.code==0){
