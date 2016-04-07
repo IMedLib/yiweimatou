@@ -356,7 +356,7 @@ module.exports = {
         }).catch(function(err) {
             console.error('organ/get', err.message);
         });
-        debug(admin)
+        debug(clazzes)
         yield this.render('lesson/show', {
             title: lesson.title,
             logo: '云课程',

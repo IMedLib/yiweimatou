@@ -197,7 +197,7 @@ module.exports = {
             cybid: cybid,
             admin: admin,
             api: config.url.outside.api,
-            classRoomYunbookList:JSON.stringify(classRoomYunbookList)
+            classRoomYunbookList:encodeURIComponent(JSON.stringify(classRoomYunbookList))
         });
     },
     leaflet: function*() {

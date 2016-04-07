@@ -68,7 +68,7 @@
           mapMinZoom = 0,
           mapMaxZoom = {{yunbook.zoom}},
           fid = {{yunbook.fid}},
-          temp ='{{classRoomYunbookList}}',
+          temp =decodeURIComponent('{{classRoomYunbookList}}'),
           stuLabels = temp===''?'':JSON.parse(temp),
           _data =unescape('{{label}}'),
           api = '{{api}}',admin = {{admin}},cfid={{cfid}},cybid={{cybid}};
