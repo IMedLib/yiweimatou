@@ -7,7 +7,7 @@ var router = require('koa-router')(),
 router.get('/me',yunbookCtrl.me);
 router.get('/',yunbookCtrl.index);
 router.get('/:id',yunbookCtrl.leaflet);
-router.get('/clazz/:id',yunbookCtrl.clazz);
+router.get('/:lid/clazz/:id',yunbookCtrl.clazz);
 router.get('/index',yunbookCtrl.index);
 router.get('/add',yunbookCtrl.add);
 router.get('/online',yunbookCtrl.online);

@@ -15,17 +15,83 @@ module.exports = {
     },
     clazz: function*() {
         var id = parseInt(this.params.id, 10),
-            editable = false,
-            url, lid, admin = false,
+            url, lid = parseInt(this.params.lid,10), admin = false,
             cybid = 0;
         key = this.cookies.get('key');
         token = this.cookies.get('token');
-        if (!id) {
+        if (!id || !lid) {
             this.set('refresh', '3,/');
             this.body = '缺少参数，即将跳转...';
             return;
         }
-        var yunbook, clazzYunbook, msg;
+        var yunbook, clazzYunbook, msg,isStudent=false;
+        //判断是否为课程学生
+        yield request({
+            uri:`${config.url.inside.api}lessonuser/get`,
+            qs:{
+                uid:key,
+                lid:lid
+            },gzip:true,json:true
+        }).then(function(data){
+            //如果不是课程学生则加入
+            if(data.code === 0 && data.get.id != undefined){
+                isStudent = true;
+            }
+            //TODO:如果接口调用失败则再次调用接口，三次调用失败后跳转其他页面
+        })
+        //如果不是课程学生则先判断是否主讲老师
+        if(!isStudent){
+            yield request({
+                uri: config.url.inside.api + 'lesson/get',
+                qs: {
+                    lid: lid
+                },
+                gzip: true,
+                json: true
+            }).then(function(data) {
+                if (data.code === 0 && data.get.uid !==
+                    undefined) {
+                    admin = data.get.uid == key;
+                }
+            }, function(err) {
+                console.error(err.message);
+            });
+            //如果不是主讲教师，判断是不是讲师
+            if (admin) {
+                yield request({
+                    uri: `${config.url.inside.api}lessonadmin/list?lid=${lid}`,
+                    gzip: true,
+                    json: true
+                }).then(function(data) {
+                    if (data.code === 0) {
+                        data.list.forEach(function(item, index) {
+                            if (item.uid == key) {
+                                admin = true;
+                                return;
+                            }
+                        })
+                    }
+                });
+            }
+        }
+        //如果不是学生也不是老师，则自动报名参加课程
+        if(!isStudent && !admin){
+            yield request({
+                    uri:`${config.url.inside.api}lessonuser/add`,
+                    qs:{
+                        lid:lid,
+                        uid:key,
+                        key:key,
+                        token:token
+                    },gzip:true,json:true
+                }).then(function(data){
+                    if(data.code === 0){
+                        isStudent = true;
+                    }else{
+                        console.error(`lessonuser/add :${data.msg}`);
+                    }
+                })
+        }
         yield request({
             uri: config.url.inside.api + 'classroomfile/get',
             qs: {
@@ -43,18 +109,19 @@ module.exports = {
             }
         }).catch(function(err) {
             msg = err.message;
-            debug(err.message);
+            console.error(err.message);
         });
         if (clazzYunbook === undefined) {
             if(msg === '账号验证出错'){
-                this.set('refresh','3,/login');
+                this.set('refresh','3,/login?redirect='+encodeURIComponent(this.url));
                 this.body = '账号验证出错,请重新登录，即将跳转...';
                 return;
+            }else if(msg === '请先报名该课程'){
+                //如果不是学生则自动加入课程,不应该出现
+                
             }
-            this.set('refresh', '3,/');
-            this.body = msg+',获取课堂云板书失败，请稍后再试，即将跳转...';
-            return;
         }
+        //获取原始云板书
         yield request({
             uri: config.url.inside.api + 'userfile/get',
             qs: {
@@ -74,80 +141,10 @@ module.exports = {
             this.body = '获取云板书失败，请稍后再试，即将跳转...';
             return;
         }
-        //先判断是否主讲老师
-        yield request({
-            uri: config.url.inside.api + 'classroom/get',
-            qs: {
-                cid: clazzYunbook.cid,
-                key: key,
-                token: token
-            },
-            gzip: true,
-            json: true
-        }).then(function(data) {
-            if (data.code === 0 && data.get.lid !== undefined) {
-                lid = data.get.lid;
-            }
-        }, function(err) {
-            debug(err.message);
-        });
-        if (lid !== undefined) {
-            yield request({
-                uri: config.url.inside.api + 'lesson/get',
-                qs: {
-                    lid: lid
-                },
-                gzip: true,
-                json: true
-            }).then(function(data) {
-                if (data.code === 0 && data.get.uid !==
-                    undefined) {
-                    editable = data.get.uid == key;
-                    if (editable) {
-                        admin = true;
-                        url = config.url.outside.api +
-                            'classroomfile/put';
-                    }
-                }
-            }, function(err) {
-                debug(err.message);
-            });
-        }
-        //如果不是主讲教师，判断是不是讲师
-        if (!editable && lid !== undefined) {
-            yield request({
-                uri: `${config.url.inside.api}lessonadmin/list?lid=${lid}`,
-                gzip: true,
-                json: true
-            }).then(function(data) {
-                if (data.code === 0) {
-                    data.list.forEach(function(item, index) {
-                        if (item.uid == key) {
-                            editable = true;
-                            admin = true;
-                            return;
-                        }
-                    })
-                }
-            });
-        }
+        
         var classRoomYunbookList = [],
             label = '';
-        //判断是否是课程学生,如果是课程学生则可以添加标注
-        if (!editable && lid !== undefined) {
-            yield request({
-                uri: `${config.url.inside.api}lessonuser/get?uid=${key}`,
-                gzip: true,
-                json: true
-            }).then(function(data) {
-                if (data.code === 0 && data.get.id !==
-                    undefined) {
-                    editable = true;
-                }
-            }).catch(function(err) {
-                debug(err.message);
-            });
-        } else {
+        if(admin) {
             label = clazzYunbook.label;
             yield request({
                 uri: config.url.inside.api +
@@ -164,10 +161,9 @@ module.exports = {
                     classRoomYunbookList = data.list;
                 }
             }, function(err) {
-                debug(err.message);
+                console.error(err.message);
             });
-        }
-        if (!admin && editable) {
+        }else {
             if(clazzYunbook.label!=''){
                 classRoomYunbookList.push(clazzYunbook.label);
             }
@@ -189,8 +185,7 @@ module.exports = {
                     label = data.get.label;
                 }
             }).catch(function(err) {
-                debug(err.message);
-                editable = false;
+                console.error(err.message);
             });
         }
         yield this.render('yunbook/clazz', {
@@ -198,7 +193,6 @@ module.exports = {
             key: key,
             token: token,
             label: label,
-            editable: editable,
             cfid: id,
             cybid: cybid,
             admin: admin,

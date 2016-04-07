@@ -132,7 +132,6 @@
             });
         }
         {% endif %}
-        {%if editable%}
         L.easyButton({
           position: 'topright',
           states: [
@@ -235,7 +234,6 @@
             }
           ]
         }).addTo(_map);
-        {% endif %}
         var $summernote = $('#summernote'),
           $modal = $('#modal'),
           $submit = $('#submit');

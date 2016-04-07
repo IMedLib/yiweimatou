@@ -271,10 +271,10 @@ module.exports = {
             if (data.code === 0) {
                 clazzes = data.list;
             } else {
-                debug(`classroom/list:${data.msg}`);
+                console.error(`classroom/list:${data.msg}`);
             }
         }).catch(function(err) {
-            debug(err.message);
+            console.error(err.message);
         });
         //获取课程详情
         yield request({
@@ -288,7 +288,7 @@ module.exports = {
             if (data.code === 0) {
                 lesson = data.get;
             } else {
-                debug('/Lesson/Get/' + data.msg);
+                console.error('/Lesson/Get/' + data.msg);
             }
         }).catch(function(err) {
             debug(err.message);
@@ -315,7 +315,7 @@ module.exports = {
                     }
                 }
             }).catch(function(err) {
-                debug(err.message);
+                console.error(err.message);
             });
         } else {
             admin = 2;
@@ -351,11 +351,12 @@ module.exports = {
             if (data.code === 0) {
                 group = data.get;
             } else {
-                debug('organ/get', data.msg);
+                console.error('organ/get', data.msg);
             }
         }).catch(function(err) {
-            debug('organ/get', err.message);
+            console.error('organ/get', err.message);
         });
+        debug(admin)
         yield this.render('lesson/show', {
             title: lesson.title,
             logo: '云课程',
