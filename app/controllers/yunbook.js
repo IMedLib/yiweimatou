@@ -31,6 +31,7 @@ module.exports = {
                 token:token
             },gzip:true,json:true
         }).then(function(data){
+            console.error(key,data);
             if(data.code === 0){
                 isLogin=true;
             }   
