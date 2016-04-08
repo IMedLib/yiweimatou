@@ -15,13 +15,31 @@ module.exports = {
     },
     clazz: function*() {
         var id = parseInt(this.params.id, 10),
-            url, lid = parseInt(this.params.lid,10), admin = false,
+            url, lid = parseInt(this.params.lid,10), admin = false,isLogin=false,
             cybid = 0;
         key = this.cookies.get('key');
         token = this.cookies.get('token');
         if (!id || !lid) {
             this.set('refresh', '3,/');
             this.body = '缺少参数，即将跳转...';
+            return;
+        }
+        yield request({
+            uri:`${config.url.inside.api}user/valid`,
+            qs:{
+                key:key,
+                token:token
+            },gzip:true,json:true
+        }).then(function(data){
+            if(data.code === 0){
+                isLogin=true;
+            }   
+        }).catch(function(err){
+            console.error(`user/valid:${err.message}`);
+        })
+        if(!isLogin){
+            this.set('refresh','3,/login?redirect='+encodeURIComponent(this.url));
+            this.body = '请先登录，即将跳转...';
             return;
         }
         var yunbook, clazzYunbook, msg,isStudent=false;
