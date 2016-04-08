@@ -60,7 +60,7 @@
             listStyle: "pagination",
             onPageClick: function (page) {
                 $.ajax({
-                    url: api+'lesson/list',
+                    url: '{{api}}lesson/list',
                     data: {
                         limit: 9,
                         ofs: page,
@@ -70,7 +70,7 @@
                     if (data.code === 0) {
                         $('#lessons').html(template('lessonTemplate', data));
                     }
-                }).catch(function () {
+                }).fail(function () {
                     toastr.error('获取课程失败!');
                 });
             }

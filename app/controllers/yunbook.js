@@ -31,12 +31,11 @@ module.exports = {
                 token:token
             },gzip:true,json:true
         }).then(function(data){
-            console.error(key,data);
             if(data.code === 0){
                 isLogin=true;
             }   
         }).catch(function(err){
-            console.error(`user/valid:${err.message}`);
+            console.log(new Date(),`user/valid:${err.message}`);
         })
         if(!isLogin){
             this.set('refresh','3,/login?redirect='+encodeURIComponent(this.url));
@@ -73,7 +72,7 @@ module.exports = {
                     admin = data.get.uid == key;
                 }
             }, function(err) {
-                console.error(err.message);
+                console.log(err.message);
             });
             //如果不是主讲教师，判断是不是讲师
             if (admin) {
@@ -107,7 +106,7 @@ module.exports = {
                     if(data.code === 0){
                         isStudent = true;
                     }else{
-                        console.error(`lessonuser/add :${data.msg}`);
+                        console.log(`lessonuser/add :${data.msg}`);
                     }
                 })
         }
@@ -128,7 +127,7 @@ module.exports = {
             }
         }).catch(function(err) {
             msg = err.message;
-            console.error(err.message);
+            console.log(err.message);
         });
         if (clazzYunbook === undefined) {
             if(msg === '账号验证出错'){
@@ -180,7 +179,7 @@ module.exports = {
                     classRoomYunbookList = data.list;
                 }
             }, function(err) {
-                console.error(err.message);
+                console.log(new Date(),'classroomyunbook/list',`cfid=${id}`,err.message);
             });
         }else {
             if(clazzYunbook.label!=''){
@@ -204,7 +203,7 @@ module.exports = {
                     label = data.get.label;
                 }
             }).catch(function(err) {
-                console.error(err.message);
+                console.log(err.message);
             });
         }
         yield this.render('yunbook/clazz', {

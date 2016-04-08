@@ -25,10 +25,10 @@ module.exports = {
             if (data.code === 0) {
                 count = data.info.count;
             } else {
-                console.error(data.msg);
+                console.log(data.msg);
             }
         }, function(err) {
-            console.error(err.message);
+            console.log(err.message);
         });
         if (count > 0) {
             count = Math.ceil(count / 9);
@@ -45,10 +45,10 @@ module.exports = {
                 if (data.code === 0) {
                     lessons = data.list;
                 } else {
-                    console.error('/lesson/list', data);
+                    console.log('/lesson/list', data);
                 }
             }).catch(function(err) {
-                console.error('/lesson/list', err.message);
+                console.log('/lesson/list', err.message);
             });
         }
         yield this.render('lesson/index', {
@@ -56,6 +56,7 @@ module.exports = {
             logo: '云课程',
             lessons: lessons,
             domain: config.url.outside.domain,
+            api:config.url.outside.api,
             count: count
         })
     },
@@ -83,10 +84,10 @@ module.exports = {
             if (data.code === 0) {
                 lesson = data.get;
             } else {
-                console.error('lesson/get/', data);
+                console.log('lesson/get/', data);
             }
         }).catch(function(err) {
-            console.error('lesson/get/', err.message);
+            console.log('lesson/get/', err.message);
         });
         //如果不是主讲教师，继续查是不是讲师
         if (key !== lesson.uid.toString()) {
@@ -108,7 +109,7 @@ module.exports = {
                     })
                 }
             }).catch(function(err) {
-                console.error(err.message);
+                console.log(err.message);
             });
         } else {
             admin = 2;
@@ -145,10 +146,10 @@ module.exports = {
             if (data.code === 0) {
                 count = Math.ceil(data.info.count / 9);
             } else {
-                console.error('lesson/info', data);
+                console.log('lesson/info', data);
             }
         }).catch(function(err) {
-            console.error('lesson/info', err.message);
+            console.log('lesson/info', err.message);
         });
         var lids=[];
         if(count > 0){
@@ -165,11 +166,11 @@ module.exports = {
                 if (data.code === 0) {
                     return lids = data.list
                 } else {
-                    console.error('/lessonuser/list', data.msg);
+                    console.log('/lessonuser/list', data.msg);
                     Promise.reject(data.msg);
                 }
             }).catch(function(err) {
-                console.error('/lessonuser/list', err.message);
+                console.log('/lessonuser/list', err.message);
             });
         }
         for(index in lids){
@@ -211,10 +212,10 @@ module.exports = {
             if (data.code === 0) {
                 lids = data.list;
             } else {
-                console.error('lessonAdmin/list', data);
+                console.log('lessonAdmin/list', data);
             }
         }).catch(function(err) {
-            console.error('lessonAdmin/list', err.message);
+            console.log('lessonAdmin/list', err.message);
         });
         if (lids !== undefined && lids.length > 0) {
             for (index in lids) {
@@ -248,11 +249,10 @@ module.exports = {
     show: function*() {
         var lid = this.params.id,
             admin = 0,
-            lesson, group, clazzes;
+            lesson, group, clazzes,isLogin = true;
         key = this.cookies.get('key');
         token = this.cookies.get('token');
         if (typeof key === 'undefined' || typeof token === 'undefined') {
-            debug(`key=${key};token=${token}`);
             this.redirect('/login?redirect=' + encodeURIComponent(this.url));
         }
         //获取课堂列表
@@ -270,12 +270,16 @@ module.exports = {
         }).then(function(data) {
             if (data.code === 0) {
                 clazzes = data.list;
-            } else {
-                console.error(`classroom/list:${data.msg}`);
+            } else if(data.msg === '账号验证出错'){
+                isLogin = false;
             }
         }).catch(function(err) {
-            console.error(err.message);
+            console.log(new Date(),err.message);
         });
+        //如果账户验证出错则引导登录
+        if(!isLogin){
+            this.redirect('/login?redirect=' + encodeURIComponent(this.url));
+        }
         //获取课程详情
         yield request({
             uri: config.url.inside.api + '/Lesson/Get/',
@@ -288,10 +292,10 @@ module.exports = {
             if (data.code === 0) {
                 lesson = data.get;
             } else {
-                console.error('/Lesson/Get/' + data.msg);
+                console.log(new Date(),'/Lesson/Get/' + data.msg);
             }
         }).catch(function(err) {
-            debug(err.message);
+            console.log(new Date(),'lesson/get/',err.message);
         });
         if (typeof lesson === 'undefined') {
             this.body = '课程获取失败，先去其他课程看看吧';
@@ -315,7 +319,7 @@ module.exports = {
                     }
                 }
             }).catch(function(err) {
-                console.error(err.message);
+                console.log(err.message);
             });
         } else {
             admin = 2;
@@ -351,12 +355,11 @@ module.exports = {
             if (data.code === 0) {
                 group = data.get;
             } else {
-                console.error('organ/get', data.msg);
+                console.log('organ/get', data.msg);
             }
         }).catch(function(err) {
-            console.error('organ/get', err.message);
+            console.log('organ/get', err.message);
         });
-        debug(clazzes)
         yield this.render('lesson/show', {
             title: lesson.title,
             logo: '云课程',

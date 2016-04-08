@@ -17,7 +17,7 @@ module.exports = {
                 lessons = data.list;
             }
         }).catch(function(err) {
-            console.error('/lesson/list', err.message);
+            console.log('/lesson/list', err.message);
         });
         yield request({
             uri: config.url.inside.api + '/Organ/list',
@@ -32,7 +32,7 @@ module.exports = {
                 groups = data.list;
             }
         }).catch(function(err) {
-            console.error('/group/list', err.message);
+            console.log('/group/list', err.message);
         });
         yield this.render('index', {
             title: "首页",

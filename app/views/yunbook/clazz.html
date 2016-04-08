@@ -152,7 +152,7 @@
                   }).done(function (data) {
                       if(data.code === 0){
                           toastr.success('保存成功!');
-                      }else{
+                      }else if(data.msg != ''){
                           toastr.error(data.msg);
                       }
                   }).fail(function () {
@@ -172,7 +172,7 @@
                           }).done(function (data) {
                               if(data.code === 0){
                                   toastr.success('保存成功!');
-                              }else{
+                              }else if(data.msg != ''){
                                   toastr.error(data.msg);
                               }
                           }).fail(function  () {
@@ -225,7 +225,7 @@
                   }).done(function (data) {
                         if (data.code === 0) {
                           toastr.success('保存成功!');
-                        }else {
+                        }else if(data.msg != ''){
                           toastr.error(data.msg);
                         }
                   })
