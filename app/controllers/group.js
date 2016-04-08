@@ -31,7 +31,7 @@ module.exports = {
             json: true
         }).then(function(data) {
             if (data.code === 0) {
-                count = data.info.Count;
+                count = data.info.count;
             }
         });
         if (count > 0) {
