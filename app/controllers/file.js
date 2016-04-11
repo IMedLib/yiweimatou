@@ -21,10 +21,10 @@ module.exports = {
             if(data.code === 0){
                 files = data.list;
             }else{
-                console.error('userfile/get',data);
+                console.log('userfile/get',data);
             }
         }).catch(function(err){
-           console.error('userfile/get',err.message);
+           console.log('userfile/get',err.message);
         });
         yield this.render('file/me',{
             title:'我的文件',

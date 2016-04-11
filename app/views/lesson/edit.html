@@ -144,6 +144,10 @@
               <header>新建课堂</header>
               <fieldset>
                 <section>
+                    <label for="" class="label">选择分类</label>
+                    <select class="select form-control" style="border-radius:0" id="select1"><option value="">未选择</option></select>
+                </section>
+                <section>
                   <label for="title" class="label">课堂标题</label>
                   <label class="input">
                     <input type="text" id="title" required>
@@ -164,7 +168,7 @@
                     <textarea id="remark" rownum="3"></textarea>
                   </label>
                 </section>
-                <div class="row">
+                <!-- <div class="row">
                   <section class="col col-6">
                     <label class="input">
                       <i class="icon-append fa fa-calendar"></i>
@@ -177,7 +181,7 @@
                       <input class="ui-datepicker" required type="text" id="end" placeholder="结束时间">
                     </label>
                   </section>
-                </div>
+                </div> -->
               </fieldset>
               <footer>
                 <span class="font-red" id="err"></span>
@@ -334,7 +338,8 @@
         <img src="[clazz.cover_path]512_256.png" alt="" class="img-responsive">
       </div>
       <div class="file-name">
-        <a href="/clazz/[clazz.cid]">[clazz.names]</a>
+        <!-- <a href="/clazz/[clazz.cid]">[clazz.names]</a> -->
+        <span>[clazz.names]</span>
         <a class="pull-right" href="/clazz/edit/[clazz.cid]">编辑</a>
         <br/>
         <small>最近修改时间:[clazz.put_ms]</small>
@@ -446,7 +451,7 @@
                     id:id,
                     key:key,
                     token:token
-                },type:'POST'
+                },type:'POST',dataType:'json'
             }).done(function (data) {
                 if(data.code === 0){
                     swal("",name+"已经从课程删除","success");
@@ -498,7 +503,7 @@
         id: id,
         key: key,
         token:token
-      }
+      },dataType:'json'
     }).done(function (data) {
       if (data.code === 0) {
         // var node = document.getElementById(id);
@@ -516,6 +521,7 @@
   }
   '{% endif %}'
   $(document).ready(function () {
+    var api = '{{config.url.api}}';
     template.config('openTag', '[');
     template.config('closeTag', ']');
     jQuery('.accordion-toggle').on('click', function () {
@@ -527,6 +533,25 @@
         return;
       active.removeClass('active');
     });
+    var aid = {{lesson.aid}};
+    aid = (aid === 0 ? 61314: aid);
+    $.ajax({
+        url:api+"category/list/",
+        data:{
+            zoom:7,
+            paid:aid
+        },dataType:'json'
+    }).done(function (data) {
+        if(data.code === 0){
+            var vals="";
+            data.list.forEach(function (item,index) {
+                vals+="<option value='"+item.aid+"'>"+item.names+"</option>"
+            })
+            $('#select1').html(vals);
+        }
+    }).fail(function () {
+        toastr.error('获取分类信息超时!请稍后再试！');
+    })
     $('#editLessonUser').on('click',function () {
         var $type=$('#type'),$names=$('#name'),$id=$('#id'),$sid=$('#sid');
         if($type.val() === 1 && ($names === '' || $sid === '')){
@@ -542,7 +567,7 @@
                 type:$type.val(),
                 names:$names.val(),
                 id:$id.val()
-            },type:'post'
+            },type:'post',dataType:'json'
         }).done(function (data) {
             if(data.code === 0){
                 toastr.success('修改成功!');
@@ -568,7 +593,7 @@
             lid:lid,
             key:key,
             token:token
-          }
+          },dataType:'json'
         }).done(function (data) {
             if(data.code != 0){
               toastr.error(item.姓名+'导入失败!');
@@ -622,7 +647,7 @@
           lid: lid,
           limit: 5,
           ofs: page
-        }
+        },dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           // data.list.forEach(function (element) {
@@ -658,7 +683,7 @@
           cname: $search.val(),
           lid: lid
         },
-        async: false
+        async: false,dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           count = data.info.count;
@@ -683,7 +708,7 @@
           key: key,
           token: token
         },
-        async: false
+        async: false,dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           c = data.info.count;
@@ -702,7 +727,7 @@
           ofs: page,
           key: key,
           token: token
-        }
+        },dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           obj.html(template('classTemplate', data));
@@ -744,7 +769,7 @@
           ofs:offset,
           key:key,
           token:token
-        }
+        },dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           $('#ts').html(template('tsTemplate', data));
@@ -763,7 +788,7 @@
         url:api+'lessonadmin/info',
         data:{
           lid:lid
-        },async:false
+        },async:false,dataType:'json'
       }).done(function (data) {
         if(data.code === 0){
           count = data.info.count;
@@ -812,7 +837,7 @@
               key:key,
               token:token,
               mobile:$mobile.val()
-          },async:false
+          },async:false,dataType:'json'
       }).done(function (data) {
           if(data.code === 0 ){
               if(data.list.length > 0){
@@ -839,7 +864,7 @@
           names: names,
           key: key,
           token: token
-        }
+        },dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           toastr.success('用户' + names + '添加成功！');
@@ -870,7 +895,7 @@
         processData: false,
         contentType: false,
         type: 'POST',
-        timeout: 600000
+        timeout: 600000,dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           $.ajax({
@@ -881,7 +906,7 @@
               cover_path: '{{config.url.domain}}cover/' + data.cover_path,
               key: '{{key}}',
               token: '{{token}}'
-            }
+            },dataType:'json'
           }).done(function (data) {
             if (data.code === 0) {
               toastr.success('更新封面成功！');
@@ -904,15 +929,16 @@
         $('#cover').unblock();
       });
     });
+    
     $('#addClassForm').submit(function (e) {
       e.preventDefault();
       var title = $('#title').val(),
         remark = $('#remark').val(),
         file = $('#file').get(0).files[0],
-        start = $('#start').val(),
-        end = $('#end').val(),
-        formData = new FormData();
-
+        start = '{{lesson.start_ms}}',
+        end = '{{lesson.end_ms}}',
+        formData = new FormData(),
+        aid = $('#select1').val();
       formData.append('uploadfile', file);
       $('#addClassForm').block({message: '<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
       $.ajax({
@@ -921,7 +947,7 @@
         processData: false,
         contentType: false,
         type: 'POST',
-        timeout: 600000
+        timeout: 600000,dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           $.ajax({
@@ -935,8 +961,9 @@
               end_ms: end,
               cover_path: '{{config.url.domain}}/cover/' + data.cover_path,
               key: '{{key}}',
-              token: '{{token}}'
-            }
+              token: '{{token}}',
+              aid : (aid===null || aid ==='')?20470:aid
+            },dataType:'json'
           }).done(function (data) {
             if (data.code == 0) {
               toastr.success('新建成功！');
@@ -974,7 +1001,7 @@
           descript: $('#lessonRemark').val(),
           key: "{{key}}",
           token: "{{token}}"
-        }
+        },dataType:'json'
       }).done(function (data) {
         if (data.code === 0) {
           toastr.success('修改成功！');

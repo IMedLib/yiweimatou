@@ -219,7 +219,7 @@
                 uid:key,
                 lid:lid
               },
-              type:'POST'
+              type:'POST',dataType:'json'
             }).done(function (data) {
               if(data.code === 0){
                 toastr.success('成功加入!');
@@ -287,13 +287,13 @@
                     key:key,
                     token:token,
                     type:3
-                }
+                },dataType:'json'
             }).done(function (data) {
                 if (data.code === 0) {
                     var id = data.list[0].cfid;
                     if (id !== undefined) {
                         var $object = $('#yunbook-' + cid);
-                        $object.html('<div class="col-sm-3 file"><a target="_blank" href="/yunbook/clazz/' + id + '">'
+                        $object.html('<div class="col-sm-3 file"><a target="_blank" href="/yunbook/'+lid+'/clazz/' + id + '">'
                         + '<div class="icon">'
                         + '<i class="fa fa-book"></i>'
                         + '</div>'
@@ -316,7 +316,7 @@
                     cid: cid,
                     limit: 50,
                     ofs: 1
-                }
+                },dataType:'json'
             }).done(function (data) {
                 if (data.code === 0) {
                     $('#file-' + cid).html(template('fileTemplate', data));
@@ -335,7 +335,7 @@
                 data: {
                     lid: lid
                 },
-                async: false
+                async: false,dataType:'json'
             }).done(function (data) {
                 if (data.code === 0) {
                     count = data.info.count;
@@ -355,7 +355,7 @@
                 data: {
                     lid: lid
                 },
-                async: false
+                async: false,dataType:'json'
             }).done(function (data) {
                 if (data.code === 0) {
                     count = data.info.count;
@@ -375,7 +375,7 @@
                     ofs: offset,
                     limit: limit,
                     lid: lid
-                }
+                },dataType:'json'
             }).done(function (data) {
                 if (data.code === 0) {
                     object.html('<div class="col-sm-4">'
@@ -402,7 +402,7 @@
                     ofs: offset,
                     limit: limit,
                     lid: lid
-                }
+                },dataType:'json'
             }).done(function (data) {
                 if (data.code === 0) {
                     object.html(template('studentTemplate', data));

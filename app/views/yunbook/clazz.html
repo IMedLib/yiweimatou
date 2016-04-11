@@ -2,7 +2,7 @@
 <html lang="zh-CN">
   <head>
     <title>{{title}}</title>
-    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
     <link rel="stylesheet" href="/js/lib/leaflet/leaflet.css"/>
     <link rel="stylesheet" href="/js/lib/leaflet/leaflet.draw.css">
@@ -68,8 +68,9 @@
           mapMinZoom = 0,
           mapMaxZoom = {{yunbook.zoom}},
           fid = {{yunbook.fid}},
-          stuLabels =JSON.parse(decodeURIComponent('{{classRoomYunbookList}}')),
-          _data =decodeURIComponent('{{label}}'),
+          temp =decodeURIComponent('{{classRoomYunbookList}}'),
+          stuLabels = temp===''?'':JSON.parse(temp),
+          _data =unescape('{{label}}'),
           api = '{{api}}',admin = {{admin}},cfid={{cfid}},cybid={{cybid}};
         var _map = L.map('map', {
           maxZoom: mapMaxZoom,
@@ -78,12 +79,13 @@
           attributionControl: false,
           crs: L.CRS.Simple
         });
+        
         {% if admin %}
         if(stuLabels.length > 0){
             var control = L.control.layers().addTo(_map);
             stuLabels.forEach(function (item,index) {
                 if(item.label !== ''){
-                    var _layerGroup = L.geoJson(JSON.parse(decodeURIComponent(item.label)),{
+                    var _layerGroup = L.geoJson(JSON.parse(unescape(item.label)),{
                         onEachFeature:function (featureData,layer) {
                             if(featureData.geometry.type === 'Point'){
                                 var popup = L.popup({maxWidth: 1200});
@@ -99,7 +101,7 @@
                             uid:item.uid,
                             key:key,
                             token:token
-                        },async:false
+                        },async:false,dataType:'json'
                     }).done(function (data) {
                         if(data.code === 0 && data.get.id !== undefined){
                             if(data.get.type == 1){
@@ -117,7 +119,7 @@
         if(stuLabels.length > 0){
             var control = L.control.layers().addTo(_map);
             stuLabels.forEach(function (item,index) {
-                    var _layerGroup = L.geoJson(JSON.parse(decodeURIComponent(item)),{
+                    var _layerGroup = L.geoJson(JSON.parse(unescape(item)),{
                         onEachFeature:function (featureData,layer) {
                             if(featureData.geometry.type === 'Point'){
                                 var popup = L.popup({maxWidth: 1200});
@@ -130,7 +132,6 @@
             });
         }
         {% endif %}
-        {%if editable%}
         L.easyButton({
           position: 'topright',
           states: [
@@ -143,15 +144,15 @@
                       url:api+'/classroomfile/put',
                       data:{
                           cfid:cfid,
-                          label:encodeURIComponent(JSON.stringify(_geoJson)),
+                          label:escape(JSON.stringify(_geoJson)),
                           key:key,
                           token:token
                       },
-                      type:'post'
+                      type:'post',dataType:'json'
                   }).done(function (data) {
                       if(data.code === 0){
                           toastr.success('保存成功!');
-                      }else{
+                      }else if(data.msg != ''){
                           toastr.error(data.msg);
                       }
                   }).fail(function () {
@@ -167,11 +168,11 @@
                                   key:key,
                                   token:token,
                                   id:cybid
-                              },type:'POST'
+                              },type:'POST',dataType:'json'
                           }).done(function (data) {
                               if(data.code === 0){
                                   toastr.success('保存成功!');
-                              }else{
+                              }else if(data.msg != ''){
                                   toastr.error(data.msg);
                               }
                           }).fail(function  () {
@@ -193,7 +194,7 @@
                               cfid:cfid,
                               key:key,
                               token:token
-                          },async:false
+                          },async:false,dataType:'json'
                       }).done(function (data) {
                           if(data.code === 0){
                               if(data.get.id !=undefined){
@@ -216,15 +217,15 @@
                     data: {
                       id:cybid,
                       cfid:cfid,
-                      label:encodeURIComponent(JSON.stringify(_geoJson)),
+                      label:escape(JSON.stringify(_geoJson)),
                       key:key,
                       token:token
                     },
-                    type: 'post'
+                    type: 'post',dataType:'json'
                   }).done(function (data) {
                         if (data.code === 0) {
                           toastr.success('保存成功!');
-                        }else {
+                        }else if(data.msg != ''){
                           toastr.error(data.msg);
                         }
                   })
@@ -233,7 +234,6 @@
             }
           ]
         }).addTo(_map);
-        {% endif %}
         var $summernote = $('#summernote'),
           $modal = $('#modal'),
           $submit = $('#submit');

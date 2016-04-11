@@ -13,6 +13,29 @@
     <header>新建云板书</header>
     <fieldset>
         <section>
+            <label for="" class="label">选择分类</label>
+            <div class="form-gruop">
+                <div class="col-sm-3">
+                    <select class="select form-control" style="border-radius:0" id="select1"><option value="">未选择</option></select>
+                </div>
+                <div class="col-sm-3">
+                    <select id="select2" style="border-radius:0" class="select form-control">
+                        <option value="">未选择</option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <select id="select3" style="border-radius:0" class="select form-control">
+                        <option value="">未选择</option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <select id="select4" style="border-radius:0" class="select form-control">
+                        <option value="">未选择</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+        <section>
             <label class="label" for="title">云板书标题</label>
             <label class="input">
                 <input type="text" required="required" id="title">
@@ -41,21 +64,96 @@
 <script>
     $(document).ready(function () {
         var $yunbookCollapse = $('#collapse-yunbook');
+        var api="{{config.url.api}}";
         jQuery('.list-group-item').on('click', function () {
             jQuery(this).toggleClass('active');
         });
         $yunbookCollapse.addClass('in');
         $yunbookCollapse.find('li').eq(1).addClass('active');
+        $.ajax({
+            url:api+"category/list/",
+            data:{
+                zoom:4
+            },dataType:'json'
+        }).done(function (data) {
+            if(data.code === 0){
+                var vals="";
+                data.list.forEach(function (item,index) {
+                    vals+="<option value='"+item.aid+"'>"+item.names+"</option>"
+                })
+                $('#select1').html(vals);
+            }
+        }).fail(function () {
+            toastr.error('获取分类信息超时!请稍后再试！');
+        })
+        $('#select1').on('change',function () {
+            $.ajax({
+                url:api+"category/list/",
+                data:{
+                    zoom:5,
+                    paid:$('#select1').val()
+                },dataType:'json'
+            }).done(function (data) {
+                if(data.code === 0){
+                    var vals="";
+                    data.list.forEach(function (item,index) {
+                        vals+="<option value='"+item.aid+"'>"+item.names+"</option>"
+                    })
+                    $('#select2').html(vals);
+                }
+            }).fail(function () {
+                toastr.error('获取分类信息超时!请稍后再试！');
+            })
+        });
+        $('#select2').on('change',function () {
+            $.ajax({
+                url:api+"category/list/",
+                data:{
+                    zoom:6,
+                    paid:$('#select2').val()
+                },dataType:'json'
+            }).done(function (data) {
+                if(data.code === 0){
+                    var vals="";
+                    data.list.forEach(function (item,index) {
+                        vals+="<option value='"+item.aid+"'>"+item.names+"</option>"
+                    })
+                    $('#select3').html(vals);
+                }
+            }).fail(function () {
+                toastr.error('获取分类信息超时!请稍后再试！');
+            })
+        })
+        $('#select3').on('change',function () {
+            $.ajax({
+                url:api+"category/list/",
+                data:{
+                    zoom:7,
+                    paid:$('#select3').val()
+                },dataType:'json'
+            }).done(function (data) {
+                if(data.code === 0){
+                    var vals="";
+                    data.list.forEach(function (item,index) {
+                        vals+="<option value='"+item.aid+"'>"+item.names+"</option>"
+                    })
+                    $('#select4').html(vals);
+                }
+            }).fail(function () {
+                toastr.error('获取分类信息超时!请稍后再试！');
+            })
+        })
         $('form').submit(function(e){
             var title=$('#title').val(),
                     file=$('#file').get(0).files[0];
+            var aid = $('#select4').val();
             e.preventDefault();
             var formData=new FormData();
             formData.append('uploadfile',file);
             formData.append('title',title);
             $('form').block({message:'<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
             $.ajax({
-                url:'{{config.url.upload}}/yunbook',
+                url:'{{config.url.upload}}/yunbook',dataType:'json',
                 data:formData,
                 type:'POST',
                 contentType: false,
@@ -78,11 +176,13 @@
                             size:data.file_size,
                             cover_path:"{{config.url.domain}}cover/"+data.cover_path,
                             path:'{{config.url.domain}}yunbook/'+ data.file_path,
-                            ext:file.name.split('.').pop()
-                        }
+                            ext:data.file_ext,
+                            aid:(aid === null || aid==='')?78287:aid
+                        },dataType:'json'
                     }).done(function(data){
                         if(data.code==0){
                             toastr.success('新建成功！');
+                            window.location.href = '/yunbook/'+data.identity
                         }else {
                             toastr.error(data.msg === '' ? "新建失败！" : data.msg);
                         }

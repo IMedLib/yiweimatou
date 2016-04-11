@@ -29,10 +29,10 @@ module.exports = {
             if (data.code === 0) {
                 clazz = data.get;
             } else {
-                console.error('Classroom/Get/', data);
+                console.log(new Date(),'Classroom/Get/',`cid=${cid}`, data);
             }
         }).catch(function(err) {
-            console.error('Classroom/Get/', err.message);
+            console.log(new Date(),'Classroom/Get/', err.message);
         });
         if (typeof clazz === 'undefined' || clazz === '{}') {
             this.redirect('/lesson');
@@ -48,10 +48,10 @@ module.exports = {
                 if (data.code === 0) {
                     lesson = data.get;
                 } else {
-                    console.error('lesson/get', data);
+                    console.log(new Date(),'lesson/get',`lid=${lid}`, data);
                 }
             }).catch(function(err) {
-                console.error('lesson/get', err.message);
+                console.log(new Date(),'lesson/get', err.message);
             });
         }
         yield this.render('clazz/edit', {

@@ -18,11 +18,11 @@ module.exports = {
         }).then(function(data) {
             if (data.code === 0) {
                 groups = data.list;
-            } else {
-                debug('organ/list/', data);
+            } else if(data.msg != ''){
+                console.log(new Date(),'organ/list/', data);
             }
         }).catch(function(err) {
-            debug('/organ/list/', err.message);
+            console.log(new Date(),'/organ/list/', err.message);
         });
         var count = 0;
         yield request({

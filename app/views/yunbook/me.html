@@ -9,27 +9,29 @@
 {% endblock %}}
 
 {% block content %}
-<div class="row" id='yunbookList'>
-        {% for yunbook in yunbooks %}
-        <div class="col-sm-4">
-            <div class="file">
-                <a target='_blank' href="/yunbook/{{yunbook.fid}}">
-                    <span class="corner"></span>
-                    <div class="img">
-                        <img src="{{yunbook.cover_path}}512_256.png" class="img-responsive" alt="">
-                    </div>
-                    <div class="file-name">
-                        {{yunbook.names}}
-                        <br/>
-                        <small>{{yunbook.put_ms}}</small>
-                    </div>
-                </a>
+<div style="background: #f7f7f7; padding: 20px">
+    <div class="row" id='yunbookList'>
+            {% for yunbook in yunbooks %}
+            <div class="col-sm-4">
+                <div class="file">
+                    <a target='_blank' href="/yunbook/{{yunbook.fid}}">
+                        <span class="corner"></span>
+                        <div class="img">
+                            <img src="{{yunbook.cover_path}}512_256.png" class="img-responsive" alt="">
+                        </div>
+                        <div class="file-name">
+                            {{yunbook.names}}
+                            <br/>
+                            <small>{{yunbook.put_ms}}</small>
+                        </div>
+                    </a>
+                </div>
             </div>
-        </div>
-        {% endfor %}
-</div>
-<div class="row">
-    <nav id="yunbookPage" class="pull-right"></nav>
+            {% endfor %}
+    </div>
+    <div class="row">
+        <nav id="yunbookPage" class="pull-right"></nav>
+    </div>
 </div>
 {% endblock %}
 {% block js %}
@@ -62,7 +64,7 @@
         $yunbookCollapse.addClass('in');
         $yunbookCollapse.find('li').eq(0).addClass('active');
         $('#yunbookPage').pagination({
-            items:2,
+            items:{{count}},
             listStyle:'pagination',
             onPageClick:function (page) {
                 getYunbooks(page);
@@ -76,7 +78,7 @@
                     type:3,
                     limit:9,
                     ofs:page
-                }
+                },dataType:'json'
             }).done(function (data) {
                 if(data.code === 0){
                     $list.html(template('yunbookListTemplaet',data));

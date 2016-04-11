@@ -10,18 +10,20 @@
 {% block body %}
     <div class="row" id="groupList">
     {% for group in groups %}
-        <div class="col-sm-4 file">
-            <a href="/group/{{group.oid}}">
-                <span class="corner"></span>
-                <div class="img">
-                    <img src="{{group.cover_path}}512_256.png" class="img-responsive" alt="">
-                </div>
-                <div class="file-name">
-                    {{group.names}}
-                    <br/>
-                    <small>{{group.add_ms}}</small>
-                </div>
-            </a>
+        <div class="col-sm-4">
+            <div class="file">
+                <a href="/group/{{group.oid}}">
+                    <span class="corner"></span>
+                    <div class="img">
+                        <img src="{{group.cover_path}}512_256.png" class="img-responsive" alt="">
+                    </div>
+                    <div class="file-name">
+                        {{group.names}}
+                        <br/>
+                        <small>{{group.add_ms}}</small>
+                    </div>
+                </a>
+            </div>
         </div>
     {% endfor %}
     </div>
@@ -33,18 +35,20 @@
 <script src="/js/lib/template.js"></script>
 <script id="groupTemplate" type="text/html">
     [each list as group]
-        <div class="col-sm-4 file">
-            <a href="/group/[group.oid]">
-                <span class="corner"></span>
-                <div class="img">
-                    <img src="[group.cover_path]512_256.png" class="img-responsive" alt="">
-                </div>
-                <div class="file-name">
-                    [group.names]
-                    <br/>
-                    <small>[group.add_ms]</small>
-                </div>
-            </a>
+        <div class="col-sm-4">
+            <div class="file">
+                <a href="/group/[group.oid]">
+                    <span class="corner"></span>
+                    <div class="img">
+                        <img src="[group.cover_path]512_256.png" class="img-responsive" alt="">
+                    </div>
+                    <div class="file-name">
+                        [group.names]
+                        <br/>
+                        <small>[group.add_ms]</small>
+                    </div>
+                </a>
+            </div>
         </div>
     [/each]
 </script>
@@ -71,7 +75,7 @@
                 data:{
                     limit:9,
                     ofs:page
-                }
+                },dataType:'json'
             }).done(function (data) {
                 if(data.code === 0){
                     $('#groupList').html(template('groupTemplate',data));

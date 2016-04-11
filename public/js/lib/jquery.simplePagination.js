@@ -13,7 +13,7 @@
 	var methods = {
 		init: function(options) {
 			var o = $.extend({
-				items: 1,
+				items: 0,
 				itemsOnPage: 1,
 				pages: 0,
 				displayedPages: 5,

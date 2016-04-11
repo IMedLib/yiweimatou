@@ -1,41 +1,70 @@
 {% extends '../layout/user_sidebar.html' %}
 {% block css %}
-<link rel="stylesheet" href="/css/lib/simplePagination.css">
-{% endblock %}
+<link href="/css/lib/simplePagination.css" rel="stylesheet">
+    {% endblock %}
 {% block breadcrumbs %}
-<li><a href="/index">首页</a></li>
-<li class="active">{{title}}</li>
-{% endblock %}
+    <li>
+        <a href="/index">
+            首页
+        </a>
+    </li>
+    <li class="active">
+        {{title}}
+    </li>
+    {% endblock %}
 
 {% block content %}
-<div id="lessons" class="row">
-    {% for lesson in lessons %}
-    <div class="col-sm-4">
-        <div class="file">
-            <a href="/lesson/{{lesson.lid}}">
-                <span class="corner"></span>
-                <div class="img">
-                    <img src="{{lesson.cover_path}}512_256.png" class="img-responsive" alt="">
+    <div id='content' style="background: #f7f7f7; padding: 20px">
+        <div class="row margin-bottom-20 margin-left-5">
+            <button class="btn btn-u" id="btn1">
+                我的课程
+            </button>
+            <button class="btn" id="btn2">
+                主讲课程
+            </button>
+            <button class="btn" id="btn3">
+                助教课程
+            </button>
+        </div>
+        <div class="row" id="lessons">
+            {% for lesson in lessons %}
+            <div class="col-sm-4">
+                <div class="file">
+                    <a href="/lesson/{{lesson.lid}}">
+                        <span class="corner">
+                        </span>
+                        <div class="img">
+                            <img alt="" class="img-responsive" src="{{lesson.cover_path}}512_256.png">
+                            </img>
+                        </div>
+                        <div class="file-name">
+                            {{lesson.names}}
+                            <br/>
+                            <small>
+                                {{lesson.put_ms}}
+                            </small>
+                        </div>
+                    </a>
                 </div>
-                <div class="file-name">
-                    {{lesson.names}}
-                    <br/>
-                    <small>{{lesson.put_ms}}</small>
-                </div>
-            </a>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="row">
+            <nav class="pull-right" id="page">
+            </nav>
         </div>
     </div>
-    {% endfor %}
-</div>
-<div class="row">
-<nav id="page" class="pull-right"></nav></div>
-{% endblock %}
+    {% endblock %}
 
 {% block js %}
-<script src="/js/lib/jquery.simplePagination.js"></script>
-<script src="/js/lib/template.js"></script>
-<script id="lessonTemplate" type="text/html">
-    [each list as lesson]
+    <script src="/js/lib/jquery.simplePagination.js">
+    </script>
+    <script src="/js/lib/template.js">
+    </script>
+    <script src="/js/lib/jquery.blockUI.min.js" type="text/javascript">
+    </script>
+    <script id="lessonTemplate" type="text/html">
+        [each list as lesson]
     <div class="col-sm-4">
         <div class="file">
             <a href="/lesson/[lesson.lid]">
@@ -52,17 +81,20 @@
         </div>
     </div>
     [/each]
-</script>
-<script>
-    $(document).ready(function () {
-        var $lessonCollapse = $('#collapse-lesson');
-        $lessonCollapse.addClass('in');
-        $lessonCollapse.find('li').eq(0).addClass('active'),
-        api='{{config.url.api}}';
-        '{% if count>0 %}'
+    </script>
+    <script>
+        $(document).ready(function () {
+        jQuery('.list-group-item').on('click', function () {
+            jQuery(this).toggleClass('active');
+        });
+        $('.list-group-item').eq(2).addClass('active');
+        var api='{{config.url.outside.api}}' ,key='{{key}}';
+        var $btn1 = $('#btn1'), $btn2 = $('#btn2'), $btn3 = $('#btn3');
+        var $page = $('#page'), $list = $('#lessons'), $div=$('#content');
         template.config('openTag','[');
         template.config('closeTag',']');
-        $('#page').pagination({
+
+        $page.pagination({
             items: '{{count}}',
             listStyle: "pagination",
             onPageClick: function (page) {
@@ -71,18 +103,218 @@
                     data: {
                         limit: 9,
                         ofs: page,
-                        uid: '{{key}}'
-                    }
+                        uid: key
+                    },dataType:'json'
                 }).done(function (data) {
                     if (data.code === 0) {
-                        $('#lessons').html(template('lessonTemplate', data));
+                        $list.html(template('lessonTemplate', data));
                     }
                 }).catch(function () {
                     toastr.error('获取课程失败!');
                 });
             }
         });
-        '{%endif%}'
+        $btn1.on('click',function(){
+            if($btn1.hasClass('')){
+                return;
+            }
+            $btn2.removeClass('btn-u');
+            $btn3.removeClass('btn-u');
+            $btn1.addClass('btn-u');
+            $div.block({message:'<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
+            $.ajax({
+                url:api+'lessonuser/info',
+                data:{
+                    uid:key
+                },
+                dataType:'json'
+            }).done(function(data){
+                if(data.code === 0 && data.info.count > 0){
+                    $page.pagination('destroy');
+                    $page.pagination({
+                        items:Math.ceil(data.info.count/9),
+                        listStyle:'pagination',
+                        onPageClick:function(page){
+                            getUserLessons(page);
+                        }
+                    });
+                    getUserLessons(1);
+                }
+            }).always(function(){
+                $div.unblock();
+            })
+            
+        })
+        $btn2.click(function(){
+            if($btn2.hasClass('btn-u')){
+                return;
+            }
+            $btn1.removeClass('btn-u');
+            $btn3.removeClass('btn-u');
+            $btn2.addClass('btn-u');
+            $div.block({message:'<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
+            $.ajax({
+                url:api+'lesson/info',
+                data:{
+                    uid:key
+                },
+                dataType:'json'
+            }).done(function(data){
+                if(data.code === 0 && data.info.count > 0){
+                    $page.pagination('destroy');
+                    $page.pagination({
+                        items:Math.ceil(data.info.count/9),
+                        listStyle:'pagination',
+                        onPageClick:function(page){
+                            getAdminLessons(page);
+                        }
+                    })
+                    getAdminLessons(1);
+                }else{
+                    $list.empty();
+                }
+            }).fail(function(){
+                toastr.error('服务器超时，请稍后再试!')
+            }).always(function(){
+                $div.unblock();
+            });
+        });
+        $btn3.click(function(){
+            if($btn3.hasClass('btn-u')){
+                return;
+            }
+            $btn1.removeClass('btn-u');
+            $btn2.removeClass('btn-u');
+            $btn3.addClass('btn-u');
+            $div.block({message:'<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
+            $.ajax({
+                url:api+'lessonadmin/info',
+                data:{
+                    uid:key
+                },
+                dataType:'json'
+            }).done(function(data){
+                if(data.code === 0 && data.info.count > 0){
+                    $page.pagination('destroy');
+                    $page.pagination({
+                        items:Math.ceil(data.info.count/9),
+                        listStyle:'pagination',
+                        onPageClick:function(page){
+                            getAssistantLessons(page);
+                        }
+                    });
+                    getAssistantLessons(1);   
+                }else{
+                    $page.pagination('destroy');
+                    $list.empty();
+                }
+            }).fail(function(){
+                toastr.error('服务器超时，请稍后再试!')
+            }).always(function(){
+                $div.unblock();
+            });
+        });
+        function doSynchronousLoop(data, processData, done) {
+            if (data.length > 0) {
+                var loop = function(data, i, processData, done) {
+                    processData(data[i], i, function() {
+                        if (++i < data.length) {
+                            loop(data, i, processData, done);
+                        } else {
+                            done();
+                        }
+                    });
+                };
+                loop(data, 0, processData, done);
+            } else {
+                done();
+            }
+        }
+        function getUserLessons(page){
+            $.ajax({
+                url:api+'lessonuser/list',
+                data:{
+                    uid:key,
+                    limit:9,
+                    ofs:1
+                },
+                dataType:'json'
+            }).done(function(data){
+                if(data.code === 0){
+                    var lessons= {list:[]};
+                    doSynchronousLoop(data.list,function(item,index,callback){
+                        $.ajax({
+                            url:api+'lesson/get',
+                            data:{
+                                lid:item.lid
+                            },
+                            dataType:'json'
+                        }).done(function(data){
+                            if(data.code === 0){
+                                lessons.list.push(data.get);
+                            }
+                        }).always(function(){
+                            callback();
+                        })
+                    },function(){
+                        $list.html(template('lessonTemplate', lessons));;
+                    })
+                }
+            })
+        }
+        function getAssistantLessons(page){
+            $.ajax({
+                url:api+'lessonadmin/list',
+                data:{
+                    uid:key,
+                    limit:9,
+                    ofs:1
+                },
+                dataType:'json'
+            }).done(function(data){
+                if(data.code === 0){
+                    var lessons={list:[]};
+                    doSynchronousLoop(data.list,function(item,index,callback){
+                        $.ajax({
+                            url:api+'lesson/get',
+                            data:{
+                                lid:item.lid
+                            },
+                            dataType:'json'
+                        }).done(function(data){
+                            if(data.code === 0){
+                                lessons.list.push(data.get);
+                            }
+                        }).always(function(){
+                            callback();
+                        })
+                    },function(){
+                        $list.html(template('lessonTemplate', lessons));
+                    });
+                }
+            }).fail(function(){
+                toastr.error('服务器超时，请稍后再试!')
+            })
+        }
+        function getAdminLessons(page){
+            $.ajax({
+                url:api+'lesson/list',
+                data:{
+                    uid:key,
+                    limit:9,
+                    ofs:page
+                },
+                dataType:'json'
+            }).done(function(data){
+                if(data.code === 0){
+                    console.log(data);
+                    $list.html(template('lessonTemplate', data));
+                }
+            }).fail(function(){
+                toastr.error('获取课程失败!');
+            })
+        }
     });
-</script>
-{% endblock %}
+    </script>
+    {% endblock %}
+</link>
