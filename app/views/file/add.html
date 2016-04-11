@@ -53,7 +53,7 @@
             var title=$('#title').val(),
                     remark=$('#remark').val(),
                     file=$('#file').get(0).files[0];
-            $('form').block();
+            $('form').block({message:'<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
             var formData=new FormData();
             formData.append('uploadfile',file);
             $.ajax({
@@ -63,37 +63,58 @@
                 contentType: false,
                 processData: false,
                 timeout:300000 //5min
+                ,dataType:'json'
             }).done(function(data){
+                //1:图片,2:视频,3:云板书,4:文档
+                var type = 0;
                 if(data.code===0){
+                    if(data.file_ext !== undefined){
+                        var ext = data.file_ext.toUpperCase();
+                        if(['BMP','GIF','JPEG','PNG'].indexOf(ext) > 0){
+                            type = 1;
+                        }else if(['MPG','MPEG','AVI','RM','RMVB','MOV','WMV','DAT'].indexOf(ext)){
+                            type = 2
+                        }else if(['TXT','DOC','DOCX'].indexOf(ext)){
+                            type = 4;
+                        }
+                        if(type === 0){
+                            toastr.error('请上传图片视频或者文档!');
+                            return false;
+                        }
+                    }else{
+                        toastr.error('上传失败,请稍后再试!');
+                        return false;
+                    }
                     $.ajax({
                         url: "{{config.url.api}}Userfile/Add/",
                         type:'post',
                         data: {
+                            aid:
+                            uid:'{{key}}',
                             title: title,
                             key: '{{key}}',
                             token: '{{token}}',
                             remark: remark,
-                            zoom:4,
+                            type:type,
                             ext:data.file_ext,
                             size:data.file_size,
-                            point: "POINT(0 0)",
-                            coverpath:"fa-file",
-                            uri:'{{config.url.domain}}file/'+ data.file_path+data.file_name+data.file_ext
-                        }
+                            coverpath:"",
+                            uri:'{{config.url.domain}}file/'+ data.file_path+data.file_name
+                        },dataType:'json'
                     }).done(function(data){
                         if(data.code==0){
-                            alert('新建成功！');
+                            toastr.success('新建成功！');
                         }else {
-                            alert(data.msg === '' ? "新建失败！" : data.msg);
+                            toastr.error(data.msg === '' ? "新建失败！" : data.msg);
                         }
                     }).fail(function(){
-                        alert('上传文件失败！');
+                        toastr.error('上传文件失败！');
                     });
                 }else{
-                    alert(data.msg===''?"上传失败，请重新上传！":data.msg);
+                    toastr.error(data.msg===''?"上传失败，请重新上传！":data.msg);
                 }
             }).fail(function(){
-                alert('文件上传超时！');
+                toastr.error('文件上传超时！');
             }).always(function(){
                 $('form').unblock();
             });
