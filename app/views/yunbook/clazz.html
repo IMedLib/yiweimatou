@@ -148,7 +148,7 @@
                           key:key,
                           token:token
                       },
-                      type:'post'
+                      type:'post',dataType:'json'
                   }).done(function (data) {
                       if(data.code === 0){
                           toastr.success('保存成功!');
