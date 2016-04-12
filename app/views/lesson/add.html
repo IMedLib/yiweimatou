@@ -234,6 +234,10 @@
                     toastr.error('无法找到主讲教师，请核对手机号码');
                     return false;
                 }
+                var aid = $('#select3').val();
+                if(aid === null || aid === ''){
+                    aid = 0;
+                }
                 var formData = new FormData();
                 formData.append('uploadfile', file.get(0).files[0]);
                 $('#wizard').block({message:'<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
@@ -256,7 +260,7 @@
                                 names: title.val(),
                                 descript: remark,
                                 uid: uid,
-                                aid:$('#select3').val(),
+                                aid:aid,
                                 cover_path: '{{config.url.domain}}/cover/' + data.cover_path,
                                 start_ms:start.val(),
                                 end_ms:end.val(),

@@ -1,254 +1,285 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
+<head>
     <title>{{title}}</title>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
-    <link rel="stylesheet" href="/js/lib/leaflet/leaflet.css"/>
-    <link rel="stylesheet" href="/js/lib/leaflet/leaflet.draw.css">
-    <link rel="stylesheet" href="/css/lib/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/lib/summernote/summernote.css">
-    <link rel="stylesheet" href="/css/lib/Font-Awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/js/lib/leaflet/easy-button.css">
-    <link rel="stylesheet" href="/css/toastr.min.css">
+    <link rel="stylesheet" href="/js/lib/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="/js/lib/leaflet/leaflet.draw.css" />
+    <link rel="stylesheet" href="/css/lib/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/lib/summernote/summernote.css" />
+    <link rel="stylesheet" href="/css/lib/Font-Awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="/js/lib/leaflet/easy-button.css" />
+    <link rel="stylesheet" href="/css/toastr.min.css" />
+    <!--<link ref="stylesheet" href="/css/styledLayerControl.css" />-->
     <style>
-      html,
-      body,
-      #map {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
+        html,
+        body,
+        #map {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
 
     </style>
-  </head>
+</head>
 
-  <body>
-    <div id="map"></div>
-    <div id="modal" class="modal fade">
-      <div class="modal-dialog modal-lg">
+<body>
+<div id="map"></div>
+<div class="modal fade" id="qrModal">
+    <div class="modal-dialog modal-sm">
         <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title">填写标注弹出内容</h4>
-          </div>
-          <div class="modal-body">
-            <div id="summernote"></div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" id="submit" class="btn btn-primary">保存</button>
-          </div>
+            <div class="modal-header">
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">
+                                ×
+                            </span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="qrcode"></div>
+            </div>
         </div>
         <!-- /.modal-content -->
-      </div>
-      <!-- /.modal-dialog -->
     </div>
-    <!-- /.modal -->
-    <script>
-      L_PREFER_CANVAS = true;
-    </script>
-    <script src="/js/lib/leaflet/leaflet-src1.0.js"></script>
-    <script src="/js/lib/leaflet/leaflet.draw-src.js"></script>
-    <script src="/js/lib/jquery.min.js"></script>
-    <script src="/js/lib/bootstrap.min.js"></script>
-    <script src="/js/lib/summernote.js"></script>
-    <script src="/js/lib/summernote-zh-CN.js"></script>
-    <script type="text/javascript" src='/js/lib/leaflet/easy-button.js'></script>
-    <script src="/js/toastr.min.js" charset="utf-8"></script>
-    <script>
-      (function (document, window) {
-        var key = '{{key}}',
-          token = '{{token}}',
-          w = {{yunbook.width}},
-          url = '{{yunbook.path}}',
-          h = {{yunbook.height}},
-          mapMinZoom = 0,
-          mapMaxZoom = {{yunbook.zoom}},
-          fid = {{yunbook.fid}},
-          temp =decodeURIComponent('{{classRoomYunbookList}}'),
-          stuLabels = temp===''?'':JSON.parse(temp),
-          _data =unescape('{{label}}'),
-          api = '{{api}}',admin = {{admin}},cfid={{cfid}},cybid={{cybid}};
+    <!-- /.modal-dialog -->
+</div>
+<div id="modal" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">填写标注弹出内容</h4>
+            </div>
+            <div class="modal-body">
+                <div id="summernote"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-primary">保存</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<script>
+    L_PREFER_CANVAS = true;
+</script>
+<script src="/js/lib/leaflet/leaflet-src1.0.js"></script>
+<script src="/js/lib/leaflet/leaflet.draw-src.js"></script>
+<script src="/js/lib/jquery.min.js"></script>
+<script src="/js/lib/bootstrap.min.js"></script>
+<script src="/js/lib/summernote.js"></script>
+<script src="/js/lib/summernote-zh-CN.js"></script>
+<script type="text/javascript" src='/js/lib/leaflet/easy-button.js'></script>
+<script src="/js/toastr.min.js" charset="utf-8"></script>
+<script src="/js/qrcode.min.js"></script>
+<!--<script src="/js/styledLayerControl.js"></script>-->
+<script>
+    (function (document, window) {
+        var key = '{{key}}', token = '{{token}}', w = {{yunbook.width}},
+        url = '{{yunbook.path}}', h = {{yunbook.height}},mapMinZoom = 0, mapMaxZoom = {{yunbook.zoom}},
+        fid = {{yunbook.fid}},
+        temp = decodeURIComponent('{{classRoomYunbookList}}'), stuLabels = temp === '' ? '' : JSON.parse(temp),
+                _data = unescape('{{label}}'),
+                api = '{{api}}', admin = {{admin}},
+        cfid = {{cfid}},cybid = {{cybid}};
         var _map = L.map('map', {
-          maxZoom: mapMaxZoom,
-          minZoom: mapMinZoom,
-          zoomControl: true,
-          attributionControl: false,
-          crs: L.CRS.Simple
+            maxZoom: mapMaxZoom,
+            minZoom: mapMinZoom,
+            zoomControl: true,
+            attributionControl: false,
+            crs: L.CRS.Simple
         });
-        
+        var control = L.control.layers().addTo(_map);
         {% if admin %}
-        if(stuLabels.length > 0){
-            var control = L.control.layers().addTo(_map);
-            stuLabels.forEach(function (item,index) {
-                if(item.label !== ''){
-                    var _layerGroup = L.geoJson(JSON.parse(unescape(item.label)),{
-                        onEachFeature:function (featureData,layer) {
-                            if(featureData.geometry.type === 'Point'){
-                                var popup = L.popup({maxWidth: 1200});
+        if (stuLabels.length > 0) {
+            stuLabels.forEach(function (item, index) {
+                if (item.label !== '') {
+                    var _layerGroup = L.geoJson(JSON.parse(unescape(item.label)), {
+                        onEachFeature: function (featureData, layer) {
+                            if (featureData.geometry.type === 'Point') {
+                                var popup = L.popup();
                                 popup.setContent(featureData.properties._popup);
                                 layer.bindPopup(popup);
                             }
                         }
                     });
-                    var name='';
+                    var name = '';
                     $.ajax({
-                        url:api+'lessonuser/get',
-                        data:{
-                            uid:item.uid,
-                            key:key,
-                            token:token
-                        },async:false,dataType:'json'
+                        url: api + 'lessonuser/get',
+                        data: {
+                            uid: item.uid,
+                            key: key,
+                            token: token
+                        }, async: false, dataType: 'json'
                     }).done(function (data) {
-                        if(data.code === 0 && data.get.id !== undefined){
-                            if(data.get.type == 1){
-                                name = '校外生'+data.get.uid;
-                            }else{
-                                name =data.get.names;
+                        if (data.code === 0 && data.get.id !== undefined) {
+                            if (data.get.type == 1) {
+                                name = '校外生' + data.get.uid;
+                            } else {
+                                name = data.get.names;
                             }
                         }
                     });
-                    control.addOverlay(_layerGroup,name);
+                    control.addOverlay(_layerGroup, name);
                 }
             })
         }
         {% else %}
-        if(stuLabels.length > 0){
-            var control = L.control.layers().addTo(_map);
-            stuLabels.forEach(function (item,index) {
-                    var _layerGroup = L.geoJson(JSON.parse(unescape(item)),{
-                        onEachFeature:function (featureData,layer) {
-                            if(featureData.geometry.type === 'Point'){
-                                var popup = L.popup({maxWidth: 1200});
-                                popup.setContent(featureData.properties._popup);
-                                layer.bindPopup(popup);
-                            }
+        if (stuLabels.length > 0) {
+            stuLabels.forEach(function (item, index) {
+                var _layerGroup = L.geoJson(JSON.parse(unescape(item)), {
+                    onEachFeature: function (featureData, layer) {
+                        if (featureData.geometry.type === 'Point') {
+                            var popup = L.popup();
+                            popup.setContent(featureData.properties._popup);
+                            layer.bindPopup(popup);
                         }
-                    });
-                    control.addOverlay(_layerGroup,"教师标注");
+                    }
+                });
+                control.addOverlay(_layerGroup, "教师标注");
             });
         }
         {% endif %}
         L.easyButton({
-          position: 'topright',
-          states: [
-            {
-              stateName: 'save',
-              icon: 'fa fa-floppy-o fa-2x',
-              onClick: function (control) {
-                  {%if admin%}
-                  $.ajax({
-                      url:api+'/classroomfile/put',
-                      data:{
-                          cfid:cfid,
-                          label:escape(JSON.stringify(_geoJson)),
-                          key:key,
-                          token:token
-                      },
-                      type:'post',dataType:'json'
-                  }).done(function (data) {
-                      if(data.code === 0){
-                          toastr.success('保存成功!');
-                      }else if(data.msg != ''){
-                          toastr.error(data.msg);
-                      }
-                  }).fail(function () {
-                      toastr.error('保存超时，请稍后再试!');
-                  })
-                  {% else %}
-                  if(_geoJson === ''){
-                      if(cybid > 0)
-                      {
-                          $.ajax({
-                              url:api+'classroomyunbook/del',
-                              data:{
-                                  key:key,
-                                  token:token,
-                                  id:cybid
-                              },type:'POST',dataType:'json'
-                          }).done(function (data) {
-                              if(data.code === 0){
-                                  toastr.success('保存成功!');
-                              }else if(data.msg != ''){
-                                  toastr.error(data.msg);
-                              }
-                          }).fail(function  () {
-                              toastr.error('保存超时，请稍后再试!');
-                          })
-                      }else{
-                          toastr.warning('没有什么需要保存！');
-                      }
-                      return;
-                  }
-                  var url = '';
-                  if(cybid > 0){
-                      url = api + 'classroomyunbook/put';
-                  }else{
-                      $.ajax({
-                          url:api+'classroomyunbook/get',
-                          data:{
-                              uid:key,
-                              cfid:cfid,
-                              key:key,
-                              token:token
-                          },async:false,dataType:'json'
-                      }).done(function (data) {
-                          if(data.code === 0){
-                              if(data.get.id !=undefined){
-                                  cybid = data.get.id;
-                                  url = api+'classroomyunbook/put';
-                              }else{
-                                  url = api + 'classroomyunbook/add';
-                              }
-                          }else{
-                              url = api + 'classroomyunbook/add';
-                          }
-                      });
-                  }
-                  if(url === ''){
-                      toastr.error('保存失败!');
-                      return;
-                  }
-                  $.ajax({
-                    url: url,
-                    data: {
-                      id:cybid,
-                      cfid:cfid,
-                      label:escape(JSON.stringify(_geoJson)),
-                      key:key,
-                      token:token
-                    },
-                    type: 'post',dataType:'json'
-                  }).done(function (data) {
-                        if (data.code === 0) {
-                          toastr.success('保存成功!');
-                        }else if(data.msg != ''){
-                          toastr.error(data.msg);
+            position: 'topright',
+            states: [
+                {
+                    stateName: 'save',
+                    icon: 'fa fa-floppy-o fa-2x',
+                    onClick: function (control) {
+                        {% if admin %}
+                        $.ajax({
+                            url: api + '/classroomfile/put',
+                            data: {
+                                cfid: cfid,
+                                label: escape(JSON.stringify(_geoJson)),
+                                key: key,
+                                token: token
+                            },
+                            type: 'post', dataType: 'json'
+                        }).done(function (data) {
+                            if (data.code === 0) {
+                                toastr.success('保存成功!');
+                            } else if (data.msg != '') {
+                                toastr.error(data.msg);
+                            }
+                        }).fail(function () {
+                            toastr.error('保存超时，请稍后再试!');
+                        })
+                        {% else %}
+                        if (_geoJson === '') {
+                            if (cybid > 0) {
+                                $.ajax({
+                                    url: api + 'classroomyunbook/del',
+                                    data: {
+                                        key: key,
+                                        token: token,
+                                        id: cybid
+                                    }, type: 'POST', dataType: 'json'
+                                }).done(function (data) {
+                                    if (data.code === 0) {
+                                        toastr.success('保存成功!');
+                                    } else if (data.msg != '') {
+                                        toastr.error(data.msg);
+                                    }
+                                }).fail(function () {
+                                    toastr.error('保存超时，请稍后再试!');
+                                })
+                            } else {
+                                toastr.warning('没有什么需要保存！');
+                            }
+                            return;
                         }
-                  })
-                  {% endif %}
-             }
-            }
-          ]
+                        var url = '';
+                        if (cybid > 0) {
+                            url = api + 'classroomyunbook/put';
+                        } else {
+                            $.ajax({
+                                url: api + 'classroomyunbook/get',
+                                data: {
+                                    uid: key,
+                                    cfid: cfid,
+                                    key: key,
+                                    token: token
+                                }, async: false, dataType: 'json'
+                            }).done(function (data) {
+                                if (data.code === 0) {
+                                    if (data.get.id != undefined) {
+                                        cybid = data.get.id;
+                                        url = api + 'classroomyunbook/put';
+                                    } else {
+                                        url = api + 'classroomyunbook/add';
+                                    }
+                                } else {
+                                    url = api + 'classroomyunbook/add';
+                                }
+                            });
+                        }
+                        if (url === '') {
+                            toastr.error('保存失败!');
+                            return;
+                        }
+                        $.ajax({
+                            url: url,
+                            data: {
+                                id: cybid,
+                                cfid: cfid,
+                                label: escape(JSON.stringify(_geoJson)),
+                                key: key,
+                                token: token
+                            },
+                            type: 'post', dataType: 'json'
+                        }).done(function (data) {
+                            if (data.code === 0) {
+                                toastr.success('保存成功!');
+                            } else if (data.msg != '') {
+                                toastr.error(data.msg);
+                            }
+                        })
+                        {% endif %}
+                    }
+                }
+            ]
+        }).addTo(_map);
+        //二维码
+        L.easyButton({
+            position: 'topright',
+            states: [{
+                stateName: 'qrcode',
+                icon: 'fa fa-qrcode fa-2x',
+                onClick: function (control) {
+                    $('#qrModal').modal('show');
+                    var node = document.getElementById('qrcode');
+                    if (node.innerHTML === '') {
+                        var qrcode = new QRCode(node, {
+                            width: 256, height: 256
+                        });
+                        qrcode.makeCode(window.location.href);
+                    }
+                }
+            }]
         }).addTo(_map);
         var $summernote = $('#summernote'),
-          $modal = $('#modal'),
-          $submit = $('#submit');
+                $modal = $('#modal'),
+                $submit = $('#submit');
         var _mapBounds = new L.LatLngBounds(_map.unproject([
-          0, h
+            0, h
         ], mapMaxZoom), _map.unproject([
-          w, 0
+            w, 0
         ], mapMaxZoom));
         _map.setMaxBounds(_mapBounds);
         _map.fitBounds(_mapBounds);
         L.tileLayer(url + '{z}/{x}/{y}.png', {
-          minZoom: mapMinZoom,
-          maxZoom: mapMaxZoom,
-          bounds: _mapBounds,
-          noWrap: true
+            minZoom: mapMinZoom,
+            maxZoom: mapMaxZoom,
+            bounds: _mapBounds,
+            noWrap: true
         }).addTo(_map);
         //汉化
         L.drawLocal.draw.toolbar.buttons.marker = '标注!';
@@ -266,147 +297,158 @@
         L.drawLocal.edit.toolbar.buttons.remove = '删除标注';
         L.drawLocal.edit.toolbar.buttons.editDisabled = '没有标注需要修改';
         L.drawLocal.edit.toolbar.buttons.removeDisabled = '没有标注需要删除';
-        var _drawnItems,_geoJson = {
-          type: 'FeatureCollection',
-          features: []
+        var _drawnItems, _geoJson = {
+            type: 'FeatureCollection',
+            features: []
         };
         if (_data === '') {
-          _drawnItems = new L.FeatureGroup().addTo(_map);
+            _drawnItems = new L.FeatureGroup().addTo(_map);
         } else {
-           _drawnItems = L.geoJson(JSON.parse(_data),{
-               onEachFeature:function (featureData,layer) {
-                   if(featureData.geometry.type === 'Point'){
-                       var popup = L.popup({maxWidth: 1200});
-                       popup.setContent(featureData.properties._popup);
-                       layer.bindPopup(popup);
-                   }
-               }
-           }).addTo(_map);
-           for(var id in _drawnItems._layers){
-               var _json = _drawnItems._layers[id].toGeoJSON();
-               _json.properties._id = _drawnItems._layers[id]._leaflet_id;
-               _geoJson.features.push(_json);
-           }
+            _drawnItems = L.geoJson(JSON.parse(_data), {
+                onEachFeature: function (featureData, layer) {
+                    if (featureData.geometry.type === 'Point') {
+                        var popup = L.popup();
+                        popup.setContent(featureData.properties._popup);
+                        layer.bindPopup(popup);
+                    }
+                }
+            }).addTo(_map);
+            for (var id in _drawnItems._layers) {
+                var _json = _drawnItems._layers[id].toGeoJSON();
+                _json.properties._id = _drawnItems._layers[id]._leaflet_id;
+                _geoJson.features.push(_json);
+            }
         }
         new L.Control.Draw({
-          edit: {
-            featureGroup: _drawnItems,
             edit: {
-              selectedPathOptions: {
-                maintainColor: true,
-                opacity: 0.3
-              }
+                featureGroup: _drawnItems,
+                edit: {
+                    selectedPathOptions: {
+                        maintainColor: true,
+                        opacity: 0.3
+                    }
+                }
+            },
+            draw: {
+                polyline: false,
+                polygon: false,
+                rectangle: false,
+                circle: false
             }
-          },
-          draw: {
-            polyline: false,
-            polygon: false,
-            rectangle: false,
-            circle: false
-          }
         }).addTo(_map);
-        $summernote.summernote({focus: true, height: 300, lang: 'zh-CN'});
+        $summernote.summernote({
+            toolbar: [
+                ['视频', ['video']],
+                ['链接', ['link']],
+                ['源码',['codeview']]
+            ],
+            focus: true, height: 300, lang: 'zh-CN'
+        });
         function removeLayer(id) {
-          _drawnItems.removeLayer(id);
-          removeGeoJson(id);
+            _drawnItems.removeLayer(id);
+            removeGeoJson(id);
         }
-        function updateGeoJson(now,old) {
-          var index=_geoJson.features.indexOf(old);
-          if(index === -1) return;
-          _geoJson.features[index] = now;
+
+        function updateGeoJson(now, old) {
+            var index = _geoJson.features.indexOf(old);
+            if (index === -1) return;
+            _geoJson.features[index] = now;
         }
+
         function findGeoJson(id) {
-          var _temp;
-          _geoJson.features.forEach(function (item, index) {
-            if (item.properties._id === id) {
-              _temp = _geoJson.features[index];
-              return;
-            }
-          });
-          return _temp;
+            var _temp;
+            _geoJson.features.forEach(function (item, index) {
+                if (item.properties._id === id) {
+                    _temp = _geoJson.features[index];
+                    return;
+                }
+            });
+            return _temp;
         }
+
         function removeGeoJson(id) {
-          _geoJson.features.forEach(function (item, index) {
-            if (item.properties._id === id) {
-              _geoJson.features.splice(index, 1);
-              return;
-            }
-          })
+            _geoJson.features.forEach(function (item, index) {
+                if (item.properties._id === id) {
+                    _geoJson.features.splice(index, 1);
+                    return;
+                }
+            })
         }
+
         _map.on('draw:edited', function (e) {
-          e.layers.eachLayer(function (_layer) {
-            var tmp = findGeoJson(_layer._leaflet_id);
-            if (tmp != undefined) {
-                var old = tmp;
-                var latLng = _layer.getLatLng();
-                tmp.geometry.coordinates = [latLng.lng,latLng.lat];
-                updateGeoJson(tmp,old);
-            }
-          })
+            e.layers.eachLayer(function (_layer) {
+                var tmp = findGeoJson(_layer._leaflet_id);
+                if (tmp != undefined) {
+                    var old = tmp;
+                    var latLng = _layer.getLatLng();
+                    tmp.geometry.coordinates = [latLng.lng, latLng.lat];
+                    updateGeoJson(tmp, old);
+                }
+            })
         });
         _map.on('draw:deleted', function (e) {
-          e.layers.eachLayer(function (_layer) {
-            removeGeoJson(_layer._leaflet_id);
-          })
+            e.layers.eachLayer(function (_layer) {
+                removeGeoJson(_layer._leaflet_id);
+            })
         })
         _map.on('draw:created', function (e) {
-          var _layer = e.layer,
-            _type = e.layerType;
-          _drawnItems.addLayer(_layer);
-          if (_type === 'marker') {
-            $summernote.summernote('code', '');
-            $modal.modal('show');
-            $submit.unbind('click');
-            // var _content = '<div><i class="fa fa-trash" onClick="removeLayer('+_layer._leaflet_id+')"</div></i>';
-            var popup = L.popup({maxWidth: 1200}); //.setContent(_content);
-            var _geoJsonTmp = _layer.toGeoJSON();
-            // _geoJsonTmp.properties._uid = key;
-            _geoJsonTmp.properties._id = _layer._leaflet_id;
-            _geoJsonTmp.properties._popup = '';
-            _geoJson.features.push(_geoJsonTmp);
-            $submit.on('click', function () {
-              $modal.modal('hide');
-              var code = $summernote.summernote('code');
-              if (code !== '') {
-                popup.setContent(code);
-                _layer.bindPopup(popup).openPopup();
-                var old = _geoJsonTmp;
-                _geoJsonTmp.properties._popup = code;
-                updateGeoJson(_geoJsonTmp,old);
-              }
-            });
+            var _layer = e.layer,
+                    _type = e.layerType;
+            _drawnItems.addLayer(_layer);
+            if (_type === 'marker') {
+                $summernote.summernote('code', '');
+                $modal.modal('show');
+                $submit.unbind('click');
+                // var _content = '<div><i class="fa fa-trash" onClick="removeLayer('+_layer._leaflet_id+')"</div></i>';
+                var popup = L.popup({maxWidth: 1200}); //.setContent(_content);
+                var _geoJsonTmp = _layer.toGeoJSON();
+                // _geoJsonTmp.properties._uid = key;
+                _geoJsonTmp.properties._id = _layer._leaflet_id;
+                _geoJsonTmp.properties._popup = '';
+                _geoJson.features.push(_geoJsonTmp);
+                $submit.on('click', function () {
+                    $modal.modal('hide');
+                    var code = $summernote.summernote('code');
+                    if (code !== '') {
+                        popup.setContent(code);
+                        _layer.bindPopup(popup).openPopup();
+                        var old = _geoJsonTmp;
+                        _geoJsonTmp.properties._popup = code;
+                        updateGeoJson(_geoJsonTmp, old);
+                    }
+                });
 
-          }
+            }
         });
         //禁用默认右击弹出菜单
         document.oncontextmenu = function (e) {
-          return false;
+            return false;
         }
         _map.on('mousedown', function drawPoly(e) {
-          e.originalEvent.preventDefault();
-          // _map.dragging.disable(); 如果不是右击则退出
-          if (2 != e.originalEvent.button) {
-            return false;
-          }
-          var polyLine = new L.Polyline([]);
-          _drawnItems.addLayer(polyLine);
-          _map.on('mousemove', function (e) {
-            polyLine.addLatLng(e.latlng);
-          })
-          _map.on('mouseup', function () {
-            _map.off('mousemove');
-            _map.off('mouseup');
-            if (key != undefined) {
-              var polyLineTmp = polyLine.toGeoJSON();
-            //   polyLineTmp.properties._uid = key;
-              polyLineTmp.properties._id = polyLine._leaflet_id;
-              _geoJson.features.push(polyLineTmp);
+            e.originalEvent.preventDefault();
+            // _map.dragging.disable(); 如果不是右击则退出
+            if (2 != e.originalEvent.button) {
+                return false;
             }
-            polyLine.bindPopup('<div><i class="fa fa-trash" onClick="removeLayer(' + polyLine._leaflet_id + ')"</div></i>');
-          })
+            var polyLine = new L.Polyline([]);
+            _drawnItems.addLayer(polyLine);
+            _map.on('mousemove', function (e) {
+                polyLine.addLatLng(e.latlng);
+            })
+            _map.on('mouseup', function () {
+                _map.off('mousemove');
+                _map.off('mouseup');
+                if (key != undefined) {
+                    var polyLineTmp = polyLine.toGeoJSON();
+                    //   polyLineTmp.properties._uid = key;
+                    polyLineTmp.properties._id = polyLine._leaflet_id;
+                    _geoJson.features.push(polyLineTmp);
+                }
+                polyLine.bindPopup('<div><i class="fa fa-trash" onClick="removeLayer(' + polyLine._leaflet_id + ')"</div></i>');
+            })
         });
-      })(document, window);
-    </script>
-  </body>
+    })(document, window);
+</script>
+</body>
 
 </html>

@@ -54,12 +54,15 @@
             <div id="lesson" class="tab-pane fade in active">
                 <div class="row">
                     <div class="col-md-7">
+                        <div class="pull-right">
+                        <a onclick="makeCode()" class="btn-u btn-xs">二维码</a>
                         {% if admin > 1%}
-                        <a href="/lesson/edit/{{lesson.lid}}" class="btn-u btn-xs pull-right">编辑</a>
+                        <a href="/lesson/edit/{{lesson.lid}}" class="btn-u btn-xs">编辑</a>
                         {% endif %}
                         {% if admin == 0%}
                         <a href="javascript:addUser()" class="btn-u btn-xs pull-right">申请加入</a>
                         {% endif %}
+                        </div>
                         <h3>详情</h3>
                         <dl class="dl-horizontal margin-top-20">
                             <dt>课程名称:</dt>
@@ -130,11 +133,35 @@
 
     </div>
 </div>
+<div class="modal fade" id="modal">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">
+                                ×
+                            </span>
+                        </button>                    
+                    </div>
+                    <div class="modal-body">
+                        <div id="qrcode"></div>
+                    </div>
+                    <!-- <div class="modal-footer">
+                        <button class="btn btn-primary" id="submit" type="button">
+                            保存
+                        </button>
+                    </div> -->
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
 {% endblock %}
 
 {% block js %}
 <script src="/js/lib/template.js"></script>
 <script src="/js/lib/jquery.simplePagination.js"></script>
+<script type="text/javascript" src="/js/qrcode.min.js"></script>
 <script id="fileTemplate" type="text/html">
     [each list as file]
     <div class="col-sm-3 file">
@@ -233,6 +260,16 @@
       })
     }
     '{% endif %}'
+    function makeCode () {
+        $('#modal').modal('show');
+        if($('#qrcode').html()===''){
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                                width : 256,
+                                height : 256
+                            });
+            qrcode.makeCode(window.location.href);
+        }
+    }
     $(document).ready(function () {
         var limit = 9;
         template.config('openTag', '[');
@@ -244,7 +281,7 @@
             var active = $('ul.collapse>li.active').not($(this).parent());
             if (typeof active === 'undefined') return;
             active.removeClass('active');
-        });
+        });       
         $('.xx').on('show.bs.tab', function () {
             var $id = $(this).attr('href'), $cid = $id.substring($id.lastIndexOf('-') + 1, $id.length),
                     $yunbook = $('#yunbook-' + $cid);
@@ -254,7 +291,6 @@
                 getYunbook($cid);
                 // getFiles($cid);
             }
-
         });
         $('a[href="#teachers"]').on('show.bs.tab', function () {
             var $teachers = $('#tList');
