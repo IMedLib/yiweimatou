@@ -127,6 +127,17 @@
           if (data.token !== '' && data.key !== '') {
             var now = new Date();
             now.setDate(now.getDate() + parseInt(expire));
+            $.ajax({
+              url:url+'user/get',
+              data:{
+                key:data.key,
+                token:data.token
+              },async:false,dataType:'json'
+            }).done(function(data){
+              if(data.code === 0){
+                setCookie('img_url',data.get.face_path,now);
+              }
+            })
             setCookie('key', data.key, now);
             setCookie('token', data.token, now);
             var redirect = decodeURIComponent(getUrlParam('redirect'));

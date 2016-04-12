@@ -176,7 +176,7 @@
                             size:data.file_size,
                             cover_path:"{{config.url.domain}}cover/"+data.cover_path,
                             path:'{{config.url.domain}}yunbook/'+ data.file_path,
-                            ext:data.file_ext,
+                            ext:'jpg',
                             aid:(aid === null || aid==='')?78287:aid
                         },dataType:'json'
                     }).done(function(data){
