@@ -6,29 +6,32 @@
         </title>
         <meta charset="utf-8"/>
         <meta content="initial-scale=1.0, user-scalable=no" name="viewport"/>
-        <link href="/js/lib/leaflet/leaflet.css" rel="stylesheet"/>
-        <link href="/js/lib/leaflet/leaflet.draw.css" rel="stylesheet">
-            <link href="/css/lib/bootstrap.min.css" rel="stylesheet">
-                <link href="/css/lib/summernote/summernote.css" rel="stylesheet">
-                    <link href="/css/lib/Font-Awesome/css/font-awesome.min.css" rel="stylesheet">
-                        <link href="/js/lib/leaflet/easy-button.css" rel="stylesheet">
-                            <link href="/css/toastr.min.css" rel="stylesheet">
-                                <style>
-                                    html,
-      body,
-      #map {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-                                </style>
-                            </link>
-                        </link>
-                    </link>
-                </link>
-            </link>
-        </link>
+        <link href="/js/lib/leaflet/leaflet.css" rel="stylesheet"/></link>
+        <link href="/js/lib/leaflet/leaflet.draw.css" rel="stylesheet"></link>
+        <link href="/css/lib/bootstrap.min.css" rel="stylesheet"></link>
+        <link href="/css/lib/summernote/summernote.css" rel="stylesheet"></link>
+        <link href="/css/lib/Font-Awesome/css/font-awesome.min.css" rel="stylesheet"></link>
+        <link href="/js/lib/leaflet/easy-button.css" rel="stylesheet"></link>
+        <link href="/css/toastr.min.css" rel="stylesheet"></link>
+        <style>
+              html,
+              body,
+              #map {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+              },
+              .select1 {
+                position: absolute;
+                top: 2px;
+                right: 2px;
+                width: 28px;
+                height: 35px;
+                background: #fff;
+                pointer-events: none;
+              }
+        </style>
     </head>
     <body>
         <div id="map">
@@ -51,6 +54,14 @@
                         </div>
                     </div>
                     <div class="modal-footer">
+                        <select style="float:left;width: auto;height: 35px;border-radius: 5px">
+                            <option value="red">
+                                红色
+                            </option>
+                            <option value="blue">
+                                蓝色
+                            </option>
+                        </select>
                         <button class="btn btn-primary" id="submit" type="button">
                             保存
                         </button>
@@ -199,7 +210,14 @@
             circle: false
           }
         }).addTo(_map);
-        $summernote.summernote({focus: true, height: 300, lang: 'zh-CN'});
+        $summernote.summernote({
+          toolbar:[
+            ['视频',['video']],
+            ['链接',['link']]//,
+            // ['源码',['codeview']]
+          ],
+          focus: true, height: 300, lang: 'zh-CN'
+        });
         function removeLayer(id) {
           _drawnItems.removeLayer(id);
           removeGeoJson(id);

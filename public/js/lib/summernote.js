@@ -6210,6 +6210,9 @@
       var youkuRegExp = /\/\/v\.youku\.com\/v_show\/id_(\w+)=*\.html/;
       var youkuMatch = url.match(youkuRegExp);
 
+      var qqRegExp = /\/\/v\.qq\.com\/cover\/[a-zA-Z0-9]\/\w+\.html\?vid=(\w+)/;
+      var qqMatch = url.match(qqRegExp);
+
       var mp4RegExp = /^.+.(mp4|m4v)$/;
       var mp4Match = url.match(mp4RegExp);
 
@@ -6252,13 +6255,20 @@
       } else if (youkuMatch && youkuMatch[1].length) {
         $video = $('<iframe webkitallowfullscreen mozallowfullscreen allowfullscreen>')
             .attr('frameborder', 0)
-            .attr('height', '498')
-            .attr('width', '510')
+            .attr('height', '320')
+            .attr('width', '256')
             .attr('src', '//player.youku.com/embed/' + youkuMatch[1]);
       } else if (mp4Match || oggMatch || webmMatch) {
         $video = $('<video controls>')
             .attr('src', url)
             .attr('width', '640').attr('height', '360');
+      } else if(qqMatch && qqMatch[1].length) {
+        console.log(qqMatch[1]);
+        $video = $('<iframe webkitallowfullscreen mozallowfullscreen allowfullscreen>')
+              .attr('frameborder',0)
+              .attr('height','320')
+              .attr('width','256')
+              .attr('src','http://v.qq.com/iframe/player.html?tiny=0&auto=0&vid='+qqMatch[1]);
       } else {
         // this is not a known video link. Now what, Cat? Now what?
         return false;
