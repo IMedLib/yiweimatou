@@ -148,7 +148,7 @@
         ], mapMaxZoom));
         _map.setMaxBounds(_mapBounds);
         _map.fitBounds(_mapBounds);
-        L.tileLayer(url + '{z}/{x}/{y}.png', {
+        L.tileLayer(url + '/{z}/{x}/{y}.png', {
           minZoom: mapMinZoom,
           maxZoom: mapMaxZoom,
           bounds: _mapBounds,
@@ -272,7 +272,7 @@
             $modal.modal('show');
             $submit.unbind('click');
             // var _content = '<div><i class="fa fa-trash" onClick="removeLayer('+_layer._leaflet_id+')"</div></i>';
-            var popup = L.popup({maxWidth: 1200}); //.setContent(_content);
+            var popup = L.popup(); //.setContent(_content);
             var _geoJsonTmp = _layer.toGeoJSON();
             // _geoJsonTmp.properties._uid = key;
             _geoJsonTmp.properties._id = _layer._leaflet_id;
