@@ -206,7 +206,7 @@
             _drawnItems = L.geoJson(JSON.parse(_data), {
                 onEachFeature: function (featureData, layer) {
                     if (featureData.geometry.type === 'Point') {
-                        var popup = L.popup({maxWidth: 1200});
+                        var popup = L.popup();
                         popup.setContent(featureData.properties._popup);
                         layer.bindPopup(popup);
                     }
