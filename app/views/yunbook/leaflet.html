@@ -144,6 +144,7 @@
                 }
             ]
         }).addTo(_map);
+        {% endif %}
         //二维码
         L.easyButton({
             position:'topright',
@@ -162,7 +163,6 @@
                 }
             }]
         }).addTo(_map);
-        {% endif %}
         var $summernote = $('#summernote'),
                 $modal = $('#modal'),
                 $submit = $('#submit');
