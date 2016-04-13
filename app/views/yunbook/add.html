@@ -189,7 +189,7 @@
                     }).done(function(data){
                         if(data.code==0){
                             toastr.success('新建成功！');
-                            // window.location.href = '/yunbook/'+data.identity
+                            window.location.href = '/yunbook/'+data.identity
                         }else {
                             toastr.error(data.msg === '' ? "新建失败！" : data.msg);
                         }
@@ -199,7 +199,7 @@
                 }else{
                     toastr.error(data.msg===''?"上传失败，请重新上传！":data.msg);
                 }
-            }).fail(function(){
+            }).fail(function(x,y,z){
                 toastr.error('文件上传超时！');
             }).always(function(){
                 $('form').unblock();
