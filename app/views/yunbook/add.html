@@ -154,7 +154,7 @@
             $('form').block({message:'<i class="fa fa-spinner fa-pulse fa-5x center"></i>'});
             var ext = file.name.split('.').pop().toUpperCase();
             var url = '{{config.url.upload}}';
-            if(['PPT','PPTX'].indexOf(ext)>0){
+            if(['PPT','PPTX'].indexOf(ext)> -1){
                 url+='ppt';
             }else{
                 url+='yunbook';
