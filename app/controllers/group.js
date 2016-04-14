@@ -49,6 +49,9 @@ module.exports = {
         var oid = this.params.id,
             group, admin = false,
             lessons;
+        if(!Number.isInteger(oid)){
+            this.redirect('/group');
+        }
         yield request({
             uri: config.url.inside.api + "Organ/get",
             gzip: true,
@@ -60,10 +63,10 @@ module.exports = {
             if (data.code === 0) {
                 group = data.get;
             } else {
-                debug("Organ/get", data);
+                console.log(new Date().toLocaleString(),"Organ/get", data);
             }
         }).catch(function(err) {
-            debug("Organ/get", err.message);
+            console.log(new Date().toLocaleString(),"Organ/get", err.message);
         });
         if (typeof group === 'undefined' || group === '{}') {
             this.redirect('/group');
@@ -148,9 +151,38 @@ module.exports = {
         });
     },
     edit: function*() {
-        yield this.render('group/manage', {
+        const id = this.params.id;
+        const key = this.cookies.get('key');
+        if(Number.isInteger(id)){
+            this.redirect('/group');
+        }
+        if(parseInt(key,10) >= 10){
+            this.redirect('/group');
+        }
+        var group;
+        yield request({
+            uri: config.url.inside.api + "Organ/get",
+            gzip: true,
+            json: true,
+            qs: {
+                oid: oid
+            }
+        }).then(function(data) {
+            if (data.code === 0) {
+                group = data.get;
+            } else {
+                console.log(new Date().toLocaleString(),"Organ/get", data);
+            }
+        }).catch(function(err) {
+            console.log(new Date().toLocaleString(),"Organ/get", err.message);
+        });
+        if (typeof group === 'undefined' || group.oid === undefined) {
+            this.redirect('/group');
+        }
+        yield this.render('group/edit', {
             title: "机构管理",
-            logo: '机构号'
+            logo: '机构号',
+            group:group
         });
     },
     add: function*() {

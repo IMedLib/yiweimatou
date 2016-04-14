@@ -248,6 +248,9 @@
             ]
         }).addTo(_map);
         //二维码
+        var qrcode = new QRCode(document.getElementById('qrcode'), {
+            width: 256, height: 256
+        });
         L.easyButton({
             position: 'topright',
             states: [{
@@ -255,13 +258,14 @@
                 icon: 'fa fa-qrcode fa-2x',
                 onClick: function (control) {
                     $('#qrModal').modal('show');
-                    var node = document.getElementById('qrcode');
-                    if (node.innerHTML === '') {
-                        var qrcode = new QRCode(node, {
-                            width: 256, height: 256
-                        });
-                        qrcode.makeCode(window.location.href);
+                    var zoom = _map.getZoom();
+                    var center = _map.getCenter();
+                    var url = window.location.href;
+                    if(url.indexOf('?')>-1){
+                        url = url.split('?')[0];
                     }
+                    url += '?zoom='+zoom+'&lat='+center.lat+'&lng='+center.lng;
+                    qrcode.makeCode(url);
                 }
             }]
         }).addTo(_map);
@@ -274,7 +278,17 @@
             w, 0
         ], mapMaxZoom));
         _map.setMaxBounds(_mapBounds);
-        _map.fitBounds(_mapBounds);
+        var zoom = getUrlParam('zoom');
+        var lat = getUrlParam('lat');
+        var lng = getUrlParam('lng');
+             
+        if(zoom === null || lat === null || lng === null){
+            _map.fitBounds(_mapBounds);
+            _map.setZoom(2);
+        }else{
+            var latLng = L.latLng(lat,lng);
+            _map.setView(latLng,zoom);
+        }
         L.tileLayer(url + '/{z}/{x}/{y}.png', {
             minZoom: mapMinZoom,
             maxZoom: mapMaxZoom,
@@ -344,6 +358,12 @@
             ],
             focus: true, height: 300, lang: 'zh-CN'
         });
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return r[2];
+            return null;
+        }
         function removeLayer(id) {
             _drawnItems.removeLayer(id);
             removeGeoJson(id);

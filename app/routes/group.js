@@ -7,7 +7,7 @@ var router =  require('koa-router')(),
 router.get('/',groupCtrl.index);
 router.get('/:id',groupCtrl.show);
 router.get('/me',groupCtrl.me);
-router.get('/edit/:id',groupCtrl.edit);
+// router.get('/edit/:id',groupCtrl.edit);
 router.get('/add',groupCtrl.add);
 
 module.exports=router;
