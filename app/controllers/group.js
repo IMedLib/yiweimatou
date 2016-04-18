@@ -49,9 +49,6 @@ module.exports = {
         var oid = this.params.id,
             group, admin = false,
             lessons;
-        if(!Number.isInteger(oid)){
-            this.redirect('/group');
-        }
         yield request({
             uri: config.url.inside.api + "Organ/get",
             gzip: true,
