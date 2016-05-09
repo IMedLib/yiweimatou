@@ -191,7 +191,8 @@
             minZoom: mapMinZoom,
             maxZoom: mapMaxZoom,
             bounds: _mapBounds,
-            noWrap: true
+            noWrap: true,
+            detectRetina:true
         }).addTo(_map);
         //汉化
         L.drawLocal.draw.toolbar.buttons.marker = '标注!';
