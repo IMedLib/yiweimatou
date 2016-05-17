@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <title>
-        {{title}}
+        {{yunbook.names}}
     </title>
     <meta charset="utf-8"/>
     <meta content="initial-scale=1.0, user-scalable=no" name="viewport"/>
@@ -110,7 +110,7 @@
         fid = {{yunbook.fid}},
         _data = unescape('{{yunbook.label}}');
         var _map = L.map('map', {
-            maxZoom: mapMaxZoom,
+            maxZoom: mapMaxZoom-1,
             minZoom: mapMinZoom,
             zoomControl: true,
             attributionControl: false,

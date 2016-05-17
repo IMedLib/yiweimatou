@@ -254,6 +254,7 @@ module.exports = {
         if (key == yunbook.uid) {
             editable = true;
         }
+        debug(yunbook);
         yield this.render('yunbook/leaflet', {
             yunbook: yunbook,
             key: key,

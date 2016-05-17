@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "yiweimatou",
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "better-npm-run dev",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "better-npm-run dev"
   },
   "betterScripts": {
     "dev": {
-      "command": "nodemon ./bin/www",
+      "command": "./node_modules/.bin/nodemon ./bin/www",
       "env": {
         "NODE_ENV": "development",
         "DEBUG": "app:*"
@@ -50,6 +50,7 @@
     "gulp-webpack": "^1.5.0",
     "jshint": "^2.8.0",
     "leaflet-easybutton": "^1.2.0",
+    "nodemon": "^1.9.2",
     "xlsx": "^0.8.0"
   }
 }
