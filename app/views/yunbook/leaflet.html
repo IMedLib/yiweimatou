@@ -111,8 +111,9 @@
         url = '{{yunbook.path}}', h = {{yunbook.height}},mapMinZoom = 0, mapMaxZoom = {{yunbook.zoom}},
         fid = {{yunbook.fid}},
         _data = unescape('{{yunbook.label}}');
+        var isMobile={% if isMobile %}{{true}}{% else %}{{false}}{% endif %}
         var _map = L.map('map', {
-            maxZoom: mapMaxZoom-1,
+            maxZoom: isMobile?mapMaxZoom-1:mapMaxZoom,
             minZoom: mapMinZoom,
             zoomControl: true,
             attributionControl: false,
@@ -194,7 +195,7 @@
             maxZoom: mapMaxZoom,
             bounds: _mapBounds,
             noWrap: true,
-            detectRetina:true
+            detectRetina:isMobile
         }).addTo(_map);
         //汉化
         L.drawLocal.draw.toolbar.buttons.marker = '标注!';

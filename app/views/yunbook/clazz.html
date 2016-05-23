@@ -91,8 +91,9 @@
                 _data = unescape('{{label}}'),
                 api = '{{api}}', admin = {{admin}},
         cfid = {{cfid}},cybid = {{cybid}};
+        var isMobile={% if isMobile %}{{true}}{% else %}{{false}}{% endif %}
         var _map = L.map('map', {
-            maxZoom: mapMaxZoom-1,
+            maxZoom: isMobile?mapMaxZoom-1:mapMaxZoom,
             minZoom: mapMinZoom,
             zoomControl: true,
             attributionControl: false,
@@ -296,7 +297,8 @@
             minZoom: mapMinZoom,
             maxZoom: mapMaxZoom,
             bounds: _mapBounds,
-            noWrap: true
+            noWrap: true,
+            detectRetina:isMobile
         }).addTo(_map);
         //汉化
         L.drawLocal.draw.toolbar.buttons.marker = '标注!';
